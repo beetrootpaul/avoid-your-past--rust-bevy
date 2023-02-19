@@ -1,5 +1,5 @@
 use bevy::app::App;
-use bevy::prelude::{Commands, Component, Plugin, Query, With};
+use bevy::prelude::{Commands, Component, Plugin, Query, Res, Time, With};
 
 fn main() {
     App::new()
@@ -34,7 +34,7 @@ fn s_hello_world() {
     println!("Hello, world!");
 }
 
-fn s_greet_people(query: Query<&Name, With<Person>>) {
+fn s_greet_people(time: Res<Time>, query: Query<&Name, With<Person>>) {
     for name in query.iter() {
         println!("I'm greeting you, {}!", name.0);
     }
