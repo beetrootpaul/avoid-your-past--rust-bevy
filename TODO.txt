@@ -6,5 +6,8 @@ Implementation:
 - macOS build: test keyboard input
 - macOS build: test game pad input
 
+Infra:
+- fix failing GitHub Action
+
 After game is finished:
 - copy README content from the original repo, add some screnshots
