@@ -1,0 +1,10 @@
+Implementation:
+- re-write the original game in Bevy
+- HTML build: test keyboard input
+- HTML build: test game pad input
+- HTML build: test touchscreen mobile input
+- macOS build: test keyboard input
+- macOS build: test game pad input
+
+After game is finished:
+- copy README content from the original repo, add some screnshots
