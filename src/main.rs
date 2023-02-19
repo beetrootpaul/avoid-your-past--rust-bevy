@@ -2,7 +2,7 @@ use bevy::app::App;
 use bevy::prelude::{Commands, Component, Plugin, Query, With};
 
 fn main() {
-    bevy::prelude::App::new()
+    App::new()
         .add_plugins(bevy::DefaultPlugins)
         .add_plugin(HelloWorldPlugin)
         .run();
