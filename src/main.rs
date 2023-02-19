@@ -1,11 +1,21 @@
-use bevy::prelude::{App, Commands, Component, Query, With};
+use bevy::app::App;
+use bevy::prelude::{Commands, Component, Plugin, Query, With};
 
 fn main() {
-    App::new()
-        .add_startup_system(ss_add_people)
-        .add_system(s_hello_world)
-        .add_system(s_greet_people)
+    bevy::prelude::App::new()
+        .add_plugins(bevy::DefaultPlugins)
+        .add_plugin(HelloWorldPlugin)
         .run();
+}
+
+pub struct HelloWorldPlugin;
+
+impl Plugin for HelloWorldPlugin {
+    fn build(&self, app: &mut App) {
+        app.add_startup_system(ss_add_people)
+            .add_system(s_hello_world)
+            .add_system(s_greet_people);
+    }
 }
 
 #[derive(Component)]
