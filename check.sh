@@ -1,7 +1,7 @@
 #!/usr/bin/env sh
-set -e
+set -ex
 
-cargo check --verbose
-
-cargo test --verbose
+cargo check
+cargo test
+cargo clippy
 
