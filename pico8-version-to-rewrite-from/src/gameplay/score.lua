@@ -3,21 +3,24 @@
 -- -- -- -- -- -- --
 
 function new_score()
-    local value = 0
+    -- TODO
+    --local value = 0
 
     local s = {}
 
     --
 
-    function s.value()
-        return value
-    end
+    -- TODO
+    --function s.value()
+    --    return value
+    --end
 
     --
 
-    function s.add(points)
-        value = value + points
-    end
+    -- TODO
+    --function s.add(points)
+    --    value = value + points
+    --end
 
     --
 
