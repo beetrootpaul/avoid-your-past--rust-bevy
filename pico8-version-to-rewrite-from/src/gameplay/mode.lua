@@ -61,16 +61,17 @@ function new_mode()
 
     --
 
-    -- TODO
-    --function m.bg_color()
-    --    if current == "no_coins" then
-    --        return a.bg_color_mode_no_coins + 16 * a.bg_color_mode_normal
-    --    elseif current == "no_memories" then
-    --        return a.bg_color_mode_no_memories + 16 * a.bg_color_mode_normal
-    --    else
-    --        return a.bg_color_mode_normal
-    --    end
-    --end
+    function m.bg_color()
+        -- TODO
+        --    if current == "no_coins" then
+        --        return a.bg_color_mode_no_coins + 16 * a.bg_color_mode_normal
+        --    elseif current == "no_memories" then
+        --        return a.bg_color_mode_no_memories + 16 * a.bg_color_mode_normal
+        --    else
+        return a.bg_color_mode_normal
+        -- TODO
+        --    end
+    end
 
     -- TODO
     --function m.bg_pattern()

@@ -5,8 +5,10 @@ Implementation:
 - HTML build: test touchscreen mobile input
 - macOS build: test keyboard input
 - macOS build: test game pad input
+- split into many files
 
 Infra:
+- a simple way to test web build
 - fix failing GitHub Action
 
 After game is finished:
