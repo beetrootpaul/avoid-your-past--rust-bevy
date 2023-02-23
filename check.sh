@@ -5,4 +5,4 @@ cargo check
 
 cargo test
 
-cargo clippy
+cargo clippy --all-targets --all-features
