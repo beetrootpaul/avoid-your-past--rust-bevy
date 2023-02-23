@@ -12,4 +12,7 @@ Infra:
 - fix failing GitHub Action
 
 After game is finished:
-- copy README content from the original repo, add some screnshots
+- copy README content from the original repo, add some screenshots
+
+Other:
+- non-CC license which allows to use, but not commercially
