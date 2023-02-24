@@ -59,7 +59,9 @@ const PLAYER_H: f32 = 8.;
 const VIEWPORT_W: f32 = GAME_AREA_W;
 const VIEWPORT_H: f32 = TOPBAR_H + GAME_AREA_H;
 
-// const VIEWPORT_SIZE
+// TODO: bevy::sprite::collide_aabb::collide(…)
+
+// TODO: app.add_system_set(SystemSet::new().with_run_criteria(FixedTimestep::step(0.5)).with_system(…))
 
 fn main() {
     App::new()
@@ -93,6 +95,8 @@ fn main() {
         .add_startup_system(spawn_camera)
         .add_startup_system(spawn_game_area)
         .add_startup_system(spawn_player)
+        // TODO: will it affect HTML embedded game?
+        .add_system(bevy::window::close_on_esc)
         .add_system(handle_keyboard_input)
         .add_system(update_controlled_directions)
         .run();
