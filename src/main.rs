@@ -17,24 +17,49 @@ use bevy::prelude::*;
 // TODO: UI resource 4: https://github.com/bevyengine/bevy/blob/latest/examples/ui/ui.rs
 // TODO: UI resource 5: https://github.com/bevyengine/bevy/blob/latest/examples/ui/ui_scaling.rs
 // TODO: UI resource 6: https://github.com/bevyengine/bevy/blob/latest/examples/2d/text2d.rs
+// TODO: UI resource 7: https://github.com/bevyengine/bevy/blob/latest/examples/ui/font_atlas_debug.rs
+// TODO: UI resource 8: https://github.com/bevyengine/bevy/blob/latest/examples/games/game_menu.rs
+// TODO: UI resource 9: https://github.com/bevyengine/bevy/blob/latest/examples/2d/2d_shapes.rs
+
+// TODO: audio resource 1: https://github.com/bevyengine/bevy/blob/latest/examples/audio/audio.rs
+// TODO: audio resource 2: https://github.com/bevyengine/bevy/blob/latest/examples/audio/audio_control.rs
+
+// TODO: fixed FPS https://github.com/bevyengine/bevy/blob/latest/examples/ecs/fixed_timestep.rs
+
+// TODO: z-index https://github.com/bevyengine/bevy/blob/latest/examples/ui/z_index.rs
+
+// TODO: scaling https://github.com/bevyengine/bevy/blob/latest/examples/window/scale_factor_override.rs
+// TODO: window resizing https://github.com/bevyengine/bevy/blob/latest/examples/window/window_resizing.rs
+// TODO: window settings https://github.com/bevyengine/bevy/blob/latest/examples/window/window_settings.rs
+
+// TODO: logs https://github.com/bevyengine/bevy/blob/latest/examples/app/logs.rs
+
+// TODO: modules, functions, scopes
+// TODO: plugins 1 https://github.com/bevyengine/bevy/blob/latest/examples/app/plugin.rs
+// TODO: plugins 2 https://github.com/bevyengine/bevy/blob/latest/examples/app/plugin_group.rs
+
+// TODO: game states https://github.com/bevyengine/bevy/blob/latest/examples/ecs/state.rs
 
 fn main() {
     App::new()
         .add_plugins(
             DefaultPlugins
+                // Prevent blurring of scaled up pixel art sprites
                 .set(ImagePlugin::default_nearest())
                 .set(AssetPlugin {
-                    // hot-reloading of assets
+                    // Watch for changes in assets and hot-reload them without need to run the app again
                     watch_for_changes: true,
                     ..default()
                 }),
         )
+        // Print FPS in a console
+        .add_plugin(bevy::diagnostic::FrameTimeDiagnosticsPlugin::default())
+        // Get rid of edges of neighbour sprites visible around the given sprite from the sprite sheet
+        .insert_resource(Msaa { samples: 1 })
+        // Draw a solid background color
         .insert_resource(ClearColor(
             Color::hex("1d2b53").unwrap_or(Color::MIDNIGHT_BLUE),
         ))
-        // Get rid of edges of neighbour sprites visible around the given sprite from the sprite sheet
-        // (based on https://discord.com/channels/691052431525675048/1038900941795102770/1038940595714002964)
-        .insert_resource(Msaa { samples: 1 })
         .add_startup_system(spawn_camera)
         .add_startup_system(spawn_player)
         .add_system(handle_keyboard_input)
