@@ -16,10 +16,19 @@ use bevy::prelude::*;
 // TODO: UI resource 3: https://github.com/bevyengine/bevy/blob/latest/examples/ui/text_debug.rs
 // TODO: UI resource 4: https://github.com/bevyengine/bevy/blob/latest/examples/ui/ui.rs
 // TODO: UI resource 5: https://github.com/bevyengine/bevy/blob/latest/examples/ui/ui_scaling.rs
+// TODO: UI resource 6: https://github.com/bevyengine/bevy/blob/latest/examples/2d/text2d.rs
 
 fn main() {
     App::new()
-        .add_plugins(DefaultPlugins.set(ImagePlugin::default_nearest()))
+        .add_plugins(
+            DefaultPlugins
+                .set(ImagePlugin::default_nearest())
+                .set(AssetPlugin {
+                    // hot-reloading of assets
+                    watch_for_changes: true,
+                    ..default()
+                }),
+        )
         .insert_resource(ClearColor(
             Color::hex("1d2b53").unwrap_or(Color::MIDNIGHT_BLUE),
         ))
@@ -56,6 +65,7 @@ fn spawn_player(
         TextureAtlas::from_grid(sprite_sheet_handle, vec2(8., 8.), 16, 3, None, None);
     let texture_atlas_handle = texture_atlases.add(texture_atlas);
 
+    // TODO: animated sprite https://github.com/bevyengine/bevy/blob/latest/examples/2d/sprite_sheet.rs
     // TODO: change sprite according to direction
     commands.spawn((
         SpriteSheetBundle {
@@ -116,3 +126,5 @@ fn update_controlled_directions(
         transform.translation.x = transform.translation.x.clamp(-300., 300.);
     }
 }
+
+// TODO: tests https://github.com/bevyengine/bevy/blob/latest/tests/how_to_test_systems.rs

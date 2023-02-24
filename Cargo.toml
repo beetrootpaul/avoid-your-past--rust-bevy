@@ -51,7 +51,7 @@ features = [
     "bevy_winit", # Window management
     #    "animation",          # Animation support
     #    "x11",                # Linux: Support X11 windowing system
-    #    "filesystem_watcher", # Asset hot-reloading
+    "filesystem_watcher", # Asset hot-reloading
     #    "render",             # Graphics Rendering
 
     ## "render" actually just includes:

@@ -11,3 +11,5 @@ cargo build --release
 # TODO: web: test touch input on a mobile
 
 # TODO: adapt scripts to easily test in a browser
+
+# TODO: low power: https://github.com/bevyengine/bevy/blob/latest/examples/window/low_power.rs
