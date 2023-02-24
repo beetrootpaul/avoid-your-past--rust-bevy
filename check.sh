@@ -1,8 +1,8 @@
 #!/usr/bin/env sh
 set -ex
 
-cargo check
+cargo check --all-targets
 
 cargo test
 
-cargo clippy --all-targets --all-features
+cargo clippy --all-targets

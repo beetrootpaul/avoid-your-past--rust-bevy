@@ -1,0 +1,26 @@
+name: "build -> test -> lint"
+
+on:
+  push:
+    branches: [ "main", "dev" ]
+  pull_request:
+    branches: [ "main" ]
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    # --features bevy/wayland: this action run on Linux, therefore require either
+    #                          X11 or Wayland to compile Bevy app properly
+    steps:
+      - uses: actions/checkout@v3
+      - name: Build
+        run: cargo build --features bevy/x11 --all-targets --verbose
+      - name: Test
+        run: cargo test --features bevy/x11 --verbose
+      - name: Lint
+        run: cargo clippy --features bevy/x11 --all-targets -- -D warnings
