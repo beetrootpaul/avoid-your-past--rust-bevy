@@ -2,8 +2,22 @@
 name = "avoid_your_past_rust_bevy"
 version = "0.1.0"
 edition = "2021"
+#TODO: license field
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+# # # # # # # #
+# workspaces
+#
+
+# Resolver set to 2 is required if you are using Cargo Workspaces
+# See: https://bevyengine.org/learn/book/getting-started/setup/#cargo-workspaces
+#[workspace]
+#resolver = "2" # Important! wgpu/Bevy needs this!
+
+# # # # # # # # #
+# optimization
+#
 
 # Enable a small amount of optimization in debug mode
 # See: https://bevyengine.org/learn/book/getting-started/setup/#compile-with-performance-optimizations
@@ -16,6 +30,10 @@ edition = "2021"
 # See: https://bevy-cheatbook.github.io/pitfalls/performance.html#unoptimized-debug-builds
 [profile.dev.package."*"]
 opt-level = 3
+
+# # # # # # # # #
+# dependencies
+#
 
 [dependencies.bevy]
 version = "0.9.1"
@@ -33,7 +51,7 @@ features = [
     "bevy_winit", # Window management
     #    "animation",          # Animation support
     #    "x11",                # Linux: Support X11 windowing system
-    #    "filesystem_watcher", # Asset hot-reloading
+    "filesystem_watcher", # Asset hot-reloading
     #    "render",             # Graphics Rendering
 
     ## "render" actually just includes:
