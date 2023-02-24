@@ -1,5 +1,6 @@
 use bevy::math::vec2;
 use bevy::prelude::*;
+use bevy::render::camera::CameraProjection;
 use bevy::sprite::Anchor;
 
 // TODO: copy README content from the original repo, add some screenshots
@@ -44,7 +45,7 @@ use bevy::sprite::Anchor;
 
 const GAME_TITLE: &str = "Avoid Your Past";
 
-// TODO: is it possible to scale the entire app instead of scaling each sprite etc.?
+// TODO: adapt SCALE according to window size (for whole integer multipliers)
 const SCALE: f32 = 4.;
 
 const TOPBAR_H: f32 = 16.;
@@ -81,6 +82,7 @@ fn main() {
                     ..default()
                 }),
         )
+        // TODO: why FPS is no longer printed in the console?!
         // Print FPS in a console
         .add_plugin(bevy::diagnostic::FrameTimeDiagnosticsPlugin::default())
         // Get rid of edges of neighbour sprites visible around the given sprite from the sprite sheet
@@ -105,7 +107,33 @@ enum ControlledDirection {
 }
 
 fn spawn_camera(mut commands: Commands) {
-    commands.spawn(Camera2dBundle::default());
+    // TODO: how to do it better? It was a simple `Camera2dBundle::default()` before I wanted to define a `scale`
+    let far = 1000.0_f32;
+    let projection = OrthographicProjection {
+        far: far,
+        scale: 1. / SCALE,
+        ..Default::default()
+    };
+    let transform = Transform::from_xyz(0.0, 0.0, far - 0.1);
+    let view_projection = projection.get_projection_matrix() * transform.compute_matrix().inverse();
+    let frustum = bevy::render::primitives::Frustum::from_view_projection(
+        &view_projection,
+        &transform.translation,
+        &transform.back(),
+        projection.far(),
+    );
+    let camera2d_bundle = Camera2dBundle {
+        camera_render_graph: bevy::render::camera::CameraRenderGraph::new("core_2d"),
+        projection,
+        visible_entities: bevy::render::view::VisibleEntities::default(),
+        frustum,
+        transform,
+        global_transform: Default::default(),
+        camera: Camera::default(),
+        camera_2d: Camera2d::default(),
+        tonemapping: bevy::core_pipeline::tonemapping::Tonemapping::Disabled,
+    };
+    commands.spawn(camera2d_bundle);
 }
 
 fn spawn_game_area(mut commands: Commands) {
@@ -117,12 +145,7 @@ fn spawn_game_area(mut commands: Commands) {
             anchor: Anchor::TopLeft,
             ..default()
         },
-        transform: Transform::from_xyz(
-            SCALE * (-GAME_AREA_W / 2.),
-            SCALE * (GAME_AREA_H / 2. - TOPBAR_H / 2.),
-            0.,
-        )
-        .with_scale(Vec3::splat(SCALE)),
+        transform: Transform::from_xyz(-GAME_AREA_W / 2., GAME_AREA_H / 2. - TOPBAR_H / 2., 0.),
         ..default()
     });
 }
@@ -145,8 +168,7 @@ fn spawn_player(
             // TODO: reorganize game area position calculations
             // TODO: Z>0 for layering?
             // TODO: add helpers for translating from window-centered coors to game area coords
-            transform: Transform::from_xyz(0., SCALE * (-TOPBAR_H / 2.), 0.)
-                .with_scale(Vec3::splat(SCALE)),
+            transform: Transform::from_xyz(0., -TOPBAR_H / 2., 0.),
             texture_atlas: texture_atlas_handle,
             sprite: TextureAtlasSprite {
                 index: 19,
@@ -199,14 +221,13 @@ fn update_controlled_directions(
             ControlledDirection::Up => transform.translation.y += SPEED * time.delta_seconds(),
             ControlledDirection::Down => transform.translation.y -= SPEED * time.delta_seconds(),
         }
-        // TODO: pixel perfect movement
         transform.translation.x = transform.translation.x.clamp(
-            SCALE * (-GAME_AREA_W / 2. + PLAYER_W / 2.),
-            SCALE * (GAME_AREA_W / 2. - PLAYER_W / 2.),
+            -GAME_AREA_W / 2. + PLAYER_W / 2.,
+            GAME_AREA_W / 2. - PLAYER_W / 2.,
         );
         transform.translation.y = transform.translation.y.clamp(
-            SCALE * (-GAME_AREA_H / 2. - TOPBAR_H / 2. + PLAYER_H / 2.),
-            SCALE * (GAME_AREA_H / 2. - TOPBAR_H / 2. - PLAYER_H / 2.),
+            -GAME_AREA_H / 2. - TOPBAR_H / 2. + PLAYER_H / 2.,
+            GAME_AREA_H / 2. - TOPBAR_H / 2. - PLAYER_H / 2.,
         );
     }
 }
