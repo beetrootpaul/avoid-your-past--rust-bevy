@@ -1,10 +1,28 @@
 use bevy::math::vec2;
 use bevy::prelude::*;
 
+// TODO: copy README content from the original repo, add some screenshots
+// TODO: non-CC license which allows to use, but not commercially
+
+// TODO: gamepad resource 1: https://github.com/bevyengine/bevy/blob/latest/examples/input/gamepad_input.rs
+// TODO: gamepad resource 2: https://github.com/bevyengine/bevy/blob/latest/examples/input/gamepad_input_events.rs
+// TODO: gamepad resource 2: https://github.com/bevyengine/bevy/blob/latest/examples/tools/gamepad_viewer.rs
+
+// TODO: touch input resource 1: https://github.com/bevyengine/bevy/blob/latest/examples/input/touch_input.rs
+// TODO: touch input resource 2: https://github.com/bevyengine/bevy/blob/latest/examples/input/touch_input_events.rs
+
+// TODO: UI resource 1: https://github.com/bevyengine/bevy/blob/latest/examples/ui/button.rs
+// TODO: UI resource 2: https://github.com/bevyengine/bevy/blob/latest/examples/ui/text.rs
+// TODO: UI resource 3: https://github.com/bevyengine/bevy/blob/latest/examples/ui/text_debug.rs
+// TODO: UI resource 4: https://github.com/bevyengine/bevy/blob/latest/examples/ui/ui.rs
+// TODO: UI resource 5: https://github.com/bevyengine/bevy/blob/latest/examples/ui/ui_scaling.rs
+
 fn main() {
     App::new()
         .add_plugins(DefaultPlugins.set(ImagePlugin::default_nearest()))
-        .insert_resource(ClearColor(Color::hex("1d2b53").unwrap()))
+        .insert_resource(ClearColor(
+            Color::hex("1d2b53").unwrap_or(Color::MIDNIGHT_BLUE),
+        ))
         // Get rid of edges of neighbour sprites visible around the given sprite from the sprite sheet
         // (based on https://discord.com/channels/691052431525675048/1038900941795102770/1038940595714002964)
         .insert_resource(Msaa { samples: 1 })
@@ -53,24 +71,27 @@ fn spawn_player(
     ));
 }
 
-fn handle_keyboard_input(input: Res<Input<KeyCode>>, mut query: Query<&mut ControlledDirection>) {
+fn handle_keyboard_input(
+    keyboard_input: Res<Input<KeyCode>>,
+    mut query: Query<&mut ControlledDirection>,
+) {
     // TODO: handle a case of pressed multiple arrows at once
-    if input.just_pressed(KeyCode::Left) {
+    if keyboard_input.just_pressed(KeyCode::Left) {
         for mut controlled_direction in query.iter_mut() {
             *controlled_direction = ControlledDirection::Left;
         }
     }
-    if input.just_pressed(KeyCode::Right) {
+    if keyboard_input.just_pressed(KeyCode::Right) {
         for mut controlled_direction in query.iter_mut() {
             *controlled_direction = ControlledDirection::Right;
         }
     }
-    if input.just_pressed(KeyCode::Up) {
+    if keyboard_input.just_pressed(KeyCode::Up) {
         for mut controlled_direction in query.iter_mut() {
             *controlled_direction = ControlledDirection::Up;
         }
     }
-    if input.just_pressed(KeyCode::Down) {
+    if keyboard_input.just_pressed(KeyCode::Down) {
         for mut controlled_direction in query.iter_mut() {
             *controlled_direction = ControlledDirection::Down;
         }
