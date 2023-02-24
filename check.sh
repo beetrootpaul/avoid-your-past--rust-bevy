@@ -2,6 +2,7 @@
 set -ex
 
 cargo check
-cargo test
-cargo clippy
 
+cargo test
+
+cargo clippy --all-targets --all-features

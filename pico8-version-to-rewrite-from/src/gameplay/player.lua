@@ -13,8 +13,8 @@ function new_player()
     --local dx = speed
     --local dy = 0
 
+    local direction = "r"
     -- TODO
-    --local direction = "r"
     --local sprite_for_direction = {
     --    u = 39,
     --    r = 40,
@@ -61,23 +61,26 @@ function new_player()
 
     --
 
-    -- TODO
-    --function p.direct_left()
-    --    dx, dy = -speed, 0
-    --    direction = "l"
-    --end
-    --function p.direct_right()
-    --    dx, dy = speed, 0
-    --    direction = "r"
-    --end
-    --function p.direct_up()
-    --    dx, dy = 0, -speed
-    --    direction = "u"
-    --end
-    --function p.direct_down()
-    --    dx, dy = 0, speed
-    --    direction = "d"
-    --end
+    function p.direct_left()
+        -- TODO
+        --    dx, dy = -speed, 0
+        direction = "l"
+    end
+    function p.direct_right()
+        -- TODO
+        --    dx, dy = speed, 0
+        direction = "r"
+    end
+    function p.direct_up()
+        -- TODO
+        --    dx, dy = 0, -speed
+        direction = "u"
+    end
+    function p.direct_down()
+        -- TODO
+        --    dx, dy = 0, speed
+        direction = "d"
+    end
 
     --
 

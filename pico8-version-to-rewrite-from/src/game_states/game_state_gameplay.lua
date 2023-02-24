@@ -63,16 +63,15 @@ function new_game_state_gameplay(params)
 
     function gs.update()
 
-        -- TODO
-        --if btnp(u.buttons.l) then
-        --    player.direct_left()
-        --elseif btnp(u.buttons.r) then
-        --    player.direct_right()
-        --elseif btnp(u.buttons.u) then
-        --    player.direct_up()
-        --elseif btnp(u.buttons.d) then
-        --    player.direct_down()
-        --end
+        if btnp(u.buttons.l) then
+            player.direct_left()
+        elseif btnp(u.buttons.r) then
+            player.direct_right()
+        elseif btnp(u.buttons.u) then
+            player.direct_up()
+        elseif btnp(u.buttons.d) then
+            player.direct_down()
+        end
 
         -- TODO
         --mode.update {

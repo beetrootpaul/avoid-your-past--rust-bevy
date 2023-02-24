@@ -15,25 +15,26 @@ u = {
         --x = 5,
     --},
 
-    -- TODO
-    --colors = {
-    --    black = 0,
-    --    dark_blue = 1,
-    --    purple = 2,
-    --    dark_green = 3,
-    --    brown = 4,
-    --    dark_grey = 5,
-    --    light_grey = 6,
-    --    white = 7,
-    --    red = 8,
-    --    orange = 9,
-    --    yellow = 10,
-    --    lime = 11,
-    --    blue = 12,
-    --    violet_grey = 13,
-    --    pink = 14,
-    --    salmon = 15,
-    --},
+    colors = {
+        -- TODO
+        --    black = 0,
+        dark_blue = 1,
+        -- TODO
+        --    purple = 2,
+        --    dark_green = 3,
+        --    brown = 4,
+        --    dark_grey = 5,
+        --    light_grey = 6,
+        --    white = 7,
+        --    red = 8,
+        --    orange = 9,
+        --    yellow = 10,
+        --    lime = 11,
+        --    blue = 12,
+        --    violet_grey = 13,
+        --    pink = 14,
+        --    salmon = 15,
+    },
 
     -- TODO
     --screen_px = 128,
