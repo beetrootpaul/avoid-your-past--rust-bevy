@@ -110,7 +110,7 @@ fn spawn_camera(mut commands: Commands) {
     // TODO: how to do it better? It was a simple `Camera2dBundle::default()` before I wanted to define a `scale`
     let far = 1000.0_f32;
     let projection = OrthographicProjection {
-        far: far,
+        far,
         scale: 1. / SCALE,
         ..Default::default()
     };
