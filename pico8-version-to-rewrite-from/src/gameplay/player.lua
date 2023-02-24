@@ -3,9 +3,9 @@
 -- -- -- -- -- -- -- --
 
 function new_player()
+    local x = a.game_area_w / 2
+    local y = a.game_area_h / 2
     -- TODO
-    --local x = a.game_area_w / 2
-    --local y = a.game_area_h / 2
     --local r = 3
 
     -- TODO
@@ -14,13 +14,14 @@ function new_player()
     --local dy = 0
 
     local direction = "r"
-    -- TODO
-    --local sprite_for_direction = {
-    --    u = 39,
-    --    r = 40,
-    --    d = 41,
-    --    l = 42,
-    --}
+    local sprite_for_direction = {
+        -- TODO
+        --    u = 39,
+        r = 40,
+        -- TODO
+        --    d = 41,
+        --    l = 42,
+    }
 
     local p = {}
 
@@ -84,30 +85,29 @@ function new_player()
 
     --
 
-    -- TODO
-    --function p.move()
-    --    x = x + dx
-    --    y = y + dy
-    --    x = mid(r, x, a.game_area_w - r - 1)
-    --    y = mid(r, y, a.game_area_h - r - 1)
-    --end
+    function p.move()
+        x = x + dx
+        y = y + dy
+        x = mid(r, x, a.game_area_w - r - 1)
+        y = mid(r, y, a.game_area_h - r - 1)
+    end
 
     --
 
-    -- TODO
-    --function p.draw()
-    --    palt(u.colors.black, false)
-    --    palt(u.colors.dark_blue, true)
-    --    spr(
-    --        sprite_for_direction[direction],
-    --        x - r,
-    --        y - r
-    --    )
-    --    palt()
-    --    if __debug__ then
-    --        circfill(x, y, r, u.colors.red)
-    --    end
-    --end
+    function p.draw()
+        palt(u.colors.black, false)
+        palt(u.colors.dark_blue, true)
+        spr(
+                sprite_for_direction[direction],
+                x - r,
+                y - r
+        )
+        palt()
+        -- TODO
+        --    if __debug__ then
+        --        circfill(x, y, r, u.colors.red)
+        --    end
+    end
 
     --
 

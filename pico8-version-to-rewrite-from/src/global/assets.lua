@@ -21,9 +21,10 @@ a = {
     --
     --    camera_x = 0,
     --    camera_y = -16,
-    --    topbar_h = 16,
-    --    game_area_w = 128,
-    --    game_area_h = 112,
+    topbar_h = 16,
+    game_area_w = 128,
+    game_area_h = 112,
+    -- TODO
     --    game_area_w_tiles = 16,
     --    game_area_h_tiles = 14,
 }

@@ -1,5 +1,6 @@
 use bevy::math::vec2;
 use bevy::prelude::*;
+use bevy::sprite::Anchor;
 
 // TODO: copy README content from the original repo, add some screenshots
 // TODO: non-CC license which allows to use, but not commercially
@@ -24,7 +25,8 @@ use bevy::prelude::*;
 // TODO: audio resource 1: https://github.com/bevyengine/bevy/blob/latest/examples/audio/audio.rs
 // TODO: audio resource 2: https://github.com/bevyengine/bevy/blob/latest/examples/audio/audio_control.rs
 
-// TODO: fixed FPS https://github.com/bevyengine/bevy/blob/latest/examples/ecs/fixed_timestep.rs
+// TODO: fixed FPS 1 https://github.com/bevyengine/bevy/blob/latest/examples/ecs/fixed_timestep.rs
+// TODO: fixed FPS 2 https://bevy-cheatbook.github.io/features/fixed-timestep.html
 
 // TODO: z-index https://github.com/bevyengine/bevy/blob/latest/examples/ui/z_index.rs
 
@@ -40,10 +42,37 @@ use bevy::prelude::*;
 
 // TODO: game states https://github.com/bevyengine/bevy/blob/latest/examples/ecs/state.rs
 
+const GAME_TITLE: &str = "Avoid Your Past";
+
+// TODO: is it possible to scale the entire app instead of scaling each sprite etc.?
+const SCALE: f32 = 4.;
+
+const TOPBAR_H: f32 = 16.;
+const GAME_AREA_W: f32 = 128.;
+const GAME_AREA_H: f32 = 112.;
+
+// TODO: make it not a constant, but some entity's property
+const PLAYER_W: f32 = 8.;
+const PLAYER_H: f32 = 8.;
+
+const VIEWPORT_W: f32 = GAME_AREA_W;
+const VIEWPORT_H: f32 = TOPBAR_H + GAME_AREA_H;
+
+// const VIEWPORT_SIZE
+
 fn main() {
     App::new()
         .add_plugins(
             DefaultPlugins
+                .set(WindowPlugin {
+                    window: WindowDescriptor {
+                        title: GAME_TITLE.to_string(),
+                        width: SCALE * VIEWPORT_W,
+                        height: SCALE * VIEWPORT_H,
+                        ..default()
+                    },
+                    ..default()
+                })
                 // Prevent blurring of scaled up pixel art sprites
                 .set(ImagePlugin::default_nearest())
                 .set(AssetPlugin {
@@ -56,11 +85,11 @@ fn main() {
         .add_plugin(bevy::diagnostic::FrameTimeDiagnosticsPlugin::default())
         // Get rid of edges of neighbour sprites visible around the given sprite from the sprite sheet
         .insert_resource(Msaa { samples: 1 })
+        // TODO: make all colors defined as a PICO-8 palette
         // Draw a solid background color
-        .insert_resource(ClearColor(
-            Color::hex("1d2b53").unwrap_or(Color::MIDNIGHT_BLUE),
-        ))
+        .insert_resource(ClearColor(Color::BLACK))
         .add_startup_system(spawn_camera)
+        .add_startup_system(spawn_game_area)
         .add_startup_system(spawn_player)
         .add_system(handle_keyboard_input)
         .add_system(update_controlled_directions)
@@ -79,6 +108,25 @@ fn spawn_camera(mut commands: Commands) {
     commands.spawn(Camera2dBundle::default());
 }
 
+fn spawn_game_area(mut commands: Commands) {
+    commands.spawn(SpriteBundle {
+        sprite: Sprite {
+            // TODO: make all colors defined as a PICO-8 palette
+            color: Color::hex("1d2b53").unwrap_or(Color::MIDNIGHT_BLUE),
+            custom_size: Some(vec2(GAME_AREA_W, GAME_AREA_H)),
+            anchor: Anchor::TopLeft,
+            ..default()
+        },
+        transform: Transform::from_xyz(
+            SCALE * (-GAME_AREA_W / 2.),
+            SCALE * (GAME_AREA_H / 2. - TOPBAR_H / 2.),
+            0.,
+        )
+        .with_scale(Vec3::splat(SCALE)),
+        ..default()
+    });
+}
+
 fn spawn_player(
     mut commands: Commands,
     asset_server: Res<AssetServer>,
@@ -94,12 +142,17 @@ fn spawn_player(
     // TODO: change sprite according to direction
     commands.spawn((
         SpriteSheetBundle {
-            // TODO: center sprite on position
-            // TODO: what initial XY to set?
+            // TODO: reorganize game area position calculations
             // TODO: Z>0 for layering?
-            transform: Transform::from_xyz(0., 0., 0.).with_scale(Vec3::splat(8.)),
+            // TODO: add helpers for translating from window-centered coors to game area coords
+            transform: Transform::from_xyz(0., SCALE * (-TOPBAR_H / 2.), 0.)
+                .with_scale(Vec3::splat(SCALE)),
             texture_atlas: texture_atlas_handle,
-            sprite: TextureAtlasSprite::new(19),
+            sprite: TextureAtlasSprite {
+                index: 19,
+                anchor: Anchor::Center,
+                ..default()
+            },
             ..default()
         },
         ControlledDirection::Right,
@@ -146,9 +199,15 @@ fn update_controlled_directions(
             ControlledDirection::Up => transform.translation.y += SPEED * time.delta_seconds(),
             ControlledDirection::Down => transform.translation.y -= SPEED * time.delta_seconds(),
         }
-        // TODO: defined game arena size (and scale it within viewport?)
-        transform.translation.y = transform.translation.y.clamp(-200., 200.);
-        transform.translation.x = transform.translation.x.clamp(-300., 300.);
+        // TODO: pixel perfect movement
+        transform.translation.x = transform.translation.x.clamp(
+            SCALE * (-GAME_AREA_W / 2. + PLAYER_W / 2.),
+            SCALE * (GAME_AREA_W / 2. - PLAYER_W / 2.),
+        );
+        transform.translation.y = transform.translation.y.clamp(
+            SCALE * (-GAME_AREA_H / 2. - TOPBAR_H / 2. + PLAYER_H / 2.),
+            SCALE * (GAME_AREA_H / 2. - TOPBAR_H / 2. - PLAYER_H / 2.),
+        );
     }
 }
 
