@@ -3,6 +3,11 @@ use bevy::prelude::*;
 use bevy::render::camera::CameraProjection;
 use bevy::sprite::Anchor;
 
+use crate::pico8color::Pico8Color;
+
+// TODO: should I "mod" my modules in lib.rs instead of main.rs?
+mod pico8color;
+
 // TODO: copy README content from the original repo, add some screenshots
 // TODO: non-CC license which allows to use, but not commercially
 
@@ -101,9 +106,8 @@ fn main() {
         .add_plugin(bevy::diagnostic::FrameTimeDiagnosticsPlugin::default())
         // Get rid of edges of neighbour sprites visible around the given sprite from the sprite sheet
         .insert_resource(Msaa { samples: 1 })
-        // TODO: make all colors defined as a PICO-8 palette
         // Draw a solid background color
-        .insert_resource(ClearColor(Color::BLACK))
+        .insert_resource(ClearColor(bevy_color_from(Pico8Color::Black)))
         .add_startup_system(spawn_camera)
         .add_startup_system(spawn_game_area)
         .add_startup_system(spawn_player)
@@ -120,6 +124,11 @@ enum ControlledDirection {
     Right,
     Up,
     Down,
+}
+
+// TODO: move to some helper module
+fn bevy_color_from(pico8color: Pico8Color) -> Color {
+    Color::hex(pico8color.hex()).unwrap()
 }
 
 fn spawn_camera(mut commands: Commands) {
@@ -157,8 +166,7 @@ fn spawn_camera(mut commands: Commands) {
 fn spawn_game_area(mut commands: Commands) {
     commands.spawn(SpriteBundle {
         sprite: Sprite {
-            // TODO: make all colors defined as a PICO-8 palette
-            color: Color::hex("1d2b53").unwrap_or(Color::MIDNIGHT_BLUE),
+            color: bevy_color_from(Pico8Color::DarkBlue),
             custom_size: Some(vec2(GAME_AREA_W, GAME_AREA_H)),
             anchor: Anchor::TopLeft,
             ..default()

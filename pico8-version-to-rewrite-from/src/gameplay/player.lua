@@ -63,23 +63,19 @@ function new_player()
     --
 
     function p.direct_left()
-        -- TODO
-        --    dx, dy = -speed, 0
+        dx, dy = -speed, 0
         direction = "l"
     end
     function p.direct_right()
-        -- TODO
-        --    dx, dy = speed, 0
+        dx, dy = speed, 0
         direction = "r"
     end
     function p.direct_up()
-        -- TODO
-        --    dx, dy = 0, -speed
+        dx, dy = 0, -speed
         direction = "u"
     end
     function p.direct_down()
-        -- TODO
-        --    dx, dy = 0, speed
+        dx, dy = 0, speed
         direction = "d"
     end
 
