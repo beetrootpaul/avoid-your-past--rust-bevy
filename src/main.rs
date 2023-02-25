@@ -1,10 +1,11 @@
 use std::ops::Add;
 use std::time::Duration;
 
+use bevy::ecs::schedule::ShouldRun;
 use bevy::math::{vec2, vec3, Vec3Swizzles};
 use bevy::prelude::*;
 use bevy::sprite::Anchor;
-use iyes_loopless::prelude::AppLooplessFixedTimestepExt;
+use iyes_loopless::prelude::{AppLooplessFixedTimestepExt, IntoConditionalSystem};
 
 use crate::pico8color::Pico8Color;
 
@@ -86,6 +87,11 @@ const FIXED_TIMESTEP_GAME_LOOP: &str = "fixed_timestep_game_loop";
 const SPRITE_SHEET_SPRITE_W: f32 = 8.;
 const SPRITE_SHEET_SPRITE_H: f32 = 8.;
 
+#[derive(Resource, Default)]
+struct SpriteSheet {
+    texture_atlas_handle: Option<Handle<TextureAtlas>>,
+}
+
 fn main() {
     let mut app = App::new();
     app.add_plugins(
@@ -93,8 +99,6 @@ fn main() {
             .set(WindowPlugin {
                 window: WindowDescriptor {
                     title: GAME_TITLE.to_string(),
-                    // width: SCALE * VIEWPORT_W,
-                    // height: SCALE * VIEWPORT_H,
                     ..default()
                 },
                 ..default()
@@ -125,13 +129,21 @@ fn main() {
     // Get rid of edges of neighbour sprites visible around the given sprite from the sprite sheet
     app.insert_resource(Msaa { samples: 1 })
         // Draw a solid background color
-        .insert_resource(ClearColor(bevy_color_from(Pico8Color::Black)))
+        .insert_resource(ClearColor(bevy_color_from(Pico8Color::Black)));
+
+    app.init_resource::<SpriteSheet>()
+        .add_startup_system(load_spritesheet)
         .add_startup_system(spawn_camera)
         .add_startup_system(spawn_game_area)
-        .add_startup_system(spawn_player)
+        // .add_startup_system(spawn_coin)
         // TODO: will it affect HTML embedded game?
         .add_system(bevy::window::close_on_esc)
-        .add_system(handle_keyboard_input);
+        .add_system(handle_keyboard_input)
+        .add_system_set(
+            SystemSet::new()
+                .with_run_criteria(run_if_there_is_no_player)
+                .with_system(spawn_player),
+        );
 
     #[cfg(debug_assertions)]
     app.add_system(draw_debug_sprite_boundaries);
@@ -145,7 +157,7 @@ fn main() {
     app.add_fixed_timestep_system(FIXED_TIMESTEP_GAME_LOOP, 0, debug_fixed);
 
     app.add_fixed_timestep_system(FIXED_TIMESTEP_GAME_LOOP, 0, fixed_update_player)
-    .add_fixed_timestep_system(FIXED_TIMESTEP_GAME_LOOP, 0, fixed_update_player_sprite);
+        .add_fixed_timestep_system(FIXED_TIMESTEP_GAME_LOOP, 0, fixed_update_player_sprite);
 
     app.run();
 }
@@ -208,14 +220,13 @@ fn spawn_game_area(mut commands: Commands) {
 //       you need to change the anchor of the sprite (which is at the center by default),
 //       or it will not be pixel aligned.
 
-fn spawn_player(
+fn load_spritesheet(
     mut commands: Commands,
     asset_server: Res<AssetServer>,
     mut texture_atlases: ResMut<Assets<TextureAtlas>>,
 ) {
-    // TODO: move atlas creation out of the system. Atlas will be used by many entities, possibly created in their separate setup systems
     let sprite_sheet_handle: Handle<Image> = asset_server.load("spritesheet.png");
-    let texture_atlas = TextureAtlas::from_grid(
+    let sprite_sheet_texture_atlas = TextureAtlas::from_grid(
         sprite_sheet_handle,
         vec2(SPRITE_SHEET_SPRITE_W, SPRITE_SHEET_SPRITE_H),
         16,
@@ -223,10 +234,26 @@ fn spawn_player(
         None,
         None,
     );
-    let texture_atlas_handle = texture_atlases.add(texture_atlas);
+    let sprite_sheet_texture_atlas_handle = texture_atlases.add(sprite_sheet_texture_atlas);
 
+    commands.insert_resource(SpriteSheet {
+        texture_atlas_handle: Some(sprite_sheet_texture_atlas_handle),
+    });
+}
+
+#[derive(Component)]
+struct Player;
+
+fn run_if_there_is_no_player(query: Query<&Player>) -> ShouldRun {
+    if query.iter().count() > 0 {
+        ShouldRun::No
+    } else {
+        ShouldRun::Yes
+    }
+}
+
+fn spawn_player(mut commands: Commands, sprite_sheet: Res<SpriteSheet>) {
     // TODO: animated sprite https://github.com/bevyengine/bevy/blob/latest/examples/2d/sprite_sheet.rs
-    // TODO: change sprite according to direction
     // TODO: bundle it all as "player" bundle? is there a way to define what components entities should have?
     commands.spawn((
         SpriteSheetBundle {
@@ -234,7 +261,8 @@ fn spawn_player(
             // TODO: Z>0 for layering?
             // TODO: add helpers for translating from window-centered coors to game area coords
             transform: Transform::from_xyz(0., -TOPBAR_H / 2., 0.),
-            texture_atlas: texture_atlas_handle,
+            // texture_atlas: sprite_sheet_texture_atlas_handle,
+            texture_atlas: sprite_sheet.texture_atlas_handle.clone().unwrap(),
             sprite: TextureAtlasSprite {
                 index: 19,
                 anchor: Anchor::Center,
@@ -248,6 +276,7 @@ fn spawn_player(
             ..default()
         },
         ControlledDirection::Right,
+        Player,
     ));
 }
 
