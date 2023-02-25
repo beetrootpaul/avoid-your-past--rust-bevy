@@ -79,6 +79,8 @@ const VIEWPORT_H: f32 = TOPBAR_H + GAME_AREA_H;
 
 // TODO game states https://bevy-cheatbook.github.io/programming/states.html
 
+const FIXED_FPS: f32 = 30.;
+
 fn main() {
     App::new()
         .add_plugins(
@@ -207,29 +209,34 @@ fn spawn_player(
     ));
 }
 
+// TODO player sprite change feels like it is one frame too late? Or is it just an effect of smooth movement instead of real 30 FPS?
 fn handle_keyboard_input(
     keyboard_input: Res<Input<KeyCode>>,
-    mut query: Query<&mut ControlledDirection>,
+    mut query: Query<(&mut ControlledDirection, &mut TextureAtlasSprite)>,
 ) {
     // TODO: handle a case of pressed multiple arrows at once
     if keyboard_input.just_pressed(KeyCode::Left) {
-        for mut controlled_direction in query.iter_mut() {
+        for (mut controlled_direction, mut sprite) in query.iter_mut() {
             *controlled_direction = ControlledDirection::Left;
+            sprite.index = 21;
         }
     }
     if keyboard_input.just_pressed(KeyCode::Right) {
-        for mut controlled_direction in query.iter_mut() {
+        for (mut controlled_direction, mut sprite) in query.iter_mut() {
             *controlled_direction = ControlledDirection::Right;
+            sprite.index = 19;
         }
     }
     if keyboard_input.just_pressed(KeyCode::Up) {
-        for mut controlled_direction in query.iter_mut() {
+        for (mut controlled_direction, mut sprite) in query.iter_mut() {
             *controlled_direction = ControlledDirection::Up;
+            sprite.index = 18;
         }
     }
     if keyboard_input.just_pressed(KeyCode::Down) {
-        for mut controlled_direction in query.iter_mut() {
+        for (mut controlled_direction, mut sprite) in query.iter_mut() {
             *controlled_direction = ControlledDirection::Down;
+            sprite.index = 20;
         }
     }
 }
@@ -238,8 +245,8 @@ fn update_controlled_directions(
     time: Res<Time>,
     mut query: Query<(&ControlledDirection, &mut Transform)>,
 ) {
-    // TODO: desired speed: 2 px every 1/30s (PICO-8 game was in 30fps)
-    const SPEED: f32 = 200.;
+    // TODO: pixel perfect movement
+    const SPEED: f32 = 2. * FIXED_FPS;
     for (controlled_direction, mut transform) in query.iter_mut() {
         match controlled_direction {
             ControlledDirection::Left => transform.translation.x -= SPEED * time.delta_seconds(),
