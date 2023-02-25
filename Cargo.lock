@@ -137,6 +137,8 @@ name = "avoid_your_past_rust_bevy"
 version = "0.1.0"
 dependencies = [
  "bevy",
+ "bevy_pixel_camera",
+ "iyes_loopless",
 ]
 
 [[package]]
@@ -419,6 +421,15 @@ dependencies = [
  "bitflags",
  "bytemuck",
  "radsort",
+]
+
+[[package]]
+name = "bevy_pixel_camera"
+version = "0.3.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "909788182141bd26ec0a2eca270b8323b80bf2d60af67b60cc729af3b2038a85"
+dependencies = [
+ "bevy",
 ]
 
 [[package]]
@@ -1272,6 +1283,18 @@ dependencies = [
  "js-sys",
  "wasm-bindgen",
  "web-sys",
+]
+
+[[package]]
+name = "iyes_loopless"
+version = "0.9.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "c47fd2cbdb1d7f295c25e6bfccfd78a84b6eef3055bc9f01b34ae861721b01ee"
+dependencies = [
+ "bevy_app",
+ "bevy_ecs",
+ "bevy_time",
+ "bevy_utils",
 ]
 
 [[package]]

@@ -1,7 +1,9 @@
+use std::time::Duration;
+
 use bevy::math::vec2;
 use bevy::prelude::*;
-use bevy::render::camera::CameraProjection;
 use bevy::sprite::Anchor;
+use iyes_loopless::prelude::AppLooplessFixedTimestepExt;
 
 use crate::pico8color::Pico8Color;
 
@@ -55,9 +57,6 @@ mod pico8color;
 
 const GAME_TITLE: &str = "Avoid Your Past";
 
-// TODO: adapt SCALE according to window size (for whole integer multipliers)
-const SCALE: f32 = 4.;
-
 const TOPBAR_H: f32 = 16.;
 const GAME_AREA_W: f32 = 128.;
 const GAME_AREA_H: f32 = 112.;
@@ -79,7 +78,9 @@ const VIEWPORT_H: f32 = TOPBAR_H + GAME_AREA_H;
 
 // TODO game states https://bevy-cheatbook.github.io/programming/states.html
 
-const FIXED_FPS: f32 = 30.;
+const FIXED_FPS: u64 = 60;
+
+const FIXED_TIMESTEP_GAME_LOOP: &str = "fixed_timestep_game_loop";
 
 fn main() {
     App::new()
@@ -88,8 +89,8 @@ fn main() {
                 .set(WindowPlugin {
                     window: WindowDescriptor {
                         title: GAME_TITLE.to_string(),
-                        width: SCALE * VIEWPORT_W,
-                        height: SCALE * VIEWPORT_H,
+                        // width: SCALE * VIEWPORT_W,
+                        // height: SCALE * VIEWPORT_H,
                         ..default()
                     },
                     ..default()
@@ -102,6 +103,11 @@ fn main() {
                     ..default()
                 }),
         )
+        // TODO: group both plugins below into a single plugin for pixel upscaling camera
+        .add_plugin(bevy_pixel_camera::PixelCameraPlugin)
+        .add_plugin(bevy_pixel_camera::PixelBorderPlugin {
+            color: bevy_color_from(Pico8Color::Black),
+        })
         // TODO merge both FPS-related diagnostics lines into a single well-named plugin
         // Print FPS in a console
         .add_plugin(bevy::diagnostic::LogDiagnosticsPlugin::default())
@@ -116,8 +122,28 @@ fn main() {
         // TODO: will it affect HTML embedded game?
         .add_system(bevy::window::close_on_esc)
         .add_system(handle_keyboard_input)
-        .add_system(update_controlled_directions)
+        .add_fixed_timestep(
+            Duration::from_nanos(1_000_000_000 / FIXED_FPS),
+            FIXED_TIMESTEP_GAME_LOOP,
+        )
+        .add_fixed_timestep_system(FIXED_TIMESTEP_GAME_LOOP, 0, debug_fixed)
+        .add_fixed_timestep_system(
+            FIXED_TIMESTEP_GAME_LOOP,
+            0,
+            fixed_update_controlled_directions,
+        )
+        .add_fixed_timestep_system(FIXED_TIMESTEP_GAME_LOOP, 0, fixed_update_player_sprite)
         .run();
+}
+
+// Copied from https://github.com/IyesGames/iyes_loopless#fixed-timestep-control
+fn debug_fixed(timesteps: Res<iyes_loopless::fixedtimestep::FixedTimesteps>) {
+    let info = timesteps.get_current().unwrap();
+    debug!(
+        "Fixed timestep: expected = {:?} | overstepped by = {:?}",
+        info.timestep(),
+        info.remaining(),
+    );
 }
 
 #[derive(Component)]
@@ -129,40 +155,16 @@ enum ControlledDirection {
 }
 
 // TODO: move to some helper module
-fn bevy_color_from(pico8color: Pico8Color) -> Color {
-    Color::hex(pico8color.hex()).unwrap()
+fn bevy_color_from(pico8_color: Pico8Color) -> Color {
+    Color::hex(pico8_color.hex()).unwrap()
 }
 
 fn spawn_camera(mut commands: Commands) {
-    // TODO: how to do it better? It was a simple `Camera2dBundle::default()` before I wanted to define a `scale`
-    // TODO: change coords to start top-left. Useful example: https://bevy-cheatbook.github.io/cookbook/custom-projection.html
-    // TODO: simplify this camera setup. See https://bevy-cheatbook.github.io/cookbook/custom-projection.html
-    let far = 1000.0_f32;
-    let projection = OrthographicProjection {
-        far,
-        scale: 1. / SCALE,
-        ..Default::default()
-    };
-    let transform = Transform::from_xyz(0.0, 0.0, far - 0.1);
-    let view_projection = projection.get_projection_matrix() * transform.compute_matrix().inverse();
-    let frustum = bevy::render::primitives::Frustum::from_view_projection(
-        &view_projection,
-        &transform.translation,
-        &transform.back(),
-        projection.far(),
-    );
-    let camera2d_bundle = Camera2dBundle {
-        camera_render_graph: bevy::render::camera::CameraRenderGraph::new("core_2d"),
-        projection,
-        visible_entities: bevy::render::view::VisibleEntities::default(),
-        frustum,
-        transform,
-        global_transform: Default::default(),
-        camera: Camera::default(),
-        camera_2d: Camera2d::default(),
-        tonemapping: bevy::core_pipeline::tonemapping::Tonemapping::Disabled,
-    };
-    commands.spawn(camera2d_bundle);
+    // TODO: proper conversion from f32 to i32?
+    commands.spawn(bevy_pixel_camera::PixelCameraBundle::from_resolution(
+        VIEWPORT_W as i32,
+        VIEWPORT_H as i32,
+    ));
 }
 
 fn spawn_game_area(mut commands: Commands) {
@@ -177,6 +179,12 @@ fn spawn_game_area(mut commands: Commands) {
         ..default()
     });
 }
+
+// TODO: note it down somewhere or make sure it is satisfied in the code itself
+//       (taken from bevy_pixel_camera plugin's README):
+//       Note that if either the width or the height of your sprite is not divisible by 2,
+//       you need to change the anchor of the sprite (which is at the center by default),
+//       or it will not be pixel aligned.
 
 fn spawn_player(
     mut commands: Commands,
@@ -209,50 +217,53 @@ fn spawn_player(
     ));
 }
 
-// TODO player sprite change feels like it is one frame too late? Or is it just an effect of smooth movement instead of real 30 FPS?
 fn handle_keyboard_input(
     keyboard_input: Res<Input<KeyCode>>,
-    mut query: Query<(&mut ControlledDirection, &mut TextureAtlasSprite)>,
+    mut query: Query<&mut ControlledDirection>,
 ) {
     // TODO: handle a case of pressed multiple arrows at once
     if keyboard_input.just_pressed(KeyCode::Left) {
-        for (mut controlled_direction, mut sprite) in query.iter_mut() {
+        for mut controlled_direction in query.iter_mut() {
             *controlled_direction = ControlledDirection::Left;
-            sprite.index = 21;
         }
     }
     if keyboard_input.just_pressed(KeyCode::Right) {
-        for (mut controlled_direction, mut sprite) in query.iter_mut() {
+        for mut controlled_direction in query.iter_mut() {
             *controlled_direction = ControlledDirection::Right;
-            sprite.index = 19;
         }
     }
     if keyboard_input.just_pressed(KeyCode::Up) {
-        for (mut controlled_direction, mut sprite) in query.iter_mut() {
+        for mut controlled_direction in query.iter_mut() {
             *controlled_direction = ControlledDirection::Up;
-            sprite.index = 18;
         }
     }
     if keyboard_input.just_pressed(KeyCode::Down) {
-        for (mut controlled_direction, mut sprite) in query.iter_mut() {
+        for mut controlled_direction in query.iter_mut() {
             *controlled_direction = ControlledDirection::Down;
-            sprite.index = 20;
         }
     }
 }
 
-fn update_controlled_directions(
-    time: Res<Time>,
-    mut query: Query<(&ControlledDirection, &mut Transform)>,
-) {
-    // TODO: pixel perfect movement
-    const SPEED: f32 = 2. * FIXED_FPS;
+fn fixed_update_player_sprite(mut query: Query<(&ControlledDirection, &mut TextureAtlasSprite)>) {
+    for (controlled_direction, mut sprite) in query.iter_mut() {
+        sprite.index = match *controlled_direction {
+            ControlledDirection::Up => 18,
+            ControlledDirection::Right => 19,
+            ControlledDirection::Down => 20,
+            ControlledDirection::Left => 21,
+        };
+    }
+}
+
+fn fixed_update_controlled_directions(mut query: Query<(&ControlledDirection, &mut Transform)>) {
+    // TODO: is it possible to bind speed to FPS (change in FPS -> automatic change of speed to make it constant in result), without allowing for non-integers?
+    const MOVEMENT_PER_FRAME: f32 = 1.;
     for (controlled_direction, mut transform) in query.iter_mut() {
         match controlled_direction {
-            ControlledDirection::Left => transform.translation.x -= SPEED * time.delta_seconds(),
-            ControlledDirection::Right => transform.translation.x += SPEED * time.delta_seconds(),
-            ControlledDirection::Up => transform.translation.y += SPEED * time.delta_seconds(),
-            ControlledDirection::Down => transform.translation.y -= SPEED * time.delta_seconds(),
+            ControlledDirection::Left => transform.translation.x -= MOVEMENT_PER_FRAME,
+            ControlledDirection::Right => transform.translation.x += MOVEMENT_PER_FRAME,
+            ControlledDirection::Up => transform.translation.y += MOVEMENT_PER_FRAME,
+            ControlledDirection::Down => transform.translation.y -= MOVEMENT_PER_FRAME,
         }
         transform.translation.x = transform.translation.x.clamp(
             -GAME_AREA_W / 2. + PLAYER_W / 2.,
