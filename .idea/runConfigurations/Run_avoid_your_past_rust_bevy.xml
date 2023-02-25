@@ -10,7 +10,7 @@
     <option name="buildTarget" value="REMOTE" />
     <option name="backtrace" value="SHORT" />
     <envs>
-      <env name="RUST_LOG" value="avoid_your_past_rust_bevy=warn" />
+      <env name="RUST_LOG" value="avoid_your_past_rust_bevy=info" />
     </envs>
     <option name="isRedirectInput" value="false" />
     <option name="redirectInputPath" value="" />

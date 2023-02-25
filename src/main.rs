@@ -5,7 +5,8 @@ use bevy::ecs::schedule::ShouldRun;
 use bevy::math::{vec2, vec3, Vec3Swizzles};
 use bevy::prelude::*;
 use bevy::sprite::Anchor;
-use iyes_loopless::prelude::{AppLooplessFixedTimestepExt, IntoConditionalSystem};
+use iyes_loopless::prelude::AppLooplessFixedTimestepExt;
+use rand::Rng;
 
 use crate::pico8color::Pico8Color;
 
@@ -62,10 +63,6 @@ const GAME_TITLE: &str = "Avoid Your Past";
 const TOPBAR_H: f32 = 16.;
 const GAME_AREA_W: f32 = 128.;
 const GAME_AREA_H: f32 = 112.;
-
-// TODO: make it not a constant, but some entity's property
-const PLAYER_W: f32 = 8.;
-const PLAYER_H: f32 = 8.;
 
 const VIEWPORT_W: f32 = GAME_AREA_W;
 const VIEWPORT_H: f32 = TOPBAR_H + GAME_AREA_H;
@@ -135,15 +132,9 @@ fn main() {
         .add_startup_system(load_spritesheet)
         .add_startup_system(spawn_camera)
         .add_startup_system(spawn_game_area)
-        // .add_startup_system(spawn_coin)
         // TODO: will it affect HTML embedded game?
         .add_system(bevy::window::close_on_esc)
-        .add_system(handle_keyboard_input)
-        .add_system_set(
-            SystemSet::new()
-                .with_run_criteria(run_if_there_is_no_player)
-                .with_system(spawn_player),
-        );
+        .add_system(handle_keyboard_input);
 
     #[cfg(debug_assertions)]
     app.add_system(draw_debug_sprite_boundaries);
@@ -151,13 +142,33 @@ fn main() {
     app.add_fixed_timestep(
         Duration::from_nanos(1_000_000_000 / FIXED_FPS),
         FIXED_TIMESTEP_GAME_LOOP,
-    );
+    )
+    .add_fixed_timestep_child_stage(FIXED_TIMESTEP_GAME_LOOP)
+    .add_fixed_timestep_child_stage(FIXED_TIMESTEP_GAME_LOOP)
+    .add_fixed_timestep_child_stage(FIXED_TIMESTEP_GAME_LOOP);
 
     #[cfg(debug_assertions)]
     app.add_fixed_timestep_system(FIXED_TIMESTEP_GAME_LOOP, 0, debug_fixed);
 
-    app.add_fixed_timestep_system(FIXED_TIMESTEP_GAME_LOOP, 0, fixed_update_player)
-        .add_fixed_timestep_system(FIXED_TIMESTEP_GAME_LOOP, 0, fixed_update_player_sprite);
+    app.add_fixed_timestep_system_set(
+        FIXED_TIMESTEP_GAME_LOOP,
+        1,
+        SystemSet::new()
+            .with_run_criteria(run_if_there_is_no_player)
+            .with_system(spawn_player),
+    )
+    .add_fixed_timestep_system_set(
+        FIXED_TIMESTEP_GAME_LOOP,
+        1,
+        SystemSet::new()
+            .with_run_criteria(run_if_there_is_no_coin)
+            .with_system(spawn_coin),
+    );
+
+    app.add_fixed_timestep_system(FIXED_TIMESTEP_GAME_LOOP, 2, fixed_update_player)
+        .add_fixed_timestep_system(FIXED_TIMESTEP_GAME_LOOP, 2, fixed_update_player_sprite);
+
+    app.add_fixed_timestep_system(FIXED_TIMESTEP_GAME_LOOP, 3, coin_pickup);
 
     app.run();
 }
@@ -244,11 +255,41 @@ fn load_spritesheet(
 #[derive(Component)]
 struct Player;
 
+#[derive(Component)]
+struct Coin;
+
 fn run_if_there_is_no_player(query: Query<&Player>) -> ShouldRun {
     if query.iter().count() > 0 {
         ShouldRun::No
     } else {
         ShouldRun::Yes
+    }
+}
+
+fn run_if_there_is_no_coin(query: Query<&Coin>) -> ShouldRun {
+    if query.iter().count() > 0 {
+        ShouldRun::No
+    } else {
+        ShouldRun::Yes
+    }
+}
+
+fn coin_pickup(
+    mut commands: Commands,
+    players_query: Query<(&Player, &Transform)>,
+    coins_query: Query<(Entity, &Coin, &Transform)>,
+) {
+    for (_, player_transform) in players_query.iter() {
+        for (coin_entity, _, coin_transform) in coins_query.iter() {
+            let distance = player_transform
+                .translation
+                .distance(coin_transform.translation);
+            // TODO: implement proper hit_circle !
+            if distance < (4. + 4.) {
+                info!("COLLIDE!");
+                commands.entity(coin_entity).despawn();
+            }
+        }
     }
 }
 
@@ -280,6 +321,40 @@ fn spawn_player(mut commands: Commands, sprite_sheet: Res<SpriteSheet>) {
     ));
 }
 
+fn spawn_coin(mut commands: Commands, sprite_sheet: Res<SpriteSheet>) {
+    let mut rng = rand::thread_rng();
+
+    // TODO: animated coin https://github.com/bevyengine/bevy/blob/latest/examples/2d/sprite_sheet.rs
+    // TODO: bundle it all as "coin" bundle? is there a way to define what components entities should have?
+    commands.spawn((
+        SpriteSheetBundle {
+            // TODO: reorganize game area position calculations
+            // TODO: Z>0 for layering?
+            // TODO: add helpers for translating from window-centered coors to game area coords
+            // TODO: TEMPORARY COORDS
+            transform: Transform::from_xyz(
+                rng.gen_range(-40.0..40.0),
+                -TOPBAR_H / 2. + rng.gen_range(-40.0..40.0),
+                0.,
+            ),
+            texture_atlas: sprite_sheet.texture_atlas_handle.clone().unwrap(),
+            sprite: TextureAtlasSprite {
+                index: 0,
+                anchor: Anchor::Center,
+                ..default()
+            },
+            ..default()
+        },
+        SpritePadding {
+            left: 1,
+            right: 1,
+            top: 1,
+            bottom: 1,
+        },
+        Coin,
+    ));
+}
+
 fn handle_keyboard_input(
     keyboard_input: Res<Input<KeyCode>>,
     mut query: Query<&mut ControlledDirection>,
@@ -308,6 +383,7 @@ fn handle_keyboard_input(
 }
 
 fn fixed_update_player_sprite(mut query: Query<(&ControlledDirection, &mut TextureAtlasSprite)>) {
+    debug!("sdsdsds");
     for (controlled_direction, mut sprite) in query.iter_mut() {
         sprite.index = match *controlled_direction {
             ControlledDirection::Up => 18,
@@ -396,12 +472,14 @@ fn fixed_update_player(
         let default_sprite_padding = SpritePadding::default();
         let sprite_padding = maybe_sprite_padding.unwrap_or(&default_sprite_padding);
         transform.translation.x = transform.translation.x.clamp(
-            -GAME_AREA_W / 2. + PLAYER_W / 2. - sprite_padding.left as f32,
-            GAME_AREA_W / 2. - PLAYER_W / 2. + sprite_padding.right as f32,
+            -GAME_AREA_W / 2. + SPRITE_SHEET_SPRITE_W / 2. - sprite_padding.left as f32,
+            GAME_AREA_W / 2. - SPRITE_SHEET_SPRITE_W / 2. + sprite_padding.right as f32,
         );
         transform.translation.y = transform.translation.y.clamp(
-            -GAME_AREA_H / 2. - TOPBAR_H / 2. + PLAYER_H / 2. - sprite_padding.bottom as f32,
-            GAME_AREA_H / 2. - TOPBAR_H / 2. - PLAYER_H / 2. + sprite_padding.top as f32,
+            -GAME_AREA_H / 2. - TOPBAR_H / 2. + SPRITE_SHEET_SPRITE_H / 2.
+                - sprite_padding.bottom as f32,
+            GAME_AREA_H / 2. - TOPBAR_H / 2. - SPRITE_SHEET_SPRITE_H / 2.
+                + sprite_padding.top as f32,
         );
     }
 }
