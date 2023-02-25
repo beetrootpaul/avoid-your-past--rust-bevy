@@ -41,7 +41,12 @@ use bevy::sprite::Anchor;
 // TODO: plugins 1 https://github.com/bevyengine/bevy/blob/latest/examples/app/plugin.rs
 // TODO: plugins 2 https://github.com/bevyengine/bevy/blob/latest/examples/app/plugin_group.rs
 
-// TODO: game states https://github.com/bevyengine/bevy/blob/latest/examples/ecs/state.rs
+// TODO: game states 1 https://github.com/bevyengine/bevy/blob/latest/examples/ecs/state.rs
+// TODO: game states 2 https://github.com/IyesGames/iyes_loopless
+
+// TODO: components on sparse sets: https://bevy-cheatbook.github.io/patterns/component-storage.html
+
+// TODO add printing out all resource types (maybe use a proper logging method instead of printing one) https://bevy-cheatbook.github.io/cookbook/print-resources.html
 
 const GAME_TITLE: &str = "Avoid Your Past";
 
@@ -62,6 +67,12 @@ const VIEWPORT_H: f32 = TOPBAR_H + GAME_AREA_H;
 // TODO: bevy::sprite::collide_aabb::collide(…)
 
 // TODO: app.add_system_set(SystemSet::new().with_run_criteria(FixedTimestep::step(0.5)).with_system(…))
+
+// TODO consider system sets or system labels for making sure input is handled first, then update, then draw, then removal of dead entities
+//      - res 1 : https://bevy-cheatbook.github.io/programming/system-order.html
+//      - res 2 : https://bevy-cheatbook.github.io/programming/system-sets.html
+
+// TODO game states https://bevy-cheatbook.github.io/programming/states.html
 
 fn main() {
     App::new()
@@ -84,8 +95,9 @@ fn main() {
                     ..default()
                 }),
         )
-        // TODO: why FPS is no longer printed in the console?!
+        // TODO merge both FPS-related diagnostics lines into a single well-named plugin
         // Print FPS in a console
+        .add_plugin(bevy::diagnostic::LogDiagnosticsPlugin::default())
         .add_plugin(bevy::diagnostic::FrameTimeDiagnosticsPlugin::default())
         // Get rid of edges of neighbour sprites visible around the given sprite from the sprite sheet
         .insert_resource(Msaa { samples: 1 })
@@ -112,6 +124,8 @@ enum ControlledDirection {
 
 fn spawn_camera(mut commands: Commands) {
     // TODO: how to do it better? It was a simple `Camera2dBundle::default()` before I wanted to define a `scale`
+    // TODO: change coords to start top-left. Useful example: https://bevy-cheatbook.github.io/cookbook/custom-projection.html
+    // TODO: simplify this camera setup. See https://bevy-cheatbook.github.io/cookbook/custom-projection.html
     let far = 1000.0_f32;
     let projection = OrthographicProjection {
         far,
@@ -236,4 +250,5 @@ fn update_controlled_directions(
     }
 }
 
-// TODO: tests https://github.com/bevyengine/bevy/blob/latest/tests/how_to_test_systems.rs
+// TODO: tests 1 https://github.com/bevyengine/bevy/blob/latest/tests/how_to_test_systems.rs
+// TODO: tests 2 https://bevy-cheatbook.github.io/programming/system-tests.html
