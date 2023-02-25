@@ -138,6 +138,7 @@ version = "0.1.0"
 dependencies = [
  "bevy",
  "bevy_pixel_camera",
+ "bevy_prototype_debug_lines",
  "iyes_loopless",
 ]
 
@@ -428,6 +429,15 @@ name = "bevy_pixel_camera"
 version = "0.3.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "909788182141bd26ec0a2eca270b8323b80bf2d60af67b60cc729af3b2038a85"
+dependencies = [
+ "bevy",
+]
+
+[[package]]
+name = "bevy_prototype_debug_lines"
+version = "0.9.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "6d9e933f5bf971fbc7e83b447db6758ed3b091faf4cd8e524a9406ae7acca096"
 dependencies = [
  "bevy",
 ]

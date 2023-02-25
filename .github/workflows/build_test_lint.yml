@@ -18,8 +18,10 @@ jobs:
     #                          X11 or Wayland to compile Bevy app properly
     steps:
       - uses: actions/checkout@v3
-      - name: Build
+      - name: Debug Build
         run: cargo build --features bevy/x11 --all-targets --verbose
+      - name: Release Build
+        run: cargo build --features bevy/x11 --release--verbose
       - name: Test
         run: cargo test --features bevy/x11 --verbose
       - name: Lint
