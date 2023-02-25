@@ -127,11 +127,7 @@ fn main() {
             FIXED_TIMESTEP_GAME_LOOP,
         )
         .add_fixed_timestep_system(FIXED_TIMESTEP_GAME_LOOP, 0, debug_fixed)
-        .add_fixed_timestep_system(
-            FIXED_TIMESTEP_GAME_LOOP,
-            0,
-            fixed_update_controlled_directions,
-        )
+        .add_fixed_timestep_system(FIXED_TIMESTEP_GAME_LOOP, 0, fixed_update_player)
         .add_fixed_timestep_system(FIXED_TIMESTEP_GAME_LOOP, 0, fixed_update_player_sprite)
         .run();
 }
@@ -152,6 +148,14 @@ enum ControlledDirection {
     Right,
     Up,
     Down,
+}
+
+#[derive(Component, Default)]
+struct SpritePadding {
+    left: i32,
+    right: i32,
+    top: i32,
+    bottom: i32,
 }
 
 // TODO: move to some helper module
@@ -199,6 +203,7 @@ fn spawn_player(
 
     // TODO: animated sprite https://github.com/bevyengine/bevy/blob/latest/examples/2d/sprite_sheet.rs
     // TODO: change sprite according to direction
+    // TODO: bundle it all as "player" bundle? is there a way to define what components entities should have?
     commands.spawn((
         SpriteSheetBundle {
             // TODO: reorganize game area position calculations
@@ -211,6 +216,11 @@ fn spawn_player(
                 anchor: Anchor::Center,
                 ..default()
             },
+            ..default()
+        },
+        SpritePadding {
+            right: 1,
+            bottom: 1,
             ..default()
         },
         ControlledDirection::Right,
@@ -255,23 +265,29 @@ fn fixed_update_player_sprite(mut query: Query<(&ControlledDirection, &mut Textu
     }
 }
 
-fn fixed_update_controlled_directions(mut query: Query<(&ControlledDirection, &mut Transform)>) {
+fn fixed_update_player(
+    mut query: Query<(&ControlledDirection, &mut Transform, Option<&SpritePadding>)>,
+) {
     // TODO: is it possible to bind speed to FPS (change in FPS -> automatic change of speed to make it constant in result), without allowing for non-integers?
     const MOVEMENT_PER_FRAME: f32 = 1.;
-    for (controlled_direction, mut transform) in query.iter_mut() {
+
+    for (controlled_direction, mut transform, maybe_sprite_padding) in query.iter_mut() {
         match controlled_direction {
             ControlledDirection::Left => transform.translation.x -= MOVEMENT_PER_FRAME,
             ControlledDirection::Right => transform.translation.x += MOVEMENT_PER_FRAME,
             ControlledDirection::Up => transform.translation.y += MOVEMENT_PER_FRAME,
             ControlledDirection::Down => transform.translation.y -= MOVEMENT_PER_FRAME,
         }
+
+        let default_sprite_padding = SpritePadding::default();
+        let sprite_padding = maybe_sprite_padding.unwrap_or(&default_sprite_padding);
         transform.translation.x = transform.translation.x.clamp(
-            -GAME_AREA_W / 2. + PLAYER_W / 2.,
-            GAME_AREA_W / 2. - PLAYER_W / 2.,
+            -GAME_AREA_W / 2. + PLAYER_W / 2. - sprite_padding.left as f32,
+            GAME_AREA_W / 2. - PLAYER_W / 2. + sprite_padding.right as f32,
         );
         transform.translation.y = transform.translation.y.clamp(
-            -GAME_AREA_H / 2. - TOPBAR_H / 2. + PLAYER_H / 2.,
-            GAME_AREA_H / 2. - TOPBAR_H / 2. - PLAYER_H / 2.,
+            -GAME_AREA_H / 2. - TOPBAR_H / 2. + PLAYER_H / 2. - sprite_padding.bottom as f32,
+            GAME_AREA_H / 2. - TOPBAR_H / 2. - PLAYER_H / 2. + sprite_padding.top as f32,
         );
     }
 }
