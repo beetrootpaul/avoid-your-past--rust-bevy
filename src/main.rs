@@ -9,10 +9,21 @@ use bevy::sprite::{Anchor, MaterialMesh2dBundle};
 use iyes_loopless::prelude::AppLooplessFixedTimestepExt;
 use rand::Rng;
 
-use crate::pico8color::Pico8Color;
+use crate::constants::{
+    SPRITE_SHEET_SPRITE_H, SPRITE_SHEET_SPRITE_W, Z_LAYER_DEBUG_HIT_CIRCLES, Z_LAYER_GAME_AREA,
+    Z_LAYER_SPRITES_COINS, Z_LAYER_SPRITES_PLAYER,
+};
+#[cfg(debug_assertions)]
+use crate::debug_helpers::{PrintFpsPlugin, SpritesBoundariesPlugin};
+use crate::pico8_color::Pico8Color;
 
 // TODO: should I "mod" my modules in lib.rs instead of main.rs?
-mod pico8color;
+mod constants;
+#[cfg(debug_assertions)]
+mod debug_helpers;
+mod pico8_color;
+
+// TODO: exclude easily debug_helpers stuff from release by doing #[allow(unused_imports)] before mod my_module_with_debug stuff
 
 // TODO: copy README content from the original repo, add some screenshots
 // TODO: non-CC license which allows to use, but not commercially
@@ -82,16 +93,6 @@ const FIXED_FPS: u64 = 30;
 
 const FIXED_TIMESTEP_GAME_LOOP: &str = "fixed_timestep_game_loop";
 
-const SPRITE_SHEET_SPRITE_W: f32 = 8.;
-const SPRITE_SHEET_SPRITE_H: f32 = 8.;
-
-const Z_LAYER_GAME_AREA: f32 = 1.;
-const Z_LAYER_DEBUG_HIT_CIRCLES: f32 = Z_LAYER_GAME_AREA + 1.;
-const Z_LAYER_SPRITES_COINS: f32 = Z_LAYER_DEBUG_HIT_CIRCLES + 1.;
-const Z_LAYER_SPRITES_PLAYER: f32 = Z_LAYER_SPRITES_COINS + 1.;
-#[cfg(debug_assertions)]
-const Z_LAYER_DEBUG_SPRITE_BOUNDARIES: f32 = Z_LAYER_SPRITES_PLAYER + 1.;
-
 #[derive(Resource, Default)]
 struct SpriteSheet {
     texture_atlas_handle: Option<Handle<TextureAtlas>>,
@@ -128,14 +129,9 @@ fn main() {
         color: bevy_color_from(Pico8Color::Black),
     });
 
-    // TODO merge both FPS-related diagnostics lines into a single well-named plugin
-    // Print FPS in a console
     #[cfg(debug_assertions)]
-    app.add_plugin(bevy::diagnostic::LogDiagnosticsPlugin::default())
-        .add_plugin(bevy::diagnostic::FrameTimeDiagnosticsPlugin::default());
-
-    #[cfg(debug_assertions)]
-    app.add_plugin(bevy_prototype_debug_lines::DebugLinesPlugin::default());
+    app.add_plugin(PrintFpsPlugin)
+        .add_plugin(SpritesBoundariesPlugin);
 
     // Get rid of edges of neighbour sprites visible around the given sprite from the sprite sheet
     app.insert_resource(Msaa { samples: 1 })
@@ -149,9 +145,6 @@ fn main() {
         // TODO: will it affect HTML embedded game?
         .add_system(bevy::window::close_on_esc)
         .add_system(handle_keyboard_input);
-
-    #[cfg(debug_assertions)]
-    app.add_system(draw_debug_sprite_boundaries);
 
     app.add_fixed_timestep(
         Duration::from_nanos(1_000_000_000 / FIXED_FPS),
@@ -295,11 +288,11 @@ fn run_if_there_is_no_coin(query: Query<&Coin>) -> ShouldRun {
 
 fn coin_pickup(
     mut commands: Commands,
-    players_query: Query<(&Player, &Transform, &HitCircle)>,
-    coins_query: Query<(Entity, &Coin, &Transform, &HitCircle)>,
+    players_query: Query<(&Transform, &HitCircle), With<Player>>,
+    coins_query: Query<(Entity, &Transform, &HitCircle), With<Coin>>,
 ) {
-    for (_, player_transform, player_hit_circle) in players_query.iter() {
-        for (coin_entity, _, coin_transform, coin_hit_circle) in coins_query.iter() {
+    for (player_transform, player_hit_circle) in players_query.iter() {
+        for (coin_entity, coin_transform, coin_hit_circle) in coins_query.iter() {
             let distance = player_transform
                 .translation
                 .add(player_hit_circle.offset)
@@ -460,68 +453,6 @@ fn fixed_update_player_sprite(mut query: Query<(&ControlledDirection, &mut Textu
             ControlledDirection::Down => 20,
             ControlledDirection::Left => 21,
         };
-    }
-}
-
-#[cfg(debug_assertions)]
-fn draw_debug_sprite_boundaries(
-    mut lines: ResMut<bevy_prototype_debug_lines::DebugLines>,
-    query: Query<(&Transform, &TextureAtlasSprite)>,
-) {
-    for (transform, _sprite) in query.iter() {
-        // TODO: can we do it in a shorter way?
-        lines.line(
-            transform.translation.xyz().add(vec3(
-                SPRITE_SHEET_SPRITE_W / 2.,
-                SPRITE_SHEET_SPRITE_H / 2.,
-                Z_LAYER_DEBUG_SPRITE_BOUNDARIES,
-            )),
-            transform.translation.xyz().add(vec3(
-                -SPRITE_SHEET_SPRITE_W / 2.,
-                SPRITE_SHEET_SPRITE_H / 2.,
-                Z_LAYER_DEBUG_SPRITE_BOUNDARIES,
-            )),
-            0.,
-        );
-        lines.line(
-            transform.translation.xyz().add(vec3(
-                -SPRITE_SHEET_SPRITE_W / 2.,
-                SPRITE_SHEET_SPRITE_H / 2.,
-                Z_LAYER_DEBUG_SPRITE_BOUNDARIES,
-            )),
-            transform.translation.xyz().add(vec3(
-                -SPRITE_SHEET_SPRITE_W / 2.,
-                -SPRITE_SHEET_SPRITE_H / 2.,
-                Z_LAYER_DEBUG_SPRITE_BOUNDARIES,
-            )),
-            0.,
-        );
-        lines.line(
-            transform.translation.xyz().add(vec3(
-                -SPRITE_SHEET_SPRITE_W / 2.,
-                -SPRITE_SHEET_SPRITE_H / 2.,
-                Z_LAYER_DEBUG_SPRITE_BOUNDARIES,
-            )),
-            transform.translation.xyz().add(vec3(
-                SPRITE_SHEET_SPRITE_W / 2.,
-                -SPRITE_SHEET_SPRITE_H / 2.,
-                Z_LAYER_DEBUG_SPRITE_BOUNDARIES,
-            )),
-            0.,
-        );
-        lines.line(
-            transform.translation.xyz().add(vec3(
-                SPRITE_SHEET_SPRITE_W / 2.,
-                -SPRITE_SHEET_SPRITE_H / 2.,
-                Z_LAYER_DEBUG_SPRITE_BOUNDARIES,
-            )),
-            transform.translation.xyz().add(vec3(
-                SPRITE_SHEET_SPRITE_W / 2.,
-                SPRITE_SHEET_SPRITE_H / 2.,
-                Z_LAYER_DEBUG_SPRITE_BOUNDARIES,
-            )),
-            0.,
-        );
     }
 }
 

@@ -4,7 +4,7 @@ version = "0.1.0"
 authors = ["Beetroot Paul <paul@beetrootpaul.com>"]
 repository = "https://github.com/beetrootpaul/avoid-your-past--rust-bevy/"
 edition = "2021"
-#TODO: license field
+#TODO: license field https://doc.rust-lang.org/cargo/reference/manifest.html#the-license-and-license-file-fields
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
@@ -21,7 +21,7 @@ edition = "2021"
 # optimization
 #
 
-# Enable a small amount of optimization in debug mode
+# Enable a small amount of optimization in debug_helpers mode
 # See: https://bevyengine.org/learn/book/getting-started/setup/#compile-with-performance-optimizations
 # See: https://bevy-cheatbook.github.io/pitfalls/performance.html#unoptimized-debug-builds
 #[profile.dev]
@@ -32,6 +32,10 @@ edition = "2021"
 # See: https://bevy-cheatbook.github.io/pitfalls/performance.html#unoptimized-debug-builds
 [profile.dev.package."*"]
 opt-level = 3
+
+# TODO: web: optimize for binary size https://doc.rust-lang.org/cargo/reference/profiles.html#opt-level
+
+# TODO: zdefiniuj brak incremental i inne rzeczy dla profilu release https://doc.rust-lang.org/cargo/reference/profiles.html#release
 
 # # # # # # # # #
 # dependencies
