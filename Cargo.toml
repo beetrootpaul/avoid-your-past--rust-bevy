@@ -2,6 +2,7 @@
 name = "avoid_your_past_rust_bevy"
 version = "0.1.0"
 authors = ["Beetroot Paul <paul@beetrootpaul.com>"]
+repository = "https://github.com/beetrootpaul/avoid-your-past--rust-bevy/"
 edition = "2021"
 #TODO: license field
 
