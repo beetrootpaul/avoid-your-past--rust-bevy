@@ -1,6 +1,7 @@
 [package]
 name = "avoid_your_past_rust_bevy"
 version = "0.1.0"
+authors = ["Beetroot Paul <paul@beetrootpaul.com>"]
 edition = "2021"
 #TODO: license field
 
