@@ -1,5 +1,4 @@
 use std::ops::Add;
-use std::time::Duration;
 
 use bevy::ecs::schedule::ShouldRun;
 #[allow(unused_imports)]
@@ -16,14 +15,13 @@ use crate::constants::{
 #[cfg(debug_assertions)]
 use crate::debug_helpers::{PrintFpsPlugin, SpritesBoundariesPlugin};
 use crate::pico8_color::Pico8Color;
+use crate::pixel_art_support::{FixedTimestep, PixelArtCameraPlugin};
 
-// TODO: should I "mod" my modules in lib.rs instead of main.rs?
 mod constants;
 #[cfg(debug_assertions)]
 mod debug_helpers;
 mod pico8_color;
-
-// TODO: exclude easily debug_helpers stuff from release by doing #[allow(unused_imports)] before mod my_module_with_debug stuff
+mod pixel_art_support;
 
 // TODO: copy README content from the original repo, add some screenshots
 // TODO: non-CC license which allows to use, but not commercially
@@ -51,17 +49,7 @@ mod pico8_color;
 // TODO: fixed FPS 1 https://github.com/bevyengine/bevy/blob/latest/examples/ecs/fixed_timestep.rs
 // TODO: fixed FPS 2 https://bevy-cheatbook.github.io/features/fixed-timestep.html
 
-// TODO: z-index https://github.com/bevyengine/bevy/blob/latest/examples/ui/z_index.rs
-
-// TODO: scaling https://github.com/bevyengine/bevy/blob/latest/examples/window/scale_factor_override.rs
-// TODO: window resizing https://github.com/bevyengine/bevy/blob/latest/examples/window/window_resizing.rs
-// TODO: window settings https://github.com/bevyengine/bevy/blob/latest/examples/window/window_settings.rs
-
 // TODO: logs https://github.com/bevyengine/bevy/blob/latest/examples/app/logs.rs
-
-// TODO: modules, functions, scopes
-// TODO: plugins 1 https://github.com/bevyengine/bevy/blob/latest/examples/app/plugin.rs
-// TODO: plugins 2 https://github.com/bevyengine/bevy/blob/latest/examples/app/plugin_group.rs
 
 // TODO: game states 1 https://github.com/bevyengine/bevy/blob/latest/examples/ecs/state.rs
 // TODO: game states 2 https://github.com/IyesGames/iyes_loopless
@@ -79,8 +67,6 @@ const GAME_AREA_H: f32 = 112.;
 const VIEWPORT_W: f32 = GAME_AREA_W;
 const VIEWPORT_H: f32 = TOPBAR_H + GAME_AREA_H;
 
-// TODO: bevy::sprite::collide_aabb::collide(…)
-
 // TODO: app.add_system_set(SystemSet::new().with_run_criteria(FixedTimestep::step(0.5)).with_system(…))
 
 // TODO consider system sets or system labels for making sure input is handled first, then update, then draw, then removal of dead entities
@@ -88,10 +74,6 @@ const VIEWPORT_H: f32 = TOPBAR_H + GAME_AREA_H;
 //      - res 2 : https://bevy-cheatbook.github.io/programming/system-sets.html
 
 // TODO game states https://bevy-cheatbook.github.io/programming/states.html
-
-const FIXED_FPS: u64 = 30;
-
-const FIXED_TIMESTEP_GAME_LOOP: &str = "fixed_timestep_game_loop";
 
 #[derive(Resource, Default)]
 struct SpriteSheet {
@@ -123,11 +105,7 @@ fn main() {
                 ..default()
             }),
     )
-    // TODO: group both plugins below into a single plugin for pixel upscaling camera
-    .add_plugin(bevy_pixel_camera::PixelCameraPlugin)
-    .add_plugin(bevy_pixel_camera::PixelBorderPlugin {
-        color: bevy_color_from(Pico8Color::Black),
-    });
+    .add_plugin(PixelArtCameraPlugin);
 
     #[cfg(debug_assertions)]
     app.add_plugin(PrintFpsPlugin)
@@ -136,7 +114,7 @@ fn main() {
     // Get rid of edges of neighbour sprites visible around the given sprite from the sprite sheet
     app.insert_resource(Msaa { samples: 1 })
         // Draw a solid background color
-        .insert_resource(ClearColor(bevy_color_from(Pico8Color::Black)));
+        .insert_resource(ClearColor(Pico8Color::Black.as_bevy_color()));
 
     app.init_resource::<SpriteSheet>()
         .add_startup_system(load_spritesheet)
@@ -146,49 +124,40 @@ fn main() {
         .add_system(bevy::window::close_on_esc)
         .add_system(handle_keyboard_input);
 
-    app.add_fixed_timestep(
-        Duration::from_nanos(1_000_000_000 / FIXED_FPS),
-        FIXED_TIMESTEP_GAME_LOOP,
-    )
-    .add_fixed_timestep_child_stage(FIXED_TIMESTEP_GAME_LOOP)
-    .add_fixed_timestep_child_stage(FIXED_TIMESTEP_GAME_LOOP)
-    .add_fixed_timestep_child_stage(FIXED_TIMESTEP_GAME_LOOP);
-
+    app.add_fixed_timestep(FixedTimestep::duration(), FixedTimestep::label());
     #[cfg(debug_assertions)]
-    app.add_fixed_timestep_system(FIXED_TIMESTEP_GAME_LOOP, 0, debug_fixed);
-
-    app.add_fixed_timestep_system_set(
-        FIXED_TIMESTEP_GAME_LOOP,
-        1,
-        SystemSet::new()
-            .with_run_criteria(run_if_there_is_no_player)
-            .with_system(spawn_player),
-    )
-    .add_fixed_timestep_system_set(
-        FIXED_TIMESTEP_GAME_LOOP,
-        1,
-        SystemSet::new()
-            .with_run_criteria(run_if_there_is_no_coin)
-            .with_system(spawn_coin),
+    app.add_fixed_timestep_system(
+        FixedTimestep::label(),
+        0,
+        FixedTimestep::log_measurements_system,
     );
-
-    app.add_fixed_timestep_system(FIXED_TIMESTEP_GAME_LOOP, 2, fixed_update_player)
-        .add_fixed_timestep_system(FIXED_TIMESTEP_GAME_LOOP, 2, fixed_update_player_sprite);
-
-    app.add_fixed_timestep_system(FIXED_TIMESTEP_GAME_LOOP, 3, coin_pickup);
+    app.add_fixed_timestep_child_stage(FixedTimestep::label())
+        .add_fixed_timestep_system_set(
+            FixedTimestep::label(),
+            1,
+            SystemSet::new()
+                .with_run_criteria(run_if_there_is_no_player)
+                .with_system(spawn_player),
+        )
+        .add_fixed_timestep_system_set(
+            FixedTimestep::label(),
+            1,
+            SystemSet::new()
+                .with_run_criteria(run_if_there_is_no_coin)
+                .with_system(spawn_coin),
+        )
+        .add_fixed_timestep_child_stage(FixedTimestep::label())
+        .add_fixed_timestep_system_set(
+            FixedTimestep::label(),
+            2,
+            SystemSet::new()
+                .with_system(fixed_update_player)
+                .with_system(fixed_update_player_sprite),
+        )
+        .add_fixed_timestep_child_stage(FixedTimestep::label())
+        .add_fixed_timestep_system(FixedTimestep::label(), 3, coin_pickup);
 
     app.run();
-}
-
-// Copied from https://github.com/IyesGames/iyes_loopless#fixed-timestep-control
-#[cfg(debug_assertions)]
-fn debug_fixed(timesteps: Res<iyes_loopless::fixedtimestep::FixedTimesteps>) {
-    let info = timesteps.get_current().unwrap();
-    debug!(
-        "Fixed timestep: expected = {:?} | overstepped by = {:?}",
-        info.timestep(),
-        info.remaining(),
-    );
 }
 
 #[derive(Component)]
@@ -207,11 +176,6 @@ struct SpritePadding {
     bottom: i32,
 }
 
-// TODO: move to some helper module
-fn bevy_color_from(pico8_color: Pico8Color) -> Color {
-    Color::hex(pico8_color.hex()).unwrap()
-}
-
 fn spawn_camera(mut commands: Commands) {
     // TODO: proper conversion from f32 to i32?
     commands.spawn(bevy_pixel_camera::PixelCameraBundle::from_resolution(
@@ -223,7 +187,7 @@ fn spawn_camera(mut commands: Commands) {
 fn spawn_game_area(mut commands: Commands) {
     commands.spawn(SpriteBundle {
         sprite: Sprite {
-            color: bevy_color_from(Pico8Color::DarkBlue),
+            color: Pico8Color::DarkBlue.as_bevy_color(),
             custom_size: Some(vec2(GAME_AREA_W, GAME_AREA_H)),
             anchor: Anchor::TopLeft,
             ..default()
@@ -344,6 +308,7 @@ fn spawn_player(
     ));
 
     #[allow(unused_mut, unused_variables)]
+    #[cfg(debug_assertions)]
     parent_command.with_children(|parent| {
         parent.spawn(MaterialMesh2dBundle {
             mesh: meshes.add(shape::Circle::new(hit_circle.r).into()).into(),
