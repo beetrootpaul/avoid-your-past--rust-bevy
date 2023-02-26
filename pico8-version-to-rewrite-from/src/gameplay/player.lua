@@ -5,60 +5,54 @@
 function new_player()
     local x = a.game_area_w / 2
     local y = a.game_area_h / 2
-    -- TODO
-    --local r = 3
+    local r = 3
 
-    -- TODO
-    --local speed = 2
-    --local dx = speed
-    --local dy = 0
+    local speed = 2
+    local dx = speed
+    local dy = 0
 
     local direction = "r"
     local sprite_for_direction = {
-        -- TODO
-        --    u = 39,
+        u = 39,
         r = 40,
-        -- TODO
-        --    d = 41,
-        --    l = 42,
+        d = 41,
+        l = 42,
     }
 
     local p = {}
 
     --
 
-    -- TODO
-    --function p.x1()
-    --    return x - r
-    --end
-    --function p.xc()
-    --    return x
-    --end
-    --function p.x2()
-    --    return x + r
-    --end
-    --function p.y1()
-    --    return y - r
-    --end
-    --function p.yc()
-    --    return y
-    --end
-    --function p.y2()
-    --    return y + r
-    --end
-    --function p.r()
-    --    return r
-    --end
-    --function p.direction()
-    --    return direction
-    --end
+    function p.x1()
+        return x - r
+    end
+    function p.xc()
+        return x
+    end
+    function p.x2()
+        return x + r
+    end
+    function p.y1()
+        return y - r
+    end
+    function p.yc()
+        return y
+    end
+    function p.y2()
+        return y + r
+    end
+    function p.r()
+        return r
+    end
+    function p.direction()
+        return direction
+    end
 
     --
 
-    -- TODO
-    --function p.collision_circle()
-    --    return { x = x, y = y, r = r }
-    --end
+    function p.collision_circle()
+        return { x = x, y = y, r = r }
+    end
 
     --
 
@@ -99,10 +93,9 @@ function new_player()
                 y - r
         )
         palt()
-        -- TODO
-        --    if __debug__ then
-        --        circfill(x, y, r, u.colors.red)
-        --    end
+        if __debug__ then
+            circfill(x, y, r, u.colors.red)
+        end
     end
 
     --

@@ -2,9 +2,10 @@ use std::ops::Add;
 use std::time::Duration;
 
 use bevy::ecs::schedule::ShouldRun;
+#[allow(unused_imports)]
 use bevy::math::{vec2, vec3, Vec3Swizzles};
 use bevy::prelude::*;
-use bevy::sprite::Anchor;
+use bevy::sprite::{Anchor, MaterialMesh2dBundle};
 use iyes_loopless::prelude::AppLooplessFixedTimestepExt;
 use rand::Rng;
 
@@ -84,9 +85,22 @@ const FIXED_TIMESTEP_GAME_LOOP: &str = "fixed_timestep_game_loop";
 const SPRITE_SHEET_SPRITE_W: f32 = 8.;
 const SPRITE_SHEET_SPRITE_H: f32 = 8.;
 
+const Z_LAYER_GAME_AREA: f32 = 1.;
+const Z_LAYER_DEBUG_HIT_CIRCLES: f32 = Z_LAYER_GAME_AREA + 1.;
+const Z_LAYER_SPRITES_COINS: f32 = Z_LAYER_DEBUG_HIT_CIRCLES + 1.;
+const Z_LAYER_SPRITES_PLAYER: f32 = Z_LAYER_SPRITES_COINS + 1.;
+#[cfg(debug_assertions)]
+const Z_LAYER_DEBUG_SPRITE_BOUNDARIES: f32 = Z_LAYER_SPRITES_PLAYER + 1.;
+
 #[derive(Resource, Default)]
 struct SpriteSheet {
     texture_atlas_handle: Option<Handle<TextureAtlas>>,
+}
+
+#[derive(Component, Clone)]
+struct HitCircle {
+    r: f32,
+    offset: Vec3,
 }
 
 fn main() {
@@ -174,6 +188,7 @@ fn main() {
 }
 
 // Copied from https://github.com/IyesGames/iyes_loopless#fixed-timestep-control
+#[cfg(debug_assertions)]
 fn debug_fixed(timesteps: Res<iyes_loopless::fixedtimestep::FixedTimesteps>) {
     let info = timesteps.get_current().unwrap();
     debug!(
@@ -191,7 +206,7 @@ enum ControlledDirection {
     Down,
 }
 
-#[derive(Component, Default)]
+#[derive(Component, Default, Copy, Clone)]
 struct SpritePadding {
     left: i32,
     right: i32,
@@ -220,7 +235,11 @@ fn spawn_game_area(mut commands: Commands) {
             anchor: Anchor::TopLeft,
             ..default()
         },
-        transform: Transform::from_xyz(-GAME_AREA_W / 2., GAME_AREA_H / 2. - TOPBAR_H / 2., 0.),
+        transform: Transform::from_xyz(
+            -GAME_AREA_W / 2.,
+            GAME_AREA_H / 2. - TOPBAR_H / 2.,
+            Z_LAYER_GAME_AREA,
+        ),
         ..default()
     });
 }
@@ -276,32 +295,42 @@ fn run_if_there_is_no_coin(query: Query<&Coin>) -> ShouldRun {
 
 fn coin_pickup(
     mut commands: Commands,
-    players_query: Query<(&Player, &Transform)>,
-    coins_query: Query<(Entity, &Coin, &Transform)>,
+    players_query: Query<(&Player, &Transform, &HitCircle)>,
+    coins_query: Query<(Entity, &Coin, &Transform, &HitCircle)>,
 ) {
-    for (_, player_transform) in players_query.iter() {
-        for (coin_entity, _, coin_transform) in coins_query.iter() {
+    for (_, player_transform, player_hit_circle) in players_query.iter() {
+        for (coin_entity, _, coin_transform, coin_hit_circle) in coins_query.iter() {
             let distance = player_transform
                 .translation
-                .distance(coin_transform.translation);
-            // TODO: implement proper hit_circle !
-            if distance < (4. + 4.) {
-                info!("COLLIDE!");
-                commands.entity(coin_entity).despawn();
+                .add(player_hit_circle.offset)
+                .distance(coin_transform.translation.add(coin_hit_circle.offset));
+            if distance < (player_hit_circle.r + coin_hit_circle.r) {
+                commands.entity(coin_entity).despawn_recursive();
             }
         }
     }
 }
 
-fn spawn_player(mut commands: Commands, sprite_sheet: Res<SpriteSheet>) {
+fn spawn_player(
+    mut commands: Commands,
+    sprite_sheet: Res<SpriteSheet>,
+    #[allow(unused_mut)] mut meshes: ResMut<Assets<Mesh>>,
+    #[allow(unused_mut)] mut materials: ResMut<Assets<ColorMaterial>>,
+) {
     // TODO: animated sprite https://github.com/bevyengine/bevy/blob/latest/examples/2d/sprite_sheet.rs
     // TODO: bundle it all as "player" bundle? is there a way to define what components entities should have?
-    commands.spawn((
+    // TODO: is there a way to operate on Vec2 everywhere, but be OK with API expecting Vec3?
+    let hit_circle = HitCircle {
+        r: 4.,
+        offset: vec3(-0.5, 0.5, 0.),
+    };
+    let transform = Transform::from_xyz(0., -TOPBAR_H / 2., Z_LAYER_SPRITES_PLAYER);
+    #[allow(unused_mut)]
+    let mut parent_command = commands.spawn((
         SpriteSheetBundle {
             // TODO: reorganize game area position calculations
-            // TODO: Z>0 for layering?
             // TODO: add helpers for translating from window-centered coors to game area coords
-            transform: Transform::from_xyz(0., -TOPBAR_H / 2., 0.),
+            transform,
             // texture_atlas: sprite_sheet_texture_atlas_handle,
             texture_atlas: sprite_sheet.texture_atlas_handle.clone().unwrap(),
             sprite: TextureAtlasSprite {
@@ -316,27 +345,53 @@ fn spawn_player(mut commands: Commands, sprite_sheet: Res<SpriteSheet>) {
             bottom: 1,
             ..default()
         },
+        hit_circle.clone(),
         ControlledDirection::Right,
         Player,
     ));
+
+    #[allow(unused_mut, unused_variables)]
+    parent_command.with_children(|parent| {
+        parent.spawn(MaterialMesh2dBundle {
+            mesh: meshes.add(shape::Circle::new(hit_circle.r).into()).into(),
+            material: materials.add(ColorMaterial::from(Color::PURPLE)),
+            transform: Transform::from_translation(vec3(
+                hit_circle.offset.x,
+                hit_circle.offset.y,
+                Z_LAYER_DEBUG_HIT_CIRCLES - Z_LAYER_SPRITES_PLAYER,
+            )),
+            ..default()
+        });
+    });
 }
 
-fn spawn_coin(mut commands: Commands, sprite_sheet: Res<SpriteSheet>) {
+fn spawn_coin(
+    mut commands: Commands,
+    sprite_sheet: Res<SpriteSheet>,
+    #[allow(unused_mut, unused_variables)] mut meshes: ResMut<Assets<Mesh>>,
+    #[allow(unused_mut, unused_variables)] mut materials: ResMut<Assets<ColorMaterial>>,
+) {
     let mut rng = rand::thread_rng();
 
     // TODO: animated coin https://github.com/bevyengine/bevy/blob/latest/examples/2d/sprite_sheet.rs
     // TODO: bundle it all as "coin" bundle? is there a way to define what components entities should have?
-    commands.spawn((
+    let hit_circle = HitCircle {
+        r: 3.5,
+        offset: vec3(0., 0., 0.),
+    };
+    let transform = Transform::from_xyz(
+        rng.gen_range(-40.0..40.0),
+        -TOPBAR_H / 2. + rng.gen_range(-40.0..40.0),
+        Z_LAYER_SPRITES_COINS,
+    );
+    #[allow(unused_mut, unused_variables)]
+    let mut parent_command = commands.spawn((
         SpriteSheetBundle {
             // TODO: reorganize game area position calculations
             // TODO: Z>0 for layering?
             // TODO: add helpers for translating from window-centered coors to game area coords
             // TODO: TEMPORARY COORDS
-            transform: Transform::from_xyz(
-                rng.gen_range(-40.0..40.0),
-                -TOPBAR_H / 2. + rng.gen_range(-40.0..40.0),
-                0.,
-            ),
+            transform,
             texture_atlas: sprite_sheet.texture_atlas_handle.clone().unwrap(),
             sprite: TextureAtlasSprite {
                 index: 0,
@@ -351,8 +406,23 @@ fn spawn_coin(mut commands: Commands, sprite_sheet: Res<SpriteSheet>) {
             top: 1,
             bottom: 1,
         },
+        hit_circle.clone(),
         Coin,
     ));
+
+    #[cfg(debug_assertions)]
+    parent_command.with_children(|parent| {
+        parent.spawn(MaterialMesh2dBundle {
+            mesh: meshes.add(shape::Circle::new(hit_circle.r).into()).into(),
+            material: materials.add(ColorMaterial::from(Color::PURPLE)),
+            transform: Transform::from_translation(vec3(
+                hit_circle.offset.x,
+                hit_circle.offset.y,
+                Z_LAYER_DEBUG_HIT_CIRCLES - Z_LAYER_SPRITES_COINS,
+            )),
+            ..default()
+        });
+    });
 }
 
 fn handle_keyboard_input(
@@ -383,7 +453,6 @@ fn handle_keyboard_input(
 }
 
 fn fixed_update_player_sprite(mut query: Query<(&ControlledDirection, &mut TextureAtlasSprite)>) {
-    debug!("sdsdsds");
     for (controlled_direction, mut sprite) in query.iter_mut() {
         sprite.index = match *controlled_direction {
             ControlledDirection::Up => 18,
@@ -394,6 +463,7 @@ fn fixed_update_player_sprite(mut query: Query<(&ControlledDirection, &mut Textu
     }
 }
 
+#[cfg(debug_assertions)]
 fn draw_debug_sprite_boundaries(
     mut lines: ResMut<bevy_prototype_debug_lines::DebugLines>,
     query: Query<(&Transform, &TextureAtlasSprite)>,
@@ -404,12 +474,12 @@ fn draw_debug_sprite_boundaries(
             transform.translation.xyz().add(vec3(
                 SPRITE_SHEET_SPRITE_W / 2.,
                 SPRITE_SHEET_SPRITE_H / 2.,
-                0.,
+                Z_LAYER_DEBUG_SPRITE_BOUNDARIES,
             )),
             transform.translation.xyz().add(vec3(
                 -SPRITE_SHEET_SPRITE_W / 2.,
                 SPRITE_SHEET_SPRITE_H / 2.,
-                0.,
+                Z_LAYER_DEBUG_SPRITE_BOUNDARIES,
             )),
             0.,
         );
@@ -417,12 +487,12 @@ fn draw_debug_sprite_boundaries(
             transform.translation.xyz().add(vec3(
                 -SPRITE_SHEET_SPRITE_W / 2.,
                 SPRITE_SHEET_SPRITE_H / 2.,
-                0.,
+                Z_LAYER_DEBUG_SPRITE_BOUNDARIES,
             )),
             transform.translation.xyz().add(vec3(
                 -SPRITE_SHEET_SPRITE_W / 2.,
                 -SPRITE_SHEET_SPRITE_H / 2.,
-                0.,
+                Z_LAYER_DEBUG_SPRITE_BOUNDARIES,
             )),
             0.,
         );
@@ -430,12 +500,12 @@ fn draw_debug_sprite_boundaries(
             transform.translation.xyz().add(vec3(
                 -SPRITE_SHEET_SPRITE_W / 2.,
                 -SPRITE_SHEET_SPRITE_H / 2.,
-                0.,
+                Z_LAYER_DEBUG_SPRITE_BOUNDARIES,
             )),
             transform.translation.xyz().add(vec3(
                 SPRITE_SHEET_SPRITE_W / 2.,
                 -SPRITE_SHEET_SPRITE_H / 2.,
-                0.,
+                Z_LAYER_DEBUG_SPRITE_BOUNDARIES,
             )),
             0.,
         );
@@ -443,12 +513,12 @@ fn draw_debug_sprite_boundaries(
             transform.translation.xyz().add(vec3(
                 SPRITE_SHEET_SPRITE_W / 2.,
                 -SPRITE_SHEET_SPRITE_H / 2.,
-                0.,
+                Z_LAYER_DEBUG_SPRITE_BOUNDARIES,
             )),
             transform.translation.xyz().add(vec3(
                 SPRITE_SHEET_SPRITE_W / 2.,
                 SPRITE_SHEET_SPRITE_H / 2.,
-                0.,
+                Z_LAYER_DEBUG_SPRITE_BOUNDARIES,
             )),
             0.,
         );
@@ -469,8 +539,10 @@ fn fixed_update_player(
             ControlledDirection::Down => transform.translation.y -= MOVEMENT_PER_FRAME,
         }
 
-        let default_sprite_padding = SpritePadding::default();
-        let sprite_padding = maybe_sprite_padding.unwrap_or(&default_sprite_padding);
+        let sprite_padding = maybe_sprite_padding
+            .copied()
+            .unwrap_or(SpritePadding::default());
+
         transform.translation.x = transform.translation.x.clamp(
             -GAME_AREA_W / 2. + SPRITE_SHEET_SPRITE_W / 2. - sprite_padding.left as f32,
             GAME_AREA_W / 2. - SPRITE_SHEET_SPRITE_W / 2. + sprite_padding.right as f32,
