@@ -11,13 +11,14 @@ env:
 
 jobs:
   build_test_lint:
-
     runs-on: ubuntu-latest
-
     # --features bevy/wayland: this action run on Linux, therefore require either
     #                          X11 or Wayland to compile Bevy app properly
     steps:
       - uses: actions/checkout@v3
+      # TODO: what is this command for? Taken from https://doc.rust-lang.org/cargo/guide/continuous-integration.html#github-actions
+      - name: TODO what is this command for?
+        run: rustup update stable && rustup default stable
       - name: Debug Build
         run: cargo build --features bevy/x11 --all-targets --verbose
       - name: Release Build
