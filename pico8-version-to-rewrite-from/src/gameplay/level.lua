@@ -6,8 +6,8 @@ function new_level(params)
     local mode = params.mode
     local player = params.player
 
+    local coin
     -- TODO
-    --local coin
     --local droplet_no_coins
     --local droplet_no_memories
 
@@ -49,16 +49,19 @@ function new_level(params)
         -- TODO
         --local coin_tile = rnd(available_tiles)
         --if coin_tile then
-        --    coin = new_item {
-        --        tile_x = coin_tile.tile_x,
-        --        tile_y = coin_tile.tile_y,
-        --        collision_circle_r = 2.5,
-        --        animated_sprite = new_animated_sprite {
-        --            first_sprite = 16,
-        --            number_of_sprites = 16,
-        --            frames_per_sprite = 2,
-        --        }
-        --    }
+        coin = new_item {
+            -- TODO
+            --        tile_x = coin_tile.tile_x,
+            --        tile_y = coin_tile.tile_y,
+            collision_circle_r = 2.5,
+            -- TODO
+            --        animated_sprite = new_animated_sprite {
+            --            first_sprite = 16,
+            --            number_of_sprites = 16,
+            --            frames_per_sprite = 2,
+            --        }
+        }
+        -- TODO
         --end
 
         -- TODO

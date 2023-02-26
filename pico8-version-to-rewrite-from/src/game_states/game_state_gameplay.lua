@@ -112,21 +112,20 @@ function new_game_state_gameplay(params)
     --
 
     function gs.draw()
+        level.draw_bg()
         -- TODO
-        --level.draw_bg()
         --level.draw_items()
 
         -- TODO
         --player_trail.draw()
-        --player.draw()
+        player.draw()
 
         -- TODO
         --if not mode.is_no_memories() then
         --    memories.draw()
         --end
 
-        -- TODO
-        --topbar.draw()
+        topbar.draw()
     end
 
     --

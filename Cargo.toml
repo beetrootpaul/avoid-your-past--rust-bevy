@@ -35,6 +35,12 @@ opt-level = 3
 # dependencies
 #
 
+[dependencies]
+bevy_pixel_camera = "0.3.0"
+iyes_loopless = "0.9.1"
+bevy_prototype_debug_lines = "0.9.0"
+rand = "0.8.5"
+
 [dependencies.bevy]
 version = "0.9.1"
 # Features config based on https://bevy-cheatbook.github.io/setup/bevy-config.html#bevy-cargo-features
