@@ -1,11 +1,9 @@
 use std::ops::Add;
 
 use bevy::ecs::schedule::ShouldRun;
-#[allow(unused_imports)]
-use bevy::math::{vec2, vec3, Vec3Swizzles};
+use bevy::math::{vec2, vec3};
 use bevy::prelude::*;
 use bevy::sprite::{Anchor, MaterialMesh2dBundle};
-use iyes_loopless::prelude::AppLooplessFixedTimestepExt;
 use rand::Rng;
 
 use crate::constants::{
@@ -15,7 +13,7 @@ use crate::constants::{
 #[cfg(debug_assertions)]
 use crate::debug_helpers::{PrintFpsPlugin, SpritesBoundariesPlugin};
 use crate::pico8_color::Pico8Color;
-use crate::pixel_art_support::{FixedTimestep, PixelArtCameraPlugin};
+use crate::pixel_art_support::{FixedFpsBevyAppExtension, FixedFpsPlugin, PixelArtCameraPlugin};
 
 mod constants;
 #[cfg(debug_assertions)]
@@ -108,8 +106,10 @@ fn main() {
     .add_plugin(PixelArtCameraPlugin);
 
     #[cfg(debug_assertions)]
-    app.add_plugin(PrintFpsPlugin)
-        .add_plugin(SpritesBoundariesPlugin);
+    app.add_plugin(PrintFpsPlugin);
+
+    #[cfg(debug_assertions)]
+    app.add_plugin(SpritesBoundariesPlugin);
 
     // Get rid of edges of neighbour sprites visible around the given sprite from the sprite sheet
     app.insert_resource(Msaa { samples: 1 })
@@ -124,38 +124,21 @@ fn main() {
         .add_system(bevy::window::close_on_esc)
         .add_system(handle_keyboard_input);
 
-    app.add_fixed_timestep(FixedTimestep::duration(), FixedTimestep::label());
+    app.add_plugin(FixedFpsPlugin);
     #[cfg(debug_assertions)]
-    app.add_fixed_timestep_system(
-        FixedTimestep::label(),
-        0,
-        FixedTimestep::log_measurements_system,
-    );
-    app.add_fixed_timestep_child_stage(FixedTimestep::label())
-        .add_fixed_timestep_system_set(
-            FixedTimestep::label(),
-            1,
-            SystemSet::new()
-                .with_run_criteria(run_if_there_is_no_player)
-                .with_system(spawn_player),
-        )
-        .add_fixed_timestep_system_set(
-            FixedTimestep::label(),
-            1,
-            SystemSet::new()
-                .with_run_criteria(run_if_there_is_no_coin)
-                .with_system(spawn_coin),
-        )
-        .add_fixed_timestep_child_stage(FixedTimestep::label())
-        .add_fixed_timestep_system_set(
-            FixedTimestep::label(),
-            2,
-            SystemSet::new()
-                .with_system(fixed_update_player)
-                .with_system(fixed_update_player_sprite),
-        )
-        .add_fixed_timestep_child_stage(FixedTimestep::label())
-        .add_fixed_timestep_system(FixedTimestep::label(), 3, coin_pickup);
+    app.log_fixed_fps_measurements();
+    app.add_fixed_fps_stage(vec![
+        SystemSet::new()
+            .with_run_criteria(run_if_there_is_no_player)
+            .with_system(spawn_player),
+        SystemSet::new()
+            .with_run_criteria(run_if_there_is_no_coin)
+            .with_system(spawn_coin),
+    ]);
+    app.add_fixed_fps_stage(vec![SystemSet::new()
+        .with_system(fixed_update_player)
+        .with_system(fixed_update_player_sprite)]);
+    app.add_fixed_fps_stage(vec![SystemSet::new().with_system(coin_pickup)]);
 
     app.run();
 }
@@ -170,9 +153,13 @@ enum ControlledDirection {
 
 #[derive(Component, Default, Copy, Clone)]
 struct SpritePadding {
+    #[allow(dead_code)]
     left: i32,
+    #[allow(dead_code)]
     right: i32,
+    #[allow(dead_code)]
     top: i32,
+    #[allow(dead_code)]
     bottom: i32,
 }
 
@@ -271,8 +258,8 @@ fn coin_pickup(
 fn spawn_player(
     mut commands: Commands,
     sprite_sheet: Res<SpriteSheet>,
-    #[allow(unused_mut)] mut meshes: ResMut<Assets<Mesh>>,
-    #[allow(unused_mut)] mut materials: ResMut<Assets<ColorMaterial>>,
+    mut meshes: ResMut<Assets<Mesh>>,
+    mut materials: ResMut<Assets<ColorMaterial>>,
 ) {
     // TODO: animated sprite https://github.com/bevyengine/bevy/blob/latest/examples/2d/sprite_sheet.rs
     // TODO: bundle it all as "player" bundle? is there a way to define what components entities should have?
@@ -282,7 +269,6 @@ fn spawn_player(
         offset: vec3(-0.5, 0.5, 0.),
     };
     let transform = Transform::from_xyz(0., -TOPBAR_H / 2., Z_LAYER_SPRITES_PLAYER);
-    #[allow(unused_mut)]
     let mut parent_command = commands.spawn((
         SpriteSheetBundle {
             // TODO: reorganize game area position calculations
@@ -307,7 +293,6 @@ fn spawn_player(
         Player,
     ));
 
-    #[allow(unused_mut, unused_variables)]
     #[cfg(debug_assertions)]
     parent_command.with_children(|parent| {
         parent.spawn(MaterialMesh2dBundle {
@@ -326,8 +311,8 @@ fn spawn_player(
 fn spawn_coin(
     mut commands: Commands,
     sprite_sheet: Res<SpriteSheet>,
-    #[allow(unused_mut, unused_variables)] mut meshes: ResMut<Assets<Mesh>>,
-    #[allow(unused_mut, unused_variables)] mut materials: ResMut<Assets<ColorMaterial>>,
+    mut meshes: ResMut<Assets<Mesh>>,
+    mut materials: ResMut<Assets<ColorMaterial>>,
 ) {
     let mut rng = rand::thread_rng();
 
@@ -342,7 +327,6 @@ fn spawn_coin(
         -TOPBAR_H / 2. + rng.gen_range(-40.0..40.0),
         Z_LAYER_SPRITES_COINS,
     );
-    #[allow(unused_mut, unused_variables)]
     let mut parent_command = commands.spawn((
         SpriteSheetBundle {
             // TODO: reorganize game area position calculations

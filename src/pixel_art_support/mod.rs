@@ -1,5 +1,5 @@
-pub use fixed_timestep::FixedTimestep;
+pub use fixed_fps::{FixedFpsBevyAppExtension, FixedFpsPlugin};
 pub use pixel_art_camera::PixelArtCameraPlugin;
 
-mod fixed_timestep;
+mod fixed_fps;
 mod pixel_art_camera;
