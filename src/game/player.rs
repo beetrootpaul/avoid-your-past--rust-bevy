@@ -127,10 +127,10 @@ fn move_player(mut query: Query<(&PlayerMovement, &mut Transform, Option<&Sprite
 fn update_player_sprite(mut query: Query<(&PlayerMovement, &mut TextureAtlasSprite)>) {
     for (player_movement, mut sprite) in query.iter_mut() {
         sprite.index = match *player_movement {
-            PlayerMovement::Up => 18,
-            PlayerMovement::Right => 19,
-            PlayerMovement::Down => 20,
-            PlayerMovement::Left => 21,
+            PlayerMovement::Up => 34,
+            PlayerMovement::Right => 35,
+            PlayerMovement::Down => 36,
+            PlayerMovement::Left => 37,
         };
     }
 }

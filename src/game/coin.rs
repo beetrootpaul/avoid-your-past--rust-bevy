@@ -4,6 +4,7 @@ use bevy::prelude::*;
 use bevy::sprite::Anchor;
 use rand::Rng;
 
+use crate::game::animation::AnimationFrames;
 #[cfg(debug_assertions)]
 use crate::game::collision::create_hit_circle_debug;
 use crate::game::collision::HitCircle;
@@ -18,6 +19,7 @@ pub struct Coin;
 struct CoinBundle {
     coin: Coin,
     sprite_sheet_bundle: SpriteSheetBundle,
+    animation_frames: AnimationFrames,
     sprite_dimensions: SpriteDimensions,
     hit_circle: HitCircle,
 }
@@ -44,7 +46,7 @@ fn spawn_coin(
 ) {
     let mut rng = rand::thread_rng();
 
-    // TODO: animated coin https://github.com/bevyengine/bevy/blob/latest/examples/2d/sprite_sheet.rs
+    let animation_frames = AnimationFrames { first: 0, last: 31 };
     let hit_circle = HitCircle {
         r: 3.5,
         offset: vec3(0., 0., 0.),
@@ -62,12 +64,13 @@ fn spawn_coin(
             ),
             texture_atlas: sprite_sheet.texture_atlas_handle.clone().unwrap(),
             sprite: TextureAtlasSprite {
-                index: 0,
+                index: animation_frames.first,
                 anchor: Anchor::Center,
                 ..default()
             },
             ..default()
         },
+        animation_frames,
         sprite_dimensions: SpriteDimensions {
             width: 6.,
             height: 6.,
