@@ -1,6 +1,6 @@
 use std::time::Duration;
 
-use bevy::prelude::{debug, App, Mut, Plugin, Res, Resource, SystemSet};
+use bevy::prelude::*;
 use iyes_loopless::prelude::AppLooplessFixedTimestepExt;
 
 const FIXED_FPS: u64 = 30;
@@ -29,7 +29,7 @@ pub trait FixedFpsBevyAppExtension {
 
 impl FixedFpsBevyAppExtension for App {
     fn log_fixed_fps_measurements(&mut self) -> &mut App {
-        self.add_fixed_timestep_system(FIXED_TIMESTEP_LABEL, 0, sys_log_measurements)
+        self.add_fixed_timestep_system(FIXED_TIMESTEP_LABEL, 0, log_measurements)
     }
 
     fn add_fixed_fps_stage(&mut self, system_sets: Vec<SystemSet>) -> &mut App {
@@ -54,7 +54,7 @@ impl FixedFpsBevyAppExtension for App {
     }
 }
 
-fn sys_log_measurements(timesteps: Res<iyes_loopless::fixedtimestep::FixedTimesteps>) {
+fn log_measurements(timesteps: Res<iyes_loopless::fixedtimestep::FixedTimesteps>) {
     let info = timesteps
         .get_current()
         .expect("should get current fixed timestep");

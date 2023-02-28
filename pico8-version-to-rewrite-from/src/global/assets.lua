@@ -3,9 +3,8 @@
 -- -- -- -- -- -- --
 
 a = {
-    -- TODO
-    --    fps = 30,
-    --
+    fps = 30,
+
     bg_color_mode_normal = u.colors.dark_blue,
     -- TODO
     --    bg_color_mode_no_coins = u.colors.orange,

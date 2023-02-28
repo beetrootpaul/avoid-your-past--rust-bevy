@@ -102,10 +102,9 @@ function new_level(params)
 
     --
 
-    -- TODO
-    --function l.remove_coin()
-    --    coin = nil
-    --end
+    function l.remove_coin()
+        coin = nil
+    end
 
     --
 
@@ -119,33 +118,33 @@ function new_level(params)
 
     --
 
-    -- TODO
-    --function l.check_collisions(callbacks)
-    --    if coin then
-    --        if collisions.have_circles_collided(
-    --            player.collision_circle(),
-    --            coin.collision_circle()
-    --        ) then
-    --            callbacks.on_coin()
-    --        end
-    --    end
-    --    if droplet_no_coins then
-    --        if collisions.have_circles_collided(
-    --            player.collision_circle(),
-    --            droplet_no_coins.collision_circle()
-    --        ) then
-    --            callbacks.on_droplet_no_coins()
-    --        end
-    --    end
-    --    if droplet_no_memories then
-    --        if collisions.have_circles_collided(
-    --            player.collision_circle(),
-    --            droplet_no_memories.collision_circle()
-    --        ) then
-    --            callbacks.on_droplet_no_memories()
-    --        end
-    --    end
-    --end
+    function l.check_collisions(callbacks)
+        if coin then
+            if collisions.have_circles_collided(
+                    player.collision_circle(),
+                    coin.collision_circle()
+            ) then
+                callbacks.on_coin()
+            end
+        end
+        -- TODO
+        --    if droplet_no_coins then
+        --        if collisions.have_circles_collided(
+        --            player.collision_circle(),
+        --            droplet_no_coins.collision_circle()
+        --        ) then
+        --            callbacks.on_droplet_no_coins()
+        --        end
+        --    end
+        --    if droplet_no_memories then
+        --        if collisions.have_circles_collided(
+        --            player.collision_circle(),
+        --            droplet_no_memories.collision_circle()
+        --        ) then
+        --            callbacks.on_droplet_no_memories()
+        --        end
+        --    end
+    end
 
     --
 
@@ -200,18 +199,18 @@ function new_level(params)
 
     --
 
-    -- TODO
-    --function l.draw_items()
-    --    if not mode.is_no_coins() then
-    --        coin.draw()
-    --    end
-    --    if droplet_no_coins then
-    --        droplet_no_coins.draw()
-    --    end
-    --    if droplet_no_memories then
-    --        droplet_no_memories.draw()
-    --    end
-    --end
+    function l.draw_items()
+        -- TODO
+        --    if not mode.is_no_coins() then
+        --        coin.draw()
+        --    end
+        --    if droplet_no_coins then
+        --        droplet_no_coins.draw()
+        --    end
+        --    if droplet_no_memories then
+        --        droplet_no_memories.draw()
+        --    end
+    end
 
     --
 
