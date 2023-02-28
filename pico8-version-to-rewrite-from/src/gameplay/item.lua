@@ -12,14 +12,13 @@ function new_item(params)
 
     --
 
-    -- TODO
-    --function it.collision_circle()
-    --    return {
-    --        x = (tile_x - 1) * u.tile_px + u.tile_px / 2 - 0.5,
-    --        y = (tile_y - 1) * u.tile_px + u.tile_px / 2 - 0.5,
-    --        r = collision_circle_r,
-    --    }
-    --end
+    function it.collision_circle()
+        return {
+            x = (tile_x - 1) * u.tile_px + u.tile_px / 2 - 0.5,
+            y = (tile_y - 1) * u.tile_px + u.tile_px / 2 - 0.5,
+            r = collision_circle_r,
+        }
+    end
 
     --
 

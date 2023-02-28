@@ -1,8 +1,8 @@
 #!/usr/bin/env sh
-set -e
+set -ex
 
-# TODO: fix assets loading when running `./avoid_your_past_rust_bevy` from `./target/release`
-cargo build --release
+RUSTFLAGS="-D warnings -A dead_code -A unused-imports -A unused_mut -A unused-variables" \
+  cargo build --release
 
 # TODO: WASM https://github.com/bevyengine/bevy/tree/latest/examples#wasm
 
@@ -19,8 +19,11 @@ cargo build --release
 # TODO: web: optimize for size https://bevy-cheatbook.github.io/platforms/wasm/size-opt.html
 # TODO: web: hosting https://bevy-cheatbook.github.io/platforms/wasm/gh-pages.html
 
+# TODO: fix assets loading when running `./avoid_your_past_rust_bevy` from `./target/release`… Is this below a proper fix already?
 rm -rf ./target/release/assets/
 mkdir -p ./target/release/assets/
 cp ./assets/* ./target/release/assets/
 
 ./target/release/avoid_your_past_rust_bevy
+
+# TODO: check app size after build, wonder how heavy file would it be for web

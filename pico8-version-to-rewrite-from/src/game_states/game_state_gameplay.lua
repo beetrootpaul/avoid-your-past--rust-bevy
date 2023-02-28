@@ -23,20 +23,21 @@ function new_game_state_gameplay(params)
     --    audio.enable_music_layers { true, false, false }
     --end
 
-    -- TODO
-    --local function on_coin_collision()
-    --    if mode.is_no_coins() then
-    --        return
-    --    end
-    --
-    --    audio.play_sfx(a.sfx_coin)
-    --    score.add(10)
-    --    if not mode.is_no_memories() then
-    --        memories.add_memory()
-    --    end
-    --    level.remove_coin()
-    --    level.spawn_items()
-    --end
+    local function on_coin_collision()
+        -- TODO
+        --    if mode.is_no_coins() then
+        --        return
+        --    end
+        --
+        --    audio.play_sfx(a.sfx_coin)
+        --    score.add(10)
+        --    if not mode.is_no_memories() then
+        --        memories.add_memory()
+        --    end
+        level.remove_coin()
+        -- TODO
+        --    level.spawn_items()
+    end
 
     -- TODO
     --local function on_droplet_no_coins_collision()
@@ -78,19 +79,19 @@ function new_game_state_gameplay(params)
         --    on_back_to_regular_mode = on_back_to_regular_mode
         --}
 
-        -- TODO
-        --level.check_collisions {
-        --    on_coin = on_coin_collision,
-        --    on_droplet_no_coins = on_droplet_no_coins_collision,
-        --    on_droplet_no_memories = on_droplet_no_memories_collision,
-        --}
+        level.check_collisions {
+            on_coin = on_coin_collision,
+            -- TODO
+            --    on_droplet_no_coins = on_droplet_no_coins_collision,
+            --    on_droplet_no_memories = on_droplet_no_memories_collision,
+        }
 
         -- TODO
         --level.animate()
 
         -- TODO
         --player_trail.update()
-        --player.move()
+        player.move()
 
         -- TODO
         --memories.move()

@@ -1,5 +1,5 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="Run avoid_your_past_rust_bevy" type="CargoCommandRunConfiguration" factoryName="Cargo Command" activateToolWindowBeforeRun="false">
+  <configuration default="false" name="Run avoid_your_past_rust_bevy" type="CargoCommandRunConfiguration" factoryName="Cargo Command">
     <option name="command" value="run --package avoid_your_past_rust_bevy --bin avoid_your_past_rust_bevy --features bevy/dynamic" />
     <option name="workingDirectory" value="file://$PROJECT_DIR$" />
     <option name="emulateTerminal" value="false" />

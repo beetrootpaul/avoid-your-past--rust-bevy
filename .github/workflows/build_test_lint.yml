@@ -10,19 +10,19 @@ env:
   CARGO_TERM_COLOR: always
 
 jobs:
-  build_test_lint:
-
+  build_test_lint_job:
     runs-on: ubuntu-latest
-
     # --features bevy/wayland: this action run on Linux, therefore require either
     #                          X11 or Wayland to compile Bevy app properly
     steps:
       - uses: actions/checkout@v3
+      - name: Update rustup and Rust toolchain, set it to "stable"
+        run: rustup update stable && rustup default stable
       - name: Debug Build
         run: cargo build --features bevy/x11 --all-targets --verbose
-      - name: Release Build
-        run: cargo build --features bevy/x11 --release --verbose
       - name: Test
         run: cargo test --features bevy/x11 --verbose
       - name: Lint
         run: cargo clippy --features bevy/x11 --all-targets -- -D warnings
+      - name: Release Build
+        run: RUSTFLAGS="-D warnings -A dead_code -A unused-imports -A unused_mut -A unused-variables" cargo build --release --features bevy/x11 --verbose

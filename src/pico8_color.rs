@@ -1,3 +1,5 @@
+use bevy::prelude::Color;
+
 #[allow(dead_code)]
 pub enum Pico8Color {
     Black,
@@ -19,7 +21,11 @@ pub enum Pico8Color {
 }
 
 impl Pico8Color {
-    pub fn hex(&self) -> &str {
+    pub fn as_bevy_color(&self) -> Color {
+        Color::hex(self.hex()).expect("should convert from hex")
+    }
+
+    fn hex(&self) -> &str {
         match *self {
             // Hex value here are taken from https://pico-8.fandom.com/wiki/Palette#The_system_palette
             Pico8Color::Black => "000000",
