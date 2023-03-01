@@ -6,8 +6,9 @@ pub use input::GameKeyboardControlsPlugin;
 pub use player::create_player_move_systems;
 pub use player::create_player_spawn_systems;
 pub use player::PlayerMovement;
-pub use sprites::SpriteDimensions;
 pub use sprites::GameSpriteSheetPlugin;
+pub use sprites::SpriteDimensions;
+pub use sprites::SpriteSheet;
 
 use crate::game::animation::create_animate_sprite_systems;
 use crate::game::audio::GameAudioPlugin;
@@ -17,22 +18,24 @@ use crate::game::logic::create_collect_coins_systems;
 #[cfg(debug_assertions)]
 use crate::game::sprites_debug::SpritesBoundariesPlugin;
 use crate::pico8_color::Pico8Color;
-use crate::pixel_art_support::{FixedFpsBevyAppExtension, FixedFpsPlugin, PixelArtCameraPlugin};
+use crate::pixel_art_support::{FixedFpsBevyAppExtension, FixedFpsPlugin, PixelArtRenderingPlugin};
 
 mod animation;
 mod audio;
 mod coin;
 mod collision;
+#[cfg(debug_assertions)]
+mod collision_debug;
 mod game_area;
 mod gui;
 mod input;
 mod logic;
 mod player;
 mod sprites;
-pub mod sprites_debug;
+#[cfg(debug_assertions)]
+mod sprites_debug;
 
 pub const GAME_TITLE: &str = "Avoid Your Past";
-
 pub const VIEWPORT_W: f32 = GAME_AREA_W;
 pub const VIEWPORT_H: f32 = TOPBAR_H + GAME_AREA_H;
 
@@ -46,12 +49,10 @@ impl Plugin for GamePlugin {
         app.add_plugin(GameSpriteSheetPlugin);
         app.add_plugin(GameAudioPlugin);
 
-        app.add_plugin(PixelArtCameraPlugin);
+        app.add_plugin(PixelArtRenderingPlugin);
 
-        #[cfg(debug_assertions)]
-        app.add_plugin(SpritesBoundariesPlugin);
-
-        app.insert_resource(ClearColor(Pico8Color::Black.as_bevy_color()));
+        // #[cfg(debug_assertions)]
+        // app.add_plugin(SpritesBoundariesPlugin);
 
         app.add_startup_system(spawn_game_area);
 

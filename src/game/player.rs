@@ -3,9 +3,9 @@ use bevy::math::vec3;
 use bevy::prelude::*;
 use bevy::sprite::Anchor;
 
-#[cfg(debug_assertions)]
-use crate::game::collision::create_hit_circle_debug;
 use crate::game::collision::HitCircle;
+#[cfg(debug_assertions)]
+use crate::game::collision_debug::create_hit_circle_debug;
 use crate::game::game_area::{GAME_AREA_H, GAME_AREA_W};
 use crate::game::gui::TOPBAR_H;
 use crate::game::sprites::{SpriteDimensions, SpriteSheet};
@@ -88,7 +88,7 @@ fn spawn_player(
     parent_command.with_children(|parent| {
         parent.spawn(create_hit_circle_debug(
             &hit_circle,
-            Z_LAYER_SPRITES_COINS,
+            Z_LAYER_SPRITES_PLAYER,
             meshes,
             materials,
         ));

@@ -13,6 +13,7 @@ pub struct SpritesBoundariesPlugin;
 impl Plugin for SpritesBoundariesPlugin {
     // Uses https://crates.io/crates/bevy_prototype_debug_lines
     fn build(&self, app: &mut App) {
+        // TODO: does it still work? rework to another approach?
         app.add_plugin(bevy_prototype_debug_lines::DebugLinesPlugin::default())
             .add_system(draw_debug_sprite_boundaries);
     }
