@@ -6,7 +6,6 @@ pub use input::GameKeyboardControlsPlugin;
 pub use player::create_player_move_systems;
 pub use player::create_player_spawn_systems;
 pub use player::PlayerMovement;
-pub use sprites::SpriteDimensions;
 pub use sprites::GameSpriteSheetPlugin;
 
 use crate::game::animation::create_animate_sprite_systems;
@@ -23,16 +22,16 @@ mod animation;
 mod audio;
 mod coin;
 mod collision;
+mod collision_debug;
 mod game_area;
 mod gui;
 mod input;
 mod logic;
 mod player;
 mod sprites;
-pub mod sprites_debug;
+mod sprites_debug;
 
 pub const GAME_TITLE: &str = "Avoid Your Past";
-
 pub const VIEWPORT_W: f32 = GAME_AREA_W;
 pub const VIEWPORT_H: f32 = TOPBAR_H + GAME_AREA_H;
 

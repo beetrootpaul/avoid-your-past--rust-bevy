@@ -3,7 +3,7 @@ use std::ops::Add;
 use bevy::math::{vec3, Vec3Swizzles};
 use bevy::prelude::*;
 
-use crate::game::SpriteDimensions;
+use crate::game::sprites::SpriteDimensions;
 use crate::z_layer::Z_LAYER_DEBUG_SPRITE_BOUNDARIES;
 
 #[cfg(debug_assertions)]

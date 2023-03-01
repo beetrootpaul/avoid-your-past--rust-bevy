@@ -33,5 +33,6 @@ fn play_music(audio: Res<Audio>, audio_files: Res<AudioFiles>) {
         .music_base
         .clone()
         .expect("should have music_base file already loaded");
+    // TODO: remove kira, use built-in looped_play
     audio.play(music_base).looped();
 }

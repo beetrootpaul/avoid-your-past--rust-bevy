@@ -5,9 +5,9 @@ use bevy::sprite::Anchor;
 use rand::Rng;
 
 use crate::game::animation::AnimationFrames;
-#[cfg(debug_assertions)]
-use crate::game::collision::create_hit_circle_debug;
 use crate::game::collision::HitCircle;
+#[cfg(debug_assertions)]
+use crate::game::collision_debug::create_hit_circle_debug;
 use crate::game::gui::TOPBAR_H;
 use crate::game::sprites::{SpriteDimensions, SpriteSheet};
 use crate::z_layer::Z_LAYER_SPRITES_COINS;
@@ -48,7 +48,7 @@ fn spawn_coin(
 
     let animation_frames = AnimationFrames { first: 0, last: 31 };
     let hit_circle = HitCircle {
-        r: 3.5,
+        r: 3.7,
         offset: vec3(0., 0., 0.),
     };
     let mut parent_command = commands.spawn(CoinBundle {

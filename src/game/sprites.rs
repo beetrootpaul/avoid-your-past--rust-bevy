@@ -5,7 +5,7 @@ use bevy::prelude::*;
 const SPRITE_SHEET_SPRITE_W: f32 = 8.;
 const SPRITE_SHEET_SPRITE_H: f32 = 8.;
 const SPRITE_SHEET_COLUMNS: usize = 16;
-const SPRITE_SHEET_ROWS: usize = 3;
+const SPRITE_SHEET_ROWS: usize = 4;
 
 #[derive(Resource, Default)]
 pub struct SpriteSheet {

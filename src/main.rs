@@ -19,6 +19,11 @@ fn main() {
             .set(WindowPlugin {
                 window: WindowDescriptor {
                     title: game::GAME_TITLE.to_string(),
+                    // TODO: rendering in the web broke after introducing pixel art rendering :(
+                    // width: 512.0,
+                    // height: 256.0,
+                    width: 1280.,
+                    height: 720.,
                     ..default()
                 },
                 ..default()
