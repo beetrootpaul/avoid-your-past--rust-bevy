@@ -7,6 +7,7 @@ echo "When the command below runs, open http://127.0.0.1:1334/ in your browser."
 RUST_LOG=warn,bevy=info,avoid_your_past_rust_bevy=debug \
   cargo build --target wasm32-unknown-unknown
 
+# This command should serve the game under http://127.0.0.1:1334/
 wasm-server-runner ./target/wasm32-unknown-unknown/debug/avoid_your_past_rust_bevy.wasm
 
 # TODO: FIX RUST_LOG to work on web same as on desktop
