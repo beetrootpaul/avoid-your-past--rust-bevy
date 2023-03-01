@@ -16,13 +16,16 @@ jobs:
     #                          X11 or Wayland to compile Bevy app properly
     steps:
       - uses: actions/checkout@v3
-      - name: Update rustup and Rust toolchain, set it to "stable"
+      # See https://github.com/Spotifyd/spotifyd/issues/659#issuecomment-737730954
+      - name: "Install missing alsa dependency"
+        run: sudo apt install librust-alsa-sys-dev
+      - name: "Update rustup and Rust toolchain, set it to 'stable'"
         run: rustup update stable && rustup default stable
-      - name: Debug Build
+      - name: "Debug Build"
         run: cargo build --features bevy/x11 --all-targets --verbose
-      - name: Test
+      - name: "Test"
         run: cargo test --features bevy/x11 --verbose
-      - name: Lint
+      - name: "Lint"
         run: cargo clippy --features bevy/x11 --all-targets -- -D warnings
-      - name: Release Build
+      - name: "Release Build"
         run: RUSTFLAGS="-D warnings -A dead_code -A unused-imports -A unused_mut -A unused-variables" cargo build --release --features bevy/x11 --verbose

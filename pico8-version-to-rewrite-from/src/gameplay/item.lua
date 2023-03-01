@@ -22,24 +22,22 @@ function new_item(params)
 
     --
 
-    -- TODO
-    --function it.animate()
-    --    animated_sprite.advance_1_frame()
-    --end
+    function it.animate()
+        animated_sprite.advance_1_frame()
+    end
 
     --
 
-    -- TODO
-    --function it.draw()
-    --    palt(u.colors.black, false)
-    --    palt(u.colors.dark_blue, true)
-    --    spr(
-    --        animated_sprite.current_sprite(),
-    --        (tile_x - 1) * u.tile_px,
-    --        (tile_y - 1) * u.tile_px
-    --    )
-    --    palt()
-    --end
+    function it.draw()
+        palt(u.colors.black, false)
+        palt(u.colors.dark_blue, true)
+        spr(
+                animated_sprite.current_sprite(),
+                (tile_x - 1) * u.tile_px,
+                (tile_y - 1) * u.tile_px
+        )
+        palt()
+    end
 
     --
 

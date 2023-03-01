@@ -54,12 +54,11 @@ function new_level(params)
             --        tile_x = coin_tile.tile_x,
             --        tile_y = coin_tile.tile_y,
             collision_circle_r = 2.5,
-            -- TODO
-            --        animated_sprite = new_animated_sprite {
-            --            first_sprite = 16,
-            --            number_of_sprites = 16,
-            --            frames_per_sprite = 2,
-            --        }
+            animated_sprite = new_animated_sprite {
+                first_sprite = 16,
+                number_of_sprites = 16,
+                frames_per_sprite = 2,
+            }
         }
         -- TODO
         --end

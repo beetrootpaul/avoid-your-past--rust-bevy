@@ -69,8 +69,7 @@ fn main() {
 // TODO: UI resource 8: https://github.com/bevyengine/bevy/blob/latest/examples/games/game_menu.rs
 // TODO: UI resource 9: https://github.com/bevyengine/bevy/blob/latest/examples/2d/2d_shapes.rs
 
-// TODO: audio resource 1: https://github.com/bevyengine/bevy/blob/latest/examples/audio/audio.rs
-// TODO: audio resource 2: https://github.com/bevyengine/bevy/blob/latest/examples/audio/audio_control.rs
+// TODO: audio control: https://github.com/bevyengine/bevy/blob/latest/examples/audio/audio_control.rs
 
 // TODO: fixed FPS 1 https://github.com/bevyengine/bevy/blob/latest/examples/ecs/fixed_timestep.rs
 // TODO: fixed FPS 2 https://bevy-cheatbook.github.io/features/fixed-timestep.html

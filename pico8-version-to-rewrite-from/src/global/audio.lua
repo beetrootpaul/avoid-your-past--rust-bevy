@@ -30,7 +30,6 @@ audio = {}
 --    end
 --end
 
--- TODO
---function audio.play_sfx(sfx_number)
---    sfx(sfx_number, 0)
---end
+function audio.play_sfx(sfx_number)
+    sfx(sfx_number, 0)
+end
