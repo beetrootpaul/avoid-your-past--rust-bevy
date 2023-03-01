@@ -1,0 +1,18 @@
+name: "setup prerequisites (shared steps)"
+description: "Shared steps used to setup prerequisites for other jobs."
+runs:
+  using: "composite"
+  steps:
+    # See https://github.com/Spotifyd/spotifyd/issues/659#issuecomment-737730954
+    - name: "Install missing alsa dependency"
+      shell: sh
+      run: sudo apt install librust-alsa-sys-dev
+    - name: "Update rustup and Rust 'stable' toolchain"
+      shell: sh
+      run: rustup update stable
+    - name: "Set Rust toolchain to 'stable'"
+      shell: sh
+      run: rustup default stable
+    - name: "Install WASM target"
+      shell: sh
+      run: rustup target add wasm32-unknown-unknown
