@@ -27,3 +27,5 @@ cp ./assets/* ./target/release/assets/
 ./target/release/avoid_your_past_rust_bevy
 
 # TODO: check app size after build, wonder how heavy file would it be for web
+
+# TODO: MAKE THIS WASM

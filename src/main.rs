@@ -92,3 +92,5 @@ fn main() {
 
 // TODO: tests 1 https://github.com/bevyengine/bevy/blob/latest/tests/how_to_test_systems.rs
 // TODO: tests 2 https://bevy-cheatbook.github.io/programming/system-tests.html
+
+// TODO: pixel art rendering discord://discord.com/channels/691052431525675048/1075359868631928933/1075359868631928933
