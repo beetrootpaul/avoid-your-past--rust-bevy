@@ -16,7 +16,7 @@ a = {
     --    sfx_looped_empty_1 = 4,
     --    sfx_looped_empty_2 = 5,
     --    sfx_looped_empty_3 = 6,
-    --    sfx_coin = 0,
+    sfx_coin = 0,
 
     camera_x = 0,
     camera_y = -16,

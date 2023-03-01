@@ -17,7 +17,7 @@ pub struct SpriteSheetPlugin;
 impl Plugin for SpriteSheetPlugin {
     fn build(&self, app: &mut App) {
         app.init_resource::<SpriteSheet>()
-            .add_startup_system(ss_load_spritesheet);
+            .add_startup_system(load_spritesheet);
     }
 }
 
@@ -50,7 +50,7 @@ impl Default for SpriteDimensions {
     }
 }
 
-fn ss_load_spritesheet(
+fn load_spritesheet(
     mut commands: Commands,
     asset_server: Res<AssetServer>,
     mut texture_atlases: ResMut<Assets<TextureAtlas>>,

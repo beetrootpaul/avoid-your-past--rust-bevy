@@ -29,7 +29,8 @@ function new_game_state_gameplay(params)
         --        return
         --    end
         --
-        --    audio.play_sfx(a.sfx_coin)
+        audio.play_sfx(a.sfx_coin)
+        -- TODO
         --    score.add(10)
         --    if not mode.is_no_memories() then
         --        memories.add_memory()

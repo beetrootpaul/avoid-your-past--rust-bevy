@@ -10,6 +10,7 @@ pub use sprites::SpriteDimensions;
 pub use sprites::SpriteSheetPlugin;
 
 use crate::game::animation::create_animate_sprite_systems;
+use crate::game::audio::AudioPlugin;
 use crate::game::game_area::{spawn_game_area, GAME_AREA_H, GAME_AREA_W};
 use crate::game::gui::TOPBAR_H;
 use crate::game::logic::create_collect_coins_systems;
@@ -19,6 +20,7 @@ use crate::pico8_color::Pico8Color;
 use crate::pixel_art_support::{FixedFpsBevyAppExtension, FixedFpsPlugin, PixelArtCameraPlugin};
 
 mod animation;
+mod audio;
 mod coin;
 mod collision;
 mod game_area;
@@ -40,7 +42,9 @@ impl Plugin for GamePlugin {
     fn build(&self, app: &mut App) {
         app.add_plugin(KeyboardControlsPlugin);
 
+        // TODO: add some nice assertions for whether plugin was added or not, because right now error is very cryptic
         app.add_plugin(SpriteSheetPlugin);
+        app.add_plugin(AudioPlugin);
 
         app.add_plugin(PixelArtCameraPlugin);
 
