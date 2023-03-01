@@ -1,16 +1,16 @@
 use bevy::prelude::*;
 use crate::game::PlayerMovement;
 
-pub struct KeyboardControlsPlugin;
+pub struct GameKeyboardControlsPlugin;
 
-impl Plugin for KeyboardControlsPlugin {
+impl Plugin for GameKeyboardControlsPlugin {
     fn build(&self, app: &mut App) {
-        app.add_system(s_handle_keyboard_input);
+        app.add_system(handle_keyboard_input);
     }
 }
 
 // TODO: handle a case of multiple arrows pressed at once
-fn s_handle_keyboard_input(
+fn handle_keyboard_input(
     keyboard_input: Res<Input<KeyCode>>,
     mut query: Query<&mut PlayerMovement>,
 ) {

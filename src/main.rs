@@ -26,6 +26,7 @@ fn main() {
             .set(AssetPlugin {
                 // Watch for changes made to assets while the app is run and
                 // hot-reload them in the app without need to run the app again
+                #[cfg(debug_assertions)]
                 watch_for_changes: true,
                 ..default()
             })

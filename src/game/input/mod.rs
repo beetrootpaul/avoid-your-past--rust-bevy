@@ -1,3 +1,3 @@
-pub use keyboard_controls::KeyboardControlsPlugin;
+pub use keyboard_controls::GameKeyboardControlsPlugin;
 
 mod keyboard_controls;
