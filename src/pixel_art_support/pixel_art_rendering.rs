@@ -64,6 +64,6 @@ fn setup_pixel_art_rendering(mut commands: Commands, mut images: ResMut<Assets<I
 
     commands.spawn((
         output_render_layer,
-        bevy_pixel_camera::PixelCameraBundle::from_resolution(VIEWPORT_W as i32, VIEWPORT_H as i32),
+        bevy_pixel_camera::PixelCameraBundle::from_resolution((VIEWPORT_W * 1.) as i32, (VIEWPORT_H * 1.) as i32),
     ));
 }

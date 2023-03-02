@@ -1,8 +1,10 @@
 #!/usr/bin/env sh
-set -ex
+set -e
 
 RUSTFLAGS="-D warnings -A dead_code -A unused-imports -A unused_mut -A unused-variables" \
   cargo build --target wasm32-unknown-unknown --release
+
+echo "When the command below runs, open http://127.0.0.1:1334/ in your browser."
 
 # TODO: create a proper web release page, not this temporary quick way to start and run it
 # This command should serve the game under http://127.0.0.1:1334/

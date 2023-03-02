@@ -19,6 +19,11 @@ fn main() {
             .set(WindowPlugin {
                 window: WindowDescriptor {
                     title: game::GAME_TITLE.to_string(),
+                    // TODO: rendering in the web broke after introducing pixel art rendering :(
+                    // width: 512.0,
+                    // height: 256.0,
+                    width: 1280.,
+                    height: 720.,
                     ..default()
                 },
                 ..default()
@@ -36,7 +41,6 @@ fn main() {
 
     // Get rid of edges of neighbour sprites visible around the given sprite from the sprite sheet
     // Note: in DEBUG we don't set it in order to achieve nice debug circles elsewhere
-    #[cfg(not(debug_assertions))]
     app.insert_resource(Msaa { samples: 1 });
 
     app.add_plugin(GamePlugin);

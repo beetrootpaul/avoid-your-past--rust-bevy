@@ -60,7 +60,7 @@ fn spawn_player(
     let initial_movement = PlayerMovement::Right;
 
     let hit_circle = HitCircle {
-        r: 4.,
+        r: 8.,
         offset: vec3(-0.5, 0.5, 0.),
     };
 

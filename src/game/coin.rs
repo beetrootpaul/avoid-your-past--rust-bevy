@@ -48,7 +48,7 @@ fn spawn_coin(
 
     let animation_frames = AnimationFrames { first: 0, last: 31 };
     let hit_circle = HitCircle {
-        r: 3.5,
+        r: 6.5,
         offset: vec3(0., 0., 0.),
     };
     let mut parent_command = commands.spawn(CoinBundle {
