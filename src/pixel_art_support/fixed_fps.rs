@@ -3,7 +3,7 @@ use std::time::Duration;
 use bevy::prelude::*;
 use iyes_loopless::prelude::AppLooplessFixedTimestepExt;
 
-const FIXED_FPS: u64 = 10;
+const FIXED_FPS: u64 = 30;
 
 const FIXED_TIMESTEP_LABEL: &str = "fixed_timestep_label";
 
