@@ -59,7 +59,7 @@ features = [
     "bevy_asset", # Assets management
     #    "bevy_scene",         # Scenes management
     #    "bevy_gilrs",         # Gamepad input support
-    "bevy_audio", # Builtin audio
+    #    "bevy_audio",         # Builtin audio | WARNING: Do not enabl it, because we use bevy_kira_audio instead
     "bevy_winit", # Window management
     #    "animation",          # Animation support
     #    "x11",                # Linux: Support X11 windowing system
@@ -79,7 +79,7 @@ features = [
     # File formats:
     "png",
     #    "hdr",
-    #    "vorbis",
+    #    "vorbis", # WARNING: Do not enabl it, because we use bevy_kira_audio instead
 
     # These are other features that may be of interest:
     # (add any of these that you need)
@@ -98,13 +98,23 @@ features = [
     #    "tga",
     #    "basis-universal",
     #    "zstd", # needed if using zstd in KTX2 files
-    #    "flac",
-    #    "mp3",
-    "wav",
+    #    "flac", # WARNING: Do not enable it, because we use bevy_kira_audio instead
+    #    "mp3",  # WARNING: Do not enable it, because we use bevy_kira_audio instead
+    #    "wav",  # WARNING: Do not enable it, because we use bevy_kira_audio instead
     # Development/Debug features:
     #    "dynamic",      # Dynamic linking for faster compile-times
     #    "trace",        # Enable tracing for performance measurement
     #    "trace_tracy",  # Tracing using `tracy`
     #    "trace_chrome", # Tracing using the Chrome format
     #    "wgpu_trace",   # WGPU/rendering tracing
+]
+
+[dependencies.bevy_kira_audio]
+version = "0.13.0"
+default-features = false
+features = [
+    "wav",
+    #    "flac",
+    #    "mp3",
+    #    "ogg",
 ]

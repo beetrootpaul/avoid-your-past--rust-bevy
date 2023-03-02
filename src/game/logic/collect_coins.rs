@@ -1,10 +1,11 @@
 use std::ops::Add;
 
 use bevy::prelude::*;
+use bevy_kira_audio::{Audio, AudioControl};
 
+use crate::game::audio::AudioFiles;
 use crate::game::collision::HitCircle;
 use crate::game::player::Player;
-use crate::game::audio::AudioFiles;
 use crate::game::Coin;
 
 pub fn create_collect_coins_systems() -> SystemSet {
@@ -15,8 +16,8 @@ fn collect_coins(
     mut commands: Commands,
     players_query: Query<(&Transform, &HitCircle), With<Player>>,
     coins_query: Query<(Entity, &Transform, &HitCircle), With<Coin>>,
-    sfx: Res<AudioFiles>,
     audio: Res<Audio>,
+    audio_files: Res<AudioFiles>,
 ) {
     for (player_transform, player_hit_circle) in players_query.iter() {
         for (coin_entity, coin_transform, coin_hit_circle) in coins_query.iter() {
@@ -26,9 +27,12 @@ fn collect_coins(
                 .distance(coin_transform.translation.add(coin_hit_circle.offset));
             if distance < (player_hit_circle.r + coin_hit_circle.r) {
                 commands.entity(coin_entity).despawn_recursive();
-                if let Some(sfx) = sfx.sfx_coin_collected.clone() {
-                    audio.play(sfx);
-                }
+                // TODO: consider moving audio play somewhere else, and here just a simple function call or event maybe?
+                let sfx = audio_files
+                    .sfx_coin_collected
+                    .clone()
+                    .expect("should have sfx_coin_collected file already loaded");
+                audio.play(sfx);
             }
         }
     }

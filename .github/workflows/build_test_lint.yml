@@ -1,4 +1,4 @@
-name: "build -> test -> lint"
+name: "build, test, lint"
 
 on:
   push:
@@ -9,23 +9,56 @@ on:
 env:
   CARGO_TERM_COLOR: always
 
+# TODO: split into several jobs, so I can easily see which target/release fails
+
 jobs:
-  build_test_lint_job:
+
+  test:
     runs-on: ubuntu-latest
-    # --features bevy/wayland: this action run on Linux, therefore require either
-    #                          X11 or Wayland to compile Bevy app properly
     steps:
       - uses: actions/checkout@v3
-      # See https://github.com/Spotifyd/spotifyd/issues/659#issuecomment-737730954
-      - name: "Install missing alsa dependency"
-        run: sudo apt install librust-alsa-sys-dev
-      - name: "Update rustup and Rust toolchain, set it to 'stable'"
-        run: rustup update stable && rustup default stable
-      - name: "Debug Build"
-        run: cargo build --features bevy/x11 --all-targets --verbose
+      - uses: ./.github/actions/shared-steps-setup-prerequisites
       - name: "Test"
         run: cargo test --features bevy/x11 --verbose
+
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: ./.github/actions/shared-steps-setup-prerequisites
       - name: "Lint"
         run: cargo clippy --features bevy/x11 --all-targets -- -D warnings
-      - name: "Release Build"
+
+  build_debug_desktop:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: ./.github/actions/shared-steps-setup-prerequisites
+      # --features bevy/x11: this job run on Linux, therefore require either X11 or Wayland to compile Bevy app properly
+      - name: "Build"
+        run: cargo build --features bevy/x11 --verbose
+
+  build_debug_web:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: ./.github/actions/shared-steps-setup-prerequisites
+      - name: "Build"
+        run: cargo build  --target wasm32-unknown-unknown --verbose
+
+  build_release_desktop:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: ./.github/actions/shared-steps-setup-prerequisites
+      # --features bevy/x11: this job run on Linux, therefore require either X11 or Wayland to compile Bevy app properly
+      - name: "Build"
         run: RUSTFLAGS="-D warnings -A dead_code -A unused-imports -A unused_mut -A unused-variables" cargo build --release --features bevy/x11 --verbose
+
+  build_release_web:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: ./.github/actions/shared-steps-setup-prerequisites
+      - name: "Build"
+        run: RUSTFLAGS="-D warnings -A dead_code -A unused-imports -A unused_mut -A unused-variables" cargo build --release --target wasm32-unknown-unknown --verbose

@@ -2,15 +2,15 @@ use bevy::prelude::*;
 
 pub use coin::create_coin_spawn_systems;
 pub use coin::Coin;
-pub use input::KeyboardControlsPlugin;
+pub use input::GameKeyboardControlsPlugin;
 pub use player::create_player_move_systems;
 pub use player::create_player_spawn_systems;
 pub use player::PlayerMovement;
 pub use sprites::SpriteDimensions;
-pub use sprites::SpriteSheetPlugin;
+pub use sprites::GameSpriteSheetPlugin;
 
 use crate::game::animation::create_animate_sprite_systems;
-use crate::game::audio::AudioPlugin;
+use crate::game::audio::GameAudioPlugin;
 use crate::game::game_area::{spawn_game_area, GAME_AREA_H, GAME_AREA_W};
 use crate::game::gui::TOPBAR_H;
 use crate::game::logic::create_collect_coins_systems;
@@ -40,11 +40,11 @@ pub struct GamePlugin;
 
 impl Plugin for GamePlugin {
     fn build(&self, app: &mut App) {
-        app.add_plugin(KeyboardControlsPlugin);
+        app.add_plugin(GameKeyboardControlsPlugin);
 
         // TODO: add some nice assertions for whether plugin was added or not, because right now error is very cryptic
-        app.add_plugin(SpriteSheetPlugin);
-        app.add_plugin(AudioPlugin);
+        app.add_plugin(GameSpriteSheetPlugin);
+        app.add_plugin(GameAudioPlugin);
 
         app.add_plugin(PixelArtCameraPlugin);
 

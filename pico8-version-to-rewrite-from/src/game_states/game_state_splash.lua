@@ -28,8 +28,8 @@ function new_game_state_splash()
     --    end,
     --})
 
+    audio.play_music()
     -- TODO
-    --audio.play_music()
     --audio.enable_music_layers { false, false, false }
 
     local gs = {}

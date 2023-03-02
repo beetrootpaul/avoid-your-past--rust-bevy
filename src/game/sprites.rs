@@ -12,9 +12,9 @@ pub struct SpriteSheet {
     pub texture_atlas_handle: Option<Handle<TextureAtlas>>,
 }
 
-pub struct SpriteSheetPlugin;
+pub struct GameSpriteSheetPlugin;
 
-impl Plugin for SpriteSheetPlugin {
+impl Plugin for GameSpriteSheetPlugin {
     fn build(&self, app: &mut App) {
         app.init_resource::<SpriteSheet>()
             .add_startup_system(load_spritesheet);

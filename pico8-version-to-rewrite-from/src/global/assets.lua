@@ -9,8 +9,9 @@ a = {
     -- TODO
     --    bg_color_mode_no_coins = u.colors.orange,
     --    bg_color_mode_no_memories = u.colors.pink,
-    --
-    --    music = 1,
+
+    music = 1,
+    -- TODO
     --    music_beat_frames = 16,
     --
     --    sfx_looped_empty_1 = 4,

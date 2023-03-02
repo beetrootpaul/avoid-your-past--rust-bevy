@@ -4,10 +4,9 @@
 
 audio = {}
 
--- TODO
---function audio.play_music()
---    music(a.music)
---end
+function audio.play_music()
+    music(a.music)
+end
 
 -- TODO
 --function audio.enable_music_layers(enable_layers)

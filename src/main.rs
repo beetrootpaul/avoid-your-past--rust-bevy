@@ -26,6 +26,7 @@ fn main() {
             .set(AssetPlugin {
                 // Watch for changes made to assets while the app is run and
                 // hot-reload them in the app without need to run the app again
+                #[cfg(debug_assertions)]
                 watch_for_changes: true,
                 ..default()
             })
@@ -91,3 +92,5 @@ fn main() {
 
 // TODO: tests 1 https://github.com/bevyengine/bevy/blob/latest/tests/how_to_test_systems.rs
 // TODO: tests 2 https://bevy-cheatbook.github.io/programming/system-tests.html
+
+// TODO: pixel art rendering discord://discord.com/channels/691052431525675048/1075359868631928933/1075359868631928933
