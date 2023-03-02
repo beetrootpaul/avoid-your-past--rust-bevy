@@ -5,8 +5,8 @@ use bevy::sprite::Anchor;
 use rand::Rng;
 
 use crate::game::animation::AnimationFrames;
-#[cfg(debug_assertions)]
 use crate::game::collision::HitCircle;
+#[cfg(debug_assertions)]
 use crate::game::collision_debug::create_hit_circle_debug;
 use crate::game::gui::TOPBAR_H;
 use crate::game::sprites::{SpriteDimensions, SpriteSheet};

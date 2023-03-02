@@ -4,6 +4,7 @@ use bevy::prelude::*;
 use bevy::sprite::Anchor;
 
 use crate::game::collision::HitCircle;
+#[cfg(debug_assertions)]
 use crate::game::collision_debug::create_hit_circle_debug;
 use crate::game::game_area::{GAME_AREA_H, GAME_AREA_W};
 use crate::game::gui::TOPBAR_H;

@@ -19,7 +19,6 @@ mod animation;
 mod audio;
 mod coin;
 mod collision;
-#[cfg(debug_assertions)]
 mod collision_debug;
 mod game_area;
 mod gui;
