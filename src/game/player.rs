@@ -4,12 +4,11 @@ use bevy::prelude::*;
 use bevy::sprite::Anchor;
 
 use crate::game::collision::HitCircle;
-#[cfg(debug_assertions)]
 use crate::game::collision_debug::create_hit_circle_debug;
 use crate::game::game_area::{GAME_AREA_H, GAME_AREA_W};
 use crate::game::gui::TOPBAR_H;
 use crate::game::sprites::{SpriteDimensions, SpriteSheet};
-use crate::z_layer::{Z_LAYER_SPRITES_COINS, Z_LAYER_SPRITES_PLAYER};
+use crate::z_layer::Z_LAYER_SPRITES_PLAYER;
 
 #[derive(Component)]
 pub struct Player;
@@ -57,10 +56,13 @@ fn spawn_player(
     meshes: ResMut<Assets<Mesh>>,
     materials: ResMut<Assets<ColorMaterial>>,
 ) {
+    let initial_movement = PlayerMovement::Right;
+
     let hit_circle = HitCircle {
         r: 4.,
         offset: vec3(-0.5, 0.5, 0.),
     };
+
     let mut parent_command = commands.spawn(PlayerBundle {
         player: Player,
         sprite_sheet_bundle: SpriteSheetBundle {
@@ -69,13 +71,13 @@ fn spawn_player(
             transform: Transform::from_xyz(0., -TOPBAR_H / 2., Z_LAYER_SPRITES_PLAYER),
             texture_atlas: sprite_sheet.texture_atlas_handle.clone().unwrap(),
             sprite: TextureAtlasSprite {
-                index: 19,
+                index: get_sprite_index_for_movement(&initial_movement),
                 anchor: Anchor::Center,
                 ..default()
             },
             ..default()
         },
-        player_movement: PlayerMovement::Right,
+        player_movement: initial_movement,
         sprite_dimensions: SpriteDimensions {
             padding_right: 1.,
             padding_bottom: 1.,
@@ -126,11 +128,15 @@ fn move_player(mut query: Query<(&PlayerMovement, &mut Transform, Option<&Sprite
 
 fn update_player_sprite(mut query: Query<(&PlayerMovement, &mut TextureAtlasSprite)>) {
     for (player_movement, mut sprite) in query.iter_mut() {
-        sprite.index = match *player_movement {
-            PlayerMovement::Up => 34,
-            PlayerMovement::Right => 35,
-            PlayerMovement::Down => 36,
-            PlayerMovement::Left => 37,
-        };
+        sprite.index = get_sprite_index_for_movement(player_movement);
+    }
+}
+
+fn get_sprite_index_for_movement(movement: &PlayerMovement) -> usize {
+    match *movement {
+        PlayerMovement::Up => 34,
+        PlayerMovement::Right => 35,
+        PlayerMovement::Down => 36,
+        PlayerMovement::Left => 37,
     }
 }

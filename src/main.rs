@@ -35,6 +35,8 @@ fn main() {
     );
 
     // Get rid of edges of neighbour sprites visible around the given sprite from the sprite sheet
+    // Note: in DEBUG we don't set it in order to achieve nice debug circles elsewhere
+    #[cfg(not(debug_assertions))]
     app.insert_resource(Msaa { samples: 1 });
 
     app.add_plugin(GamePlugin);
