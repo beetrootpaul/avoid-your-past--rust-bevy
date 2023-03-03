@@ -7,7 +7,7 @@ use rand::Rng;
 use crate::game::animation::AnimationFrames;
 use crate::game::collision::HitCircle;
 #[cfg(debug_assertions)]
-use crate::game::collision_debug::create_hit_circle_debug;
+use crate::game::collision_debug::create_hit_circle_visualization;
 use crate::game::gui::TOPBAR_H;
 use crate::game::sprites::{SpriteDimensions, SpriteSheet};
 use crate::z_layer::Z_LAYER_SPRITES_COINS;
@@ -84,7 +84,7 @@ fn spawn_coin(
 
     #[cfg(debug_assertions)]
     parent_command.with_children(|parent| {
-        parent.spawn(create_hit_circle_debug(
+        parent.spawn(create_hit_circle_visualization(
             &hit_circle,
             Z_LAYER_SPRITES_COINS,
             meshes,

@@ -86,7 +86,7 @@ fn age_particles(
     mut commands: Commands,
     mut query: Query<(Entity, &mut TrailParticle, Option<&mut TextureAtlasSprite>)>,
 ) {
-    for (particle_entity, mut trail_particle, mut maybe_sprite) in query.iter_mut() {
+    for (particle_entity, mut trail_particle, maybe_sprite) in query.iter_mut() {
         trail_particle.ttl_frames -= 1;
         if trail_particle.ttl_frames <= 0 {
             commands.entity(particle_entity).despawn_recursive();
@@ -96,9 +96,6 @@ fn age_particles(
                 8.. => SpriteSheet::TRAIL_PARTICLE_3PX,
                 _ => SpriteSheet::TRAIL_PARTICLE_1PX,
             }
-        }
-        if trail_particle.ttl_frames <= 0 {
-            commands.entity(particle_entity).despawn_recursive();
         }
     }
 }

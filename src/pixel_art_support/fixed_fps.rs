@@ -58,7 +58,7 @@ impl FixedFpsBevyAppExtension for App {
     }
 }
 
-fn log_measurements(timesteps: Res<iyes_loopless::fixedtimestep::FixedTimesteps>, time: Res<Time>) {
+fn log_measurements(timesteps: Res<iyes_loopless::fixedtimestep::FixedTimesteps>) {
     let info = timesteps
         .get_current()
         .expect("should get current fixed timestep");

@@ -10,12 +10,15 @@ pub use sprites::GameSpriteSheetPlugin;
 
 use crate::game::animation::create_systems_animate_sprite;
 use crate::game::audio::GameAudioPlugin;
+use crate::game::collision_debug::HitCirclesVisualizationPlugin;
 use crate::game::game_area::{spawn_game_area, GAME_AREA_H, GAME_AREA_W};
 use crate::game::gui::TOPBAR_H;
 use crate::game::logic::create_systems_collect_coins;
 #[cfg(debug_assertions)]
 use crate::game::sprites_debug::SpritesBoundariesPlugin;
-use crate::game::trail::{create_systems_trail_particles_age, create_systems_trail_particles_spawn};
+use crate::game::trail::{
+    create_systems_trail_particles_age, create_systems_trail_particles_spawn,
+};
 use crate::pico8_color::Pico8Color;
 use crate::pixel_art_support::{FixedFpsBevyAppExtension, FixedFpsPlugin, PixelArtCameraPlugin};
 
@@ -51,6 +54,8 @@ impl Plugin for GamePlugin {
 
         #[cfg(debug_assertions)]
         app.add_plugin(SpritesBoundariesPlugin);
+        #[cfg(debug_assertions)]
+        app.add_plugin(HitCirclesVisualizationPlugin);
 
         app.insert_resource(ClearColor(Pico8Color::Black.as_bevy_color()));
 
