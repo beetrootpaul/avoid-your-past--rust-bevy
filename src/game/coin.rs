@@ -24,7 +24,7 @@ struct CoinBundle {
     hit_circle: HitCircle,
 }
 
-pub fn create_coin_spawn_systems() -> SystemSet {
+pub fn create_systems_coin_spawn() -> SystemSet {
     SystemSet::new()
         .with_run_criteria(there_is_no_coin)
         .with_system(spawn_coin)
@@ -46,7 +46,10 @@ fn spawn_coin(
 ) {
     let mut rng = rand::thread_rng();
 
-    let animation_frames = AnimationFrames { first: 0, last: 31 };
+    let animation_frames = AnimationFrames {
+        first: SpriteSheet::COIN_FIRST,
+        last: SpriteSheet::COIN_LAST,
+    };
     let hit_circle = HitCircle {
         r: 3.7,
         offset: vec3(0., 0., 0.),

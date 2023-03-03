@@ -1,20 +1,21 @@
 use bevy::prelude::*;
 
-pub use coin::create_coin_spawn_systems;
+pub use coin::create_systems_coin_spawn;
 pub use coin::Coin;
 pub use input::GameKeyboardControlsPlugin;
-pub use player::create_player_move_systems;
-pub use player::create_player_spawn_systems;
+pub use player::create_systems_player_move;
+pub use player::create_systems_player_spawn;
 pub use player::PlayerMovement;
 pub use sprites::GameSpriteSheetPlugin;
 
-use crate::game::animation::create_animate_sprite_systems;
+use crate::game::animation::create_systems_animate_sprite;
 use crate::game::audio::GameAudioPlugin;
 use crate::game::game_area::{spawn_game_area, GAME_AREA_H, GAME_AREA_W};
 use crate::game::gui::TOPBAR_H;
-use crate::game::logic::create_collect_coins_systems;
+use crate::game::logic::create_systems_collect_coins;
 #[cfg(debug_assertions)]
 use crate::game::sprites_debug::SpritesBoundariesPlugin;
+use crate::game::trail::{create_systems_trail_particles_age, create_systems_trail_particles_spawn};
 use crate::pico8_color::Pico8Color;
 use crate::pixel_art_support::{FixedFpsBevyAppExtension, FixedFpsPlugin, PixelArtCameraPlugin};
 
@@ -30,6 +31,7 @@ mod logic;
 mod player;
 mod sprites;
 mod sprites_debug;
+mod trail;
 
 pub const GAME_TITLE: &str = "Avoid Your Past";
 pub const VIEWPORT_W: f32 = GAME_AREA_W;
@@ -58,12 +60,14 @@ impl Plugin for GamePlugin {
         app.add_plugin(FixedFpsPlugin);
         #[cfg(debug_assertions)]
         app.log_fixed_fps_measurements();
-        app.add_fixed_fps_stage(vec![create_player_move_systems()]);
-        app.add_fixed_fps_stage(vec![create_collect_coins_systems()]);
-        app.add_fixed_fps_stage(vec![create_animate_sprite_systems()]);
+        app.add_fixed_fps_stage(vec![create_systems_trail_particles_age()]);
+        app.add_fixed_fps_stage(vec![create_systems_player_move()]);
+        app.add_fixed_fps_stage(vec![create_systems_collect_coins()]);
+        app.add_fixed_fps_stage(vec![create_systems_animate_sprite()]);
         app.add_fixed_fps_stage(vec![
-            create_player_spawn_systems(),
-            create_coin_spawn_systems(),
+            create_systems_player_spawn(),
+            create_systems_coin_spawn(),
         ]);
+        app.add_fixed_fps_stage(vec![create_systems_trail_particles_spawn()]);
     }
 }

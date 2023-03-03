@@ -11,12 +11,16 @@ pub struct FixedFpsPlugin;
 
 impl Plugin for FixedFpsPlugin {
     fn build(&self, app: &mut App) {
-        app.add_fixed_timestep(
-            Duration::from_nanos(1_000_000_000 / FIXED_FPS),
-            FIXED_TIMESTEP_LABEL,
-        );
+        let duration = Duration::from_nanos(1_000_000_000 / FIXED_FPS);
+        app.add_fixed_timestep(duration, FIXED_TIMESTEP_LABEL);
+        app.insert_resource(FixedFpsTime { duration });
         app.insert_resource(LastSubstageIndex(0));
     }
+}
+
+#[derive(Resource)]
+pub struct FixedFpsTime {
+    pub duration: Duration,
 }
 
 #[derive(Resource)]
@@ -54,7 +58,7 @@ impl FixedFpsBevyAppExtension for App {
     }
 }
 
-fn log_measurements(timesteps: Res<iyes_loopless::fixedtimestep::FixedTimesteps>) {
+fn log_measurements(timesteps: Res<iyes_loopless::fixedtimestep::FixedTimesteps>, time: Res<Time>) {
     let info = timesteps
         .get_current()
         .expect("should get current fixed timestep");

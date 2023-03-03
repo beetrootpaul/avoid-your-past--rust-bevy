@@ -9,6 +9,8 @@ use crate::game::collision_debug::create_hit_circle_debug;
 use crate::game::game_area::{GAME_AREA_H, GAME_AREA_W};
 use crate::game::gui::TOPBAR_H;
 use crate::game::sprites::{SpriteDimensions, SpriteSheet};
+use crate::game::trail::TrailOrigin;
+use crate::pixel_art_support::FixedFpsTime;
 use crate::z_layer::Z_LAYER_SPRITES_PLAYER;
 
 #[derive(Component)]
@@ -29,15 +31,16 @@ struct PlayerBundle {
     player_movement: PlayerMovement,
     sprite_dimensions: SpriteDimensions,
     hit_circle: HitCircle,
+    trail_origin: TrailOrigin,
 }
 
-pub fn create_player_spawn_systems() -> SystemSet {
+pub fn create_systems_player_spawn() -> SystemSet {
     SystemSet::new()
         .with_run_criteria(there_is_no_player)
         .with_system(spawn_player)
 }
 
-pub fn create_player_move_systems() -> SystemSet {
+pub fn create_systems_player_move() -> SystemSet {
     SystemSet::new()
         .with_system(move_player)
         .with_system(update_player_sprite)
@@ -56,6 +59,7 @@ fn spawn_player(
     sprite_sheet: Res<SpriteSheet>,
     meshes: ResMut<Assets<Mesh>>,
     materials: ResMut<Assets<ColorMaterial>>,
+    fixed_fps_time: Res<FixedFpsTime>,
 ) {
     let initial_movement = PlayerMovement::Right;
 
@@ -87,6 +91,10 @@ fn spawn_player(
             ..default()
         },
         hit_circle: hit_circle.clone(),
+        // TODO: express time in frames, instead of seconds maybe?
+        trail_origin: TrailOrigin::with_seconds_between_particles(
+            4. * fixed_fps_time.duration.as_secs_f32(),
+        ),
     });
 
     #[cfg(debug_assertions)]
@@ -137,9 +145,9 @@ fn update_player_sprite(mut query: Query<(&PlayerMovement, &mut TextureAtlasSpri
 
 fn get_sprite_index_for_movement(movement: &PlayerMovement) -> usize {
     match *movement {
-        PlayerMovement::Up => 34,
-        PlayerMovement::Right => 35,
-        PlayerMovement::Down => 36,
-        PlayerMovement::Left => 37,
+        PlayerMovement::Up => SpriteSheet::PLAYER_UP,
+        PlayerMovement::Right => SpriteSheet::PLAYER_RIGHT,
+        PlayerMovement::Down => SpriteSheet::PLAYER_DOWN,
+        PlayerMovement::Left => SpriteSheet::PLAYER_LEFT,
     }
 }

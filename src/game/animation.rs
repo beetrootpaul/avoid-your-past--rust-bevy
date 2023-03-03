@@ -1,12 +1,14 @@
 use bevy::prelude::{Component, Query, SystemSet, TextureAtlasSprite};
 
+// TODO: assert first <= last
+
 #[derive(Component)]
 pub struct AnimationFrames {
     pub first: usize,
     pub last: usize,
 }
 
-pub fn create_animate_sprite_systems() -> SystemSet {
+pub fn create_systems_animate_sprite() -> SystemSet {
     SystemSet::new().with_system(animate_sprites)
 }
 

@@ -8,7 +8,7 @@ use crate::game::collision::HitCircle;
 use crate::game::player::Player;
 use crate::game::Coin;
 
-pub fn create_collect_coins_systems() -> SystemSet {
+pub fn create_systems_collect_coins() -> SystemSet {
     SystemSet::new().with_system(collect_coins)
 }
 
