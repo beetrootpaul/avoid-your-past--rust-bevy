@@ -2,12 +2,14 @@ use bevy::ecs::schedule::ShouldRun;
 use bevy::math::vec3;
 use bevy::prelude::*;
 use bevy::sprite::Anchor;
+use iyes_loopless::prelude::IntoConditionalSystem;
 use rand::Rng;
 
 use crate::game::animation::AnimationFrames;
 use crate::game::collision::HitCircle;
 #[cfg(debug_assertions)]
 use crate::game::collision_debug::create_hit_circle_visualization;
+use crate::game::GameState;
 use crate::game::gui::TOPBAR_H;
 use crate::game::sprites::{SpriteDimensions, SpriteSheet};
 use crate::z_layer::Z_LAYER_SPRITES_COINS;
@@ -27,7 +29,7 @@ struct CoinBundle {
 pub fn create_systems_coin_spawn() -> SystemSet {
     SystemSet::new()
         .with_run_criteria(there_is_no_coin)
-        .with_system(spawn_coin)
+        .with_system(spawn_coin.run_in_state(GameState::InGame))
 }
 
 fn there_is_no_coin(query: Query<&Coin>) -> ShouldRun {

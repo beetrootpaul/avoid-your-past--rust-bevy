@@ -2,11 +2,13 @@ use bevy::ecs::schedule::ShouldRun;
 use bevy::math::vec3;
 use bevy::prelude::*;
 use bevy::sprite::Anchor;
+use iyes_loopless::prelude::{ConditionSet, IntoConditionalSystem};
 
 use crate::game::collision::HitCircle;
 #[cfg(debug_assertions)]
 use crate::game::collision_debug::create_hit_circle_visualization;
 use crate::game::game_area::{GAME_AREA_H, GAME_AREA_W};
+use crate::game::GameState;
 use crate::game::gui::TOPBAR_H;
 use crate::game::sprites::{SpriteDimensions, SpriteSheet};
 use crate::game::trail::TrailOrigin;
@@ -37,13 +39,13 @@ struct PlayerBundle {
 pub fn create_systems_player_spawn() -> SystemSet {
     SystemSet::new()
         .with_run_criteria(there_is_no_player)
-        .with_system(spawn_player)
+        .with_system(spawn_player.run_in_state(GameState::InGame))
 }
 
 pub fn create_systems_player_move() -> SystemSet {
     SystemSet::new()
-        .with_system(move_player)
-        .with_system(update_player_sprite)
+        .with_system(move_player.run_in_state(GameState::InGame))
+        .with_system(update_player_sprite.run_in_state(GameState::InGame))
 }
 
 fn there_is_no_player(query: Query<&Player>) -> ShouldRun {

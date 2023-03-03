@@ -1,4 +1,5 @@
 use bevy::prelude::*;
+use iyes_loopless::prelude::{AppLooplessStateExt, IntoConditionalSystem};
 
 pub use coin::create_systems_coin_spawn;
 pub use coin::Coin;
@@ -44,6 +45,8 @@ pub struct GamePlugin;
 
 impl Plugin for GamePlugin {
     fn build(&self, app: &mut App) {
+        app.add_loopless_state(GameState::InGame);
+
         app.add_plugin(GameKeyboardControlsPlugin);
 
         // TODO: add some nice assertions for whether plugin was added or not, because right now error is very cryptic
@@ -75,4 +78,11 @@ impl Plugin for GamePlugin {
         ]);
         app.add_fixed_fps_stage(vec![create_systems_trail_particles_spawn()]);
     }
+}
+
+#[derive(Clone, Eq, PartialEq, Hash, Debug)]
+enum GameState {
+    InGame,
+    #[cfg(debug_assertions)]
+    DebugPause,
 }

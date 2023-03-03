@@ -1,8 +1,10 @@
 use bevy::prelude::*;
+use iyes_loopless::prelude::NextState;
+use iyes_loopless::state::CurrentState;
 
+use crate::game::{GameState, PlayerMovement};
 use crate::game::collision_debug::HitCirclesVisualizationConfig;
 use crate::game::sprites_debug::SpritesBoundariesConfig;
-use crate::game::PlayerMovement;
 
 pub struct GameKeyboardControlsPlugin;
 
@@ -16,6 +18,8 @@ impl Plugin for GameKeyboardControlsPlugin {
 fn handle_keyboard_input(
     keyboard_input: Res<Input<KeyCode>>,
     mut player_movement_query: Query<&mut PlayerMovement>,
+    mut commands: Commands,
+    current_state: Res<CurrentState<GameState>>,
     sprites_boundaries_config: Option<ResMut<SpritesBoundariesConfig>>,
     hit_circles_visualization_config: Option<ResMut<HitCirclesVisualizationConfig>>,
 ) {
@@ -40,6 +44,15 @@ fn handle_keyboard_input(
         }
     }
 
+    // d = enter [d]ebug pause
+    #[cfg(debug_assertions)]
+    if keyboard_input.just_pressed(KeyCode::D) {
+        commands.insert_resource(match *current_state {
+            CurrentState(GameState::InGame) => NextState(GameState::DebugPause),
+            CurrentState(GameState::DebugPause) => NextState(GameState::InGame),
+        });
+        // TODO: pause music as well?
+    }
     // s = draw [s]prite boundaries
     #[cfg(debug_assertions)]
     if keyboard_input.just_pressed(KeyCode::S) {
