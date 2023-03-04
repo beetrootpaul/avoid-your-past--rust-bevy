@@ -1,6 +1,7 @@
 use bevy::prelude::{Component, Query, SystemSet, TextureAtlasSprite};
-use iyes_loopless::prelude::IntoConditionalSystem;
-use crate::game::GameState;
+use iyes_loopless::prelude::ConditionSet;
+
+use crate::game::game_state::GameState;
 
 // TODO: assert first <= last
 
@@ -11,7 +12,10 @@ pub struct AnimationFrames {
 }
 
 pub fn create_systems_animate_sprite() -> SystemSet {
-    SystemSet::new().with_system(animate_sprites.run_in_state(GameState::InGame))
+    ConditionSet::new()
+        .run_if(GameState::should_game_update)
+        .with_system(animate_sprites)
+        .into()
 }
 
 fn animate_sprites(mut query: Query<(&AnimationFrames, &mut TextureAtlasSprite)>) {

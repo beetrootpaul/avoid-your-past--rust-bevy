@@ -1,5 +1,5 @@
 use bevy::prelude::*;
-use iyes_loopless::prelude::{AppLooplessStateExt, IntoConditionalSystem};
+use iyes_loopless::prelude::AppLooplessStateExt;
 
 pub use coin::create_systems_coin_spawn;
 pub use coin::Coin;
@@ -13,6 +13,7 @@ use crate::game::animation::create_systems_animate_sprite;
 use crate::game::audio::GameAudioPlugin;
 use crate::game::collision_debug::HitCirclesVisualizationPlugin;
 use crate::game::game_area::{spawn_game_area, GAME_AREA_H, GAME_AREA_W};
+use crate::game::game_state::{create_system_update_game_state, GameState};
 use crate::game::gui::TOPBAR_H;
 use crate::game::logic::create_systems_collect_coins;
 #[cfg(debug_assertions)]
@@ -29,6 +30,7 @@ mod coin;
 mod collision;
 mod collision_debug;
 mod game_area;
+mod game_state;
 mod gui;
 mod input;
 mod logic;
@@ -77,12 +79,6 @@ impl Plugin for GamePlugin {
             create_systems_coin_spawn(),
         ]);
         app.add_fixed_fps_stage(vec![create_systems_trail_particles_spawn()]);
+        app.add_fixed_fps_stage(vec![create_system_update_game_state()]);
     }
-}
-
-#[derive(Clone, Eq, PartialEq, Hash, Debug)]
-enum GameState {
-    InGame,
-    #[cfg(debug_assertions)]
-    DebugPause,
 }

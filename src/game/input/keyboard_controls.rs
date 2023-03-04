@@ -2,8 +2,9 @@ use bevy::prelude::*;
 use iyes_loopless::prelude::NextState;
 use iyes_loopless::state::CurrentState;
 
-use crate::game::{GameState, PlayerMovement};
 use crate::game::collision_debug::HitCirclesVisualizationConfig;
+use crate::game::game_state::GameState;
+use crate::game::PlayerMovement;
 use crate::game::sprites_debug::SpritesBoundariesConfig;
 
 pub struct GameKeyboardControlsPlugin;
@@ -47,11 +48,21 @@ fn handle_keyboard_input(
     // d = enter [d]ebug pause
     #[cfg(debug_assertions)]
     if keyboard_input.just_pressed(KeyCode::D) {
-        commands.insert_resource(match *current_state {
-            CurrentState(GameState::InGame) => NextState(GameState::DebugPause),
-            CurrentState(GameState::DebugPause) => NextState(GameState::InGame),
-        });
-        // TODO: pause music as well?
+        match *current_state {
+            CurrentState(GameState::InGame) => {
+                commands.insert_resource(NextState(GameState::DebugPause));
+            },
+            CurrentState(GameState::DebugPause) => {
+                commands.insert_resource(NextState(GameState::InGame));
+            },
+            _ => {},
+        };
+    }
+    #[cfg(debug_assertions)]
+    if let CurrentState(GameState::DebugPause) = *current_state {
+        if keyboard_input.just_pressed(KeyCode::Period) {
+            commands.insert_resource(NextState(GameState::DebugResumeFor1Frame));
+        }
     }
     // s = draw [s]prite boundaries
     #[cfg(debug_assertions)]

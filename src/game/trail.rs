@@ -1,18 +1,24 @@
 use bevy::prelude::*;
 use bevy::sprite::Anchor;
-use iyes_loopless::prelude::IntoConditionalSystem;
-use crate::game::GameState;
+use iyes_loopless::prelude::ConditionSet;
 
+use crate::game::game_state::GameState;
 use crate::game::sprites::{SpriteDimensions, SpriteSheet};
 use crate::pixel_art_support::FixedFpsTime;
 use crate::z_layer::Z_LAYER_SPRITES_TRAILS;
 
 pub fn create_systems_trail_particles_spawn() -> SystemSet {
-    SystemSet::new().with_system(spawn_particles.run_in_state(GameState::InGame))
+    ConditionSet::new()
+        .run_if(GameState::should_game_update)
+        .with_system(spawn_particles)
+        .into()
 }
 
 pub fn create_systems_trail_particles_age() -> SystemSet {
-    SystemSet::new().with_system(age_particles.run_in_state(GameState::InGame))
+    ConditionSet::new()
+        .run_if(GameState::should_game_update)
+        .with_system(age_particles)
+        .into()
 }
 
 #[derive(Component)]
