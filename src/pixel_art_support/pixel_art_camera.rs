@@ -14,7 +14,6 @@ impl Plugin for PixelArtCameraPlugin {
             color: Pico8Color::Black.as_bevy_color(),
         });
 
-        // TODO: will it affect HTML embedded game?
         app.add_startup_system(|mut commands: Commands| {
             commands.spawn(bevy_pixel_camera::PixelCameraBundle::from_resolution(
                 VIEWPORT_W as i32,

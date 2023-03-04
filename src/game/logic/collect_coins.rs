@@ -2,14 +2,19 @@ use std::ops::Add;
 
 use bevy::prelude::*;
 use bevy_kira_audio::{Audio, AudioControl};
+use iyes_loopless::prelude::ConditionSet;
 
 use crate::game::audio::AudioFiles;
 use crate::game::collision::HitCircle;
+use crate::game::game_state::GameState;
 use crate::game::player::Player;
 use crate::game::Coin;
 
-pub fn create_collect_coins_systems() -> SystemSet {
-    SystemSet::new().with_system(collect_coins)
+pub fn create_systems_collect_coins() -> SystemSet {
+    ConditionSet::new()
+        .run_if(GameState::should_game_update)
+        .with_system(collect_coins)
+        .into()
 }
 
 fn collect_coins(

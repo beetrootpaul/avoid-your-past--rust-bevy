@@ -1,9 +1,10 @@
 use std::ops::Add;
 
+use bevy::ecs::schedule::ShouldRun;
 use bevy::math::{vec3, Vec3Swizzles};
 use bevy::prelude::*;
 
-use crate::game::SpriteDimensions;
+use crate::game::sprites::SpriteDimensions;
 use crate::z_layer::Z_LAYER_DEBUG_SPRITE_BOUNDARIES;
 
 #[cfg(debug_assertions)]
@@ -14,14 +15,33 @@ impl Plugin for SpritesBoundariesPlugin {
     // Uses https://crates.io/crates/bevy_prototype_debug_lines
     fn build(&self, app: &mut App) {
         app.add_plugin(bevy_prototype_debug_lines::DebugLinesPlugin::default())
-            .add_system(draw_debug_sprite_boundaries);
+            .insert_resource(SpritesBoundariesConfig {
+                is_plugin_enabled: false,
+            })
+            .add_system_set(
+                SystemSet::new()
+                    .with_run_criteria(is_plugin_enabled)
+                    .with_system(draw_debug_sprite_boundaries),
+            );
+    }
+}
+
+#[derive(Resource)]
+pub struct SpritesBoundariesConfig {
+    pub is_plugin_enabled: bool,
+}
+
+fn is_plugin_enabled(config: Res<SpritesBoundariesConfig>) -> ShouldRun {
+    match config.is_plugin_enabled {
+        true => ShouldRun::Yes,
+        false => ShouldRun::No,
     }
 }
 
 #[cfg(debug_assertions)]
 fn draw_debug_sprite_boundaries(
-    mut lines: ResMut<bevy_prototype_debug_lines::DebugLines>,
     query: Query<(&Transform, &SpriteDimensions)>,
+    mut lines: ResMut<bevy_prototype_debug_lines::DebugLines>,
 ) {
     let corners_1_clockwise = [(1., 1.), (1., -1.), (-1., -1.), (-1., 1.)];
     let mut corners_2_clockwise = corners_1_clockwise;

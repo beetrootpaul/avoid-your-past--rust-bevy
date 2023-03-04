@@ -13,10 +13,10 @@ function new_game_state_gameplay(params)
     --local memories = new_memories {
     --    player = player,
     --}
-    --local player_trail = new_trail {
-    --    origin = player,
-    --    color = u.colors.dark_green,
-    --}
+    local player_trail = new_trail {
+        origin = player,
+        color = u.colors.dark_green,
+    }
 
     -- TODO
     --local function on_back_to_regular_mode()
@@ -90,8 +90,7 @@ function new_game_state_gameplay(params)
         -- TODO
         --level.animate()
 
-        -- TODO
-        --player_trail.update()
+        player_trail.update()
         player.move()
 
         -- TODO
@@ -118,8 +117,7 @@ function new_game_state_gameplay(params)
         -- TODO
         --level.draw_items()
 
-        -- TODO
-        --player_trail.draw()
+        player_trail.draw()
         player.draw()
 
         -- TODO

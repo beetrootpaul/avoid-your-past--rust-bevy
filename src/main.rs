@@ -1,7 +1,7 @@
 use bevy::prelude::*;
 use bevy::window::close_on_esc;
 
-use crate::game::GamePlugin;
+use crate::game::{GamePlugin, VIEWPORT_H, VIEWPORT_W};
 #[cfg(debug_assertions)]
 use crate::print_fps::PrintFpsPlugin;
 
@@ -12,13 +12,20 @@ mod print_fps;
 mod z_layer;
 
 fn main() {
+    #[cfg(target_arch = "wasm32")]
+    const ZOOM: f32 = 3.;
+    #[cfg(not(target_arch = "wasm32"))]
+    const ZOOM: f32 = 4.;
+
     let mut app = App::new();
 
     app.add_plugins(
-        bevy::DefaultPlugins
+        DefaultPlugins
             .set(WindowPlugin {
                 window: WindowDescriptor {
                     title: game::GAME_TITLE.to_string(),
+                    width: VIEWPORT_W * ZOOM,
+                    height: VIEWPORT_H * ZOOM,
                     ..default()
                 },
                 ..default()

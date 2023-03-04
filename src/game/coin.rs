@@ -1,13 +1,14 @@
-use bevy::ecs::schedule::ShouldRun;
 use bevy::math::vec3;
 use bevy::prelude::*;
 use bevy::sprite::Anchor;
+use iyes_loopless::prelude::ConditionSet;
 use rand::Rng;
 
 use crate::game::animation::AnimationFrames;
-#[cfg(debug_assertions)]
-use crate::game::collision::create_hit_circle_debug;
 use crate::game::collision::HitCircle;
+#[cfg(debug_assertions)]
+use crate::game::collision_debug::create_hit_circle_visualization;
+use crate::game::game_state::GameState;
 use crate::game::gui::TOPBAR_H;
 use crate::game::sprites::{SpriteDimensions, SpriteSheet};
 use crate::z_layer::Z_LAYER_SPRITES_COINS;
@@ -24,18 +25,16 @@ struct CoinBundle {
     hit_circle: HitCircle,
 }
 
-pub fn create_coin_spawn_systems() -> SystemSet {
-    SystemSet::new()
-        .with_run_criteria(there_is_no_coin)
+pub fn create_systems_coin_spawn() -> SystemSet {
+    ConditionSet::new()
+        .run_if(GameState::should_game_update)
+        .run_if(there_is_no_coin)
         .with_system(spawn_coin)
+        .into()
 }
 
-fn there_is_no_coin(query: Query<&Coin>) -> ShouldRun {
-    if query.iter().count() > 0 {
-        ShouldRun::No
-    } else {
-        ShouldRun::Yes
-    }
+fn there_is_no_coin(query: Query<&Coin>) -> bool {
+    query.iter().count() == 0
 }
 
 fn spawn_coin(
@@ -46,9 +45,12 @@ fn spawn_coin(
 ) {
     let mut rng = rand::thread_rng();
 
-    let animation_frames = AnimationFrames { first: 0, last: 31 };
+    let animation_frames = AnimationFrames {
+        first: SpriteSheet::COIN_FIRST,
+        last: SpriteSheet::COIN_LAST,
+    };
     let hit_circle = HitCircle {
-        r: 3.5,
+        r: 3.7,
         offset: vec3(0., 0., 0.),
     };
     let mut parent_command = commands.spawn(CoinBundle {
@@ -81,7 +83,7 @@ fn spawn_coin(
 
     #[cfg(debug_assertions)]
     parent_command.with_children(|parent| {
-        parent.spawn(create_hit_circle_debug(
+        parent.spawn(create_hit_circle_visualization(
             &hit_circle,
             Z_LAYER_SPRITES_COINS,
             meshes,
