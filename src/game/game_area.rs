@@ -1,6 +1,6 @@
 use bevy::math::vec2;
 use bevy::prelude::*;
-use bevy::sprite::Anchor;
+// use bevy::sprite::Anchor;
 
 use crate::game::gui::TOPBAR_H;
 use crate::pico8_color::Pico8Color;
@@ -18,18 +18,18 @@ impl Plugin for GameAreaPlugin {
 }
 
 pub fn spawn_game_area(mut commands: Commands) {
-    commands.spawn(SpriteBundle {
-        sprite: Sprite {
-            color: Pico8Color::DarkBlue.as_bevy_color(),
-            custom_size: Some(vec2(GAME_AREA_W, GAME_AREA_H)),
-            anchor: Anchor::TopLeft,
-            ..default()
-        },
-        transform: Transform::from_xyz(
-            -GAME_AREA_W / 2.,
-            GAME_AREA_H / 2. - TOPBAR_H / 2.,
-            Z_LAYER_GAME_AREA,
-        ),
-        ..default()
-    });
+    // commands.spawn(SpriteBundle {
+    //     sprite: Sprite {
+    //         color: Pico8Color::DarkBlue.as_bevy_color(),
+    //         custom_size: Some(vec2(GAME_AREA_W, GAME_AREA_H)),
+    //         anchor: Anchor::TopLeft,
+    //         ..default()
+    //     },
+    //     transform: Transform::from_xyz(
+    //         -GAME_AREA_W / 2.,
+    //         GAME_AREA_H / 2. - TOPBAR_H / 2.,
+    //         Z_LAYER_GAME_AREA,
+    //     ),
+    //     ..default()
+    // });
 }

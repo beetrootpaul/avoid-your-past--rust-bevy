@@ -1,6 +1,6 @@
 use bevy::math::vec3;
 use bevy::prelude::*;
-use bevy::sprite::Anchor;
+// use bevy::sprite::Anchor;
 use iyes_loopless::prelude::ConditionSet;
 use rand::Rng;
 
@@ -19,7 +19,7 @@ pub struct Coin;
 #[derive(Bundle)]
 struct CoinBundle {
     coin: Coin,
-    sprite_sheet_bundle: SpriteSheetBundle,
+    // sprite_sheet_bundle: SpriteSheetBundle,
     animation_frames: AnimationFrames,
     sprite_dimensions: SpriteDimensions,
     hit_circle: HitCircle,
@@ -40,8 +40,8 @@ fn there_is_no_coin(query: Query<&Coin>) -> bool {
 fn spawn_coin(
     mut commands: Commands,
     sprite_sheet: Res<SpriteSheet>,
-    meshes: ResMut<Assets<Mesh>>,
-    materials: ResMut<Assets<ColorMaterial>>,
+    // meshes: ResMut<Assets<Mesh>>,
+    // materials: ResMut<Assets<ColorMaterial>>,
 ) {
     let mut rng = rand::thread_rng();
 
@@ -55,23 +55,23 @@ fn spawn_coin(
     };
     let mut parent_command = commands.spawn(CoinBundle {
         coin: Coin,
-        sprite_sheet_bundle: SpriteSheetBundle {
-            // TODO: reorganize game area position calculations
-            // TODO: add helpers for translating from window-centered coors to game area coords
-            // TODO: TEMPORARY COORDS
-            transform: Transform::from_xyz(
-                rng.gen_range(-40.0..40.0),
-                -TOPBAR_H / 2. + rng.gen_range(-40.0..40.0),
-                Z_LAYER_SPRITES_COINS,
-            ),
-            texture_atlas: sprite_sheet.texture_atlas_handle.clone().unwrap(),
-            sprite: TextureAtlasSprite {
-                index: animation_frames.first,
-                anchor: Anchor::Center,
-                ..default()
-            },
-            ..default()
-        },
+        // sprite_sheet_bundle: SpriteSheetBundle {
+        // TODO: reorganize game area position calculations
+        // TODO: add helpers for translating from window-centered coors to game area coords
+        // TODO: TEMPORARY COORDS
+        // transform: Transform::from_xyz(
+        //     rng.gen_range(-40.0..40.0),
+        //     -TOPBAR_H / 2. + rng.gen_range(-40.0..40.0),
+        //     Z_LAYER_SPRITES_COINS,
+        // ),
+        // texture_atlas: sprite_sheet.texture_atlas_handle.clone().unwrap(),
+        // sprite: TextureAtlasSprite {
+        //     index: animation_frames.first,
+        //     anchor: Anchor::Center,
+        //     ..default()
+        // },
+        // ..default()
+        // },
         animation_frames,
         sprite_dimensions: SpriteDimensions {
             width: 6.,
@@ -86,8 +86,8 @@ fn spawn_coin(
         parent.spawn(create_hit_circle_visualization(
             &hit_circle,
             Z_LAYER_SPRITES_COINS,
-            meshes,
-            materials,
+            // meshes,
+            // materials,
         ));
     });
 }

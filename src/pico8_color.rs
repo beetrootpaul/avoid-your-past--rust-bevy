@@ -1,4 +1,4 @@
-use bevy::prelude::Color;
+// use bevy::prelude::Color;
 
 #[allow(dead_code)]
 pub enum Pico8Color {
@@ -21,9 +21,9 @@ pub enum Pico8Color {
 }
 
 impl Pico8Color {
-    pub fn as_bevy_color(&self) -> Color {
-        Color::hex(self.hex()).expect("should convert from hex")
-    }
+    // pub fn as_bevy_color(&self) -> Color {
+    //     Color::hex(self.hex()).expect("should convert from hex")
+    // }
 
     fn hex(&self) -> &str {
         match *self {

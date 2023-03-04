@@ -1,5 +1,5 @@
 use bevy::prelude::*;
-use bevy::sprite::Anchor;
+// use bevy::sprite::Anchor;
 use iyes_loopless::prelude::ConditionSet;
 
 use crate::game::game_state::GameState;
@@ -37,7 +37,7 @@ impl TrailOrigin {
 #[derive(Bundle)]
 struct TrailParticleBundle {
     trail_particle: TrailParticle,
-    sprite_sheet_bundle: SpriteSheetBundle,
+    // sprite_sheet_bundle: SpriteSheetBundle,
     sprite_dimensions: SpriteDimensions,
 }
 
@@ -67,16 +67,16 @@ fn spawn_particles(
             particle_transform.translation.z = Z_LAYER_SPRITES_TRAILS;
             commands.spawn(TrailParticleBundle {
                 trail_particle: TrailParticle::default(),
-                sprite_sheet_bundle: SpriteSheetBundle {
-                    transform: particle_transform,
-                    texture_atlas: sprite_sheet.texture_atlas_handle.clone().unwrap(),
-                    sprite: TextureAtlasSprite {
-                        index: SpriteSheet::TRAIL_PARTICLE_5PX,
-                        anchor: Anchor::Center,
-                        ..default()
-                    },
-                    ..default()
-                },
+                // sprite_sheet_bundle: SpriteSheetBundle {
+                //     transform: particle_transform,
+                //     texture_atlas: sprite_sheet.texture_atlas_handle.clone().unwrap(),
+                //     sprite: TextureAtlasSprite {
+                //         index: SpriteSheet::TRAIL_PARTICLE_5PX,
+                //         anchor: Anchor::Center,
+                //         ..default()
+                //     },
+                //     ..default()
+                // },
                 sprite_dimensions: SpriteDimensions {
                     width: 6.,
                     height: 6.,
@@ -92,18 +92,18 @@ fn spawn_particles(
 // TODO: write tests for cases of TTL 1, 0, and in general for off-by-1 errors
 fn age_particles(
     mut commands: Commands,
-    mut query: Query<(Entity, &mut TrailParticle, Option<&mut TextureAtlasSprite>)>,
+    // mut query: Query<(Entity, &mut TrailParticle, Option<&mut TextureAtlasSprite>)>,
 ) {
-    for (particle_entity, mut trail_particle, maybe_sprite) in query.iter_mut() {
-        trail_particle.ttl_frames -= 1;
-        if trail_particle.ttl_frames <= 0 {
-            commands.entity(particle_entity).despawn_recursive();
-        } else if let Some(mut sprite) = maybe_sprite {
-            sprite.index = match trail_particle.ttl_frames {
-                18.. => SpriteSheet::TRAIL_PARTICLE_5PX,
-                8.. => SpriteSheet::TRAIL_PARTICLE_3PX,
-                _ => SpriteSheet::TRAIL_PARTICLE_1PX,
-            }
-        }
-    }
+    // for (particle_entity, mut trail_particle, maybe_sprite) in query.iter_mut() {
+    //     trail_particle.ttl_frames -= 1;
+    //     if trail_particle.ttl_frames <= 0 {
+    //         commands.entity(particle_entity).despawn_recursive();
+    //     } else if let Some(mut sprite) = maybe_sprite {
+    //         sprite.index = match trail_particle.ttl_frames {
+    //             18.. => SpriteSheet::TRAIL_PARTICLE_5PX,
+    //             8.. => SpriteSheet::TRAIL_PARTICLE_3PX,
+    //             _ => SpriteSheet::TRAIL_PARTICLE_1PX,
+    //         }
+    //     }
+    // }
 }

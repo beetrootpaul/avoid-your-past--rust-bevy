@@ -47,7 +47,7 @@ pub struct GamePlugin;
 
 impl Plugin for GamePlugin {
     fn build(&self, app: &mut App) {
-        app.add_loopless_state(GameState::InGame);
+        // app.add_loopless_state(GameState::InGame);
 
         app.add_plugin(GameKeyboardControlsPlugin);
 
@@ -62,7 +62,7 @@ impl Plugin for GamePlugin {
         #[cfg(debug_assertions)]
         app.add_plugin(HitCirclesVisualizationPlugin);
 
-        app.insert_resource(ClearColor(Pico8Color::Black.as_bevy_color()));
+        // app.insert_resource(ClearColor(Pico8Color::Black.as_bevy_color()));
 
         app.add_startup_system(spawn_game_area);
 

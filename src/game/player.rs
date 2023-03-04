@@ -1,6 +1,6 @@
 use bevy::math::vec3;
 use bevy::prelude::*;
-use bevy::sprite::Anchor;
+// use bevy::sprite::Anchor;
 use iyes_loopless::prelude::ConditionSet;
 
 use crate::game::collision::HitCircle;
@@ -28,7 +28,7 @@ pub enum PlayerMovement {
 #[derive(Bundle)]
 struct PlayerBundle {
     player: Player,
-    sprite_sheet_bundle: SpriteSheetBundle,
+    // sprite_sheet_bundle: SpriteSheetBundle,
     player_movement: PlayerMovement,
     sprite_dimensions: SpriteDimensions,
     hit_circle: HitCircle,
@@ -47,7 +47,7 @@ pub fn create_systems_player_move() -> SystemSet {
     ConditionSet::new()
         .run_if(GameState::should_game_update)
         .with_system(move_player)
-        .with_system(update_player_sprite)
+        // .with_system(update_player_sprite)
         .into()
 }
 
@@ -58,8 +58,8 @@ fn there_is_no_player(query: Query<&Player>) -> bool {
 fn spawn_player(
     mut commands: Commands,
     sprite_sheet: Res<SpriteSheet>,
-    meshes: ResMut<Assets<Mesh>>,
-    materials: ResMut<Assets<ColorMaterial>>,
+    // meshes: ResMut<Assets<Mesh>>,
+    // materials: ResMut<Assets<ColorMaterial>>,
     fixed_fps_time: Res<FixedFpsTime>,
 ) {
     let initial_movement = PlayerMovement::Right;
@@ -73,18 +73,18 @@ fn spawn_player(
 
     let mut parent_command = commands.spawn(PlayerBundle {
         player: Player,
-        sprite_sheet_bundle: SpriteSheetBundle {
-            // TODO: reorganize game area position calculations
-            // TODO: add helpers for translating from window-centered coors to game area coords
-            transform: Transform::from_xyz(0., -TOPBAR_H / 2., Z_LAYER_SPRITES_PLAYER),
-            texture_atlas: sprite_sheet.texture_atlas_handle.clone().unwrap(),
-            sprite: TextureAtlasSprite {
-                index: get_sprite_index_for_movement(&initial_movement),
-                anchor: Anchor::Center,
-                ..default()
-            },
-            ..default()
-        },
+        // sprite_sheet_bundle: SpriteSheetBundle {
+        // TODO: reorganize game area position calculations
+        // TODO: add helpers for translating from window-centered coors to game area coords
+        // transform: Transform::from_xyz(0., -TOPBAR_H / 2., Z_LAYER_SPRITES_PLAYER),
+        // texture_atlas: sprite_sheet.texture_atlas_handle.clone().unwrap(),
+        // sprite: TextureAtlasSprite {
+        //     index: get_sprite_index_for_movement(&initial_movement),
+        //     anchor: Anchor::Center,
+        //     ..default()
+        // },
+        // ..default()
+        // },
         player_movement: initial_movement,
         sprite_dimensions: SpriteDimensions {
             padding_right: 1.,
@@ -103,8 +103,8 @@ fn spawn_player(
         parent.spawn(create_hit_circle_visualization(
             &hit_circle,
             Z_LAYER_SPRITES_PLAYER,
-            meshes,
-            materials,
+            // meshes,
+            // materials,
         ));
     });
 }
@@ -138,11 +138,11 @@ fn move_player(mut query: Query<(&PlayerMovement, &mut Transform, Option<&Sprite
     }
 }
 
-fn update_player_sprite(mut query: Query<(&PlayerMovement, &mut TextureAtlasSprite)>) {
-    for (player_movement, mut sprite) in query.iter_mut() {
-        sprite.index = get_sprite_index_for_movement(player_movement);
-    }
-}
+// fn update_player_sprite(mut query: Query<(&PlayerMovement, &mut TextureAtlasSprite)>) {
+//     for (player_movement, mut sprite) in query.iter_mut() {
+//         sprite.index = get_sprite_index_for_movement(player_movement);
+//     }
+// }
 
 fn get_sprite_index_for_movement(movement: &PlayerMovement) -> usize {
     match *movement {

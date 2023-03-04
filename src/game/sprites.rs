@@ -3,7 +3,7 @@ use bevy::prelude::*;
 
 #[derive(Resource, Default)]
 pub struct SpriteSheet {
-    pub texture_atlas_handle: Option<Handle<TextureAtlas>>,
+    // pub texture_atlas_handle: Option<Handle<TextureAtlas>>,
 }
 
 impl SpriteSheet {
@@ -66,20 +66,20 @@ impl Default for SpriteDimensions {
 fn load_spritesheet(
     mut commands: Commands,
     asset_server: Res<AssetServer>,
-    mut texture_atlases: ResMut<Assets<TextureAtlas>>,
+    // mut texture_atlases: ResMut<Assets<TextureAtlas>>,
 ) {
-    let image_handle: Handle<Image> = asset_server.load("spritesheet.png");
-    let texture_atlas = TextureAtlas::from_grid(
-        image_handle,
-        vec2(SpriteSheet::DEFAULT_SPRITE_W, SpriteSheet::DEFAULT_SPRITE_H),
-        SpriteSheet::COLUMNS,
-        SpriteSheet::ROWS,
-        None,
-        None,
-    );
-    let texture_atlas_handle = texture_atlases.add(texture_atlas);
-
-    commands.insert_resource(SpriteSheet {
-        texture_atlas_handle: Some(texture_atlas_handle),
-    });
+    // let image_handle: Handle<Image> = asset_server.load("spritesheet.png");
+    // let texture_atlas = TextureAtlas::from_grid(
+    //     image_handle,
+    //     vec2(SpriteSheet::DEFAULT_SPRITE_W, SpriteSheet::DEFAULT_SPRITE_H),
+    //     SpriteSheet::COLUMNS,
+    //     SpriteSheet::ROWS,
+    //     None,
+    //     None,
+    // );
+    // let texture_atlas_handle = texture_atlases.add(texture_atlas);
+    //
+    // commands.insert_resource(SpriteSheet {
+    //     texture_atlas_handle: Some(texture_atlas_handle),
+    // });
 }
