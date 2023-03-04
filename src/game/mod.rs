@@ -47,38 +47,38 @@ pub struct GamePlugin;
 
 impl Plugin for GamePlugin {
     fn build(&self, app: &mut App) {
-        // app.add_loopless_state(GameState::InGame);
+        app.add_loopless_state(GameState::InGame);
 
-        app.add_plugin(GameKeyboardControlsPlugin);
+        // app.add_plugin(GameKeyboardControlsPlugin);
 
         // TODO: add some nice assertions for whether plugin was added or not, because right now error is very cryptic
         app.add_plugin(GameSpriteSheetPlugin);
-        app.add_plugin(GameAudioPlugin);
+        // app.add_plugin(GameAudioPlugin);
 
-        app.add_plugin(PixelArtCameraPlugin);
+        // app.add_plugin(PixelArtCameraPlugin);
 
-        #[cfg(debug_assertions)]
-        app.add_plugin(SpritesBoundariesPlugin);
-        #[cfg(debug_assertions)]
-        app.add_plugin(HitCirclesVisualizationPlugin);
+        // #[cfg(debug_assertions)]
+        // app.add_plugin(SpritesBoundariesPlugin);
+        // #[cfg(debug_assertions)]
+        // app.add_plugin(HitCirclesVisualizationPlugin);
 
         // app.insert_resource(ClearColor(Pico8Color::Black.as_bevy_color()));
 
-        app.add_startup_system(spawn_game_area);
+        // app.add_startup_system(spawn_game_area);
 
         // TODO: prevent FixedFpsPlugin from being added twice in different places in the app
         app.add_plugin(FixedFpsPlugin);
         #[cfg(debug_assertions)]
         app.log_fixed_fps_measurements();
-        app.add_fixed_fps_stage(vec![create_systems_trail_particles_age()]);
-        app.add_fixed_fps_stage(vec![create_systems_player_move()]);
-        app.add_fixed_fps_stage(vec![create_systems_collect_coins()]);
-        app.add_fixed_fps_stage(vec![create_systems_animate_sprite()]);
+        // app.add_fixed_fps_stage(vec![create_systems_trail_particles_age()]);
+        // app.add_fixed_fps_stage(vec![create_systems_player_move()]);
+        // app.add_fixed_fps_stage(vec![create_systems_collect_coins()]);
+        // app.add_fixed_fps_stage(vec![create_systems_animate_sprite()]);
         app.add_fixed_fps_stage(vec![
             create_systems_player_spawn(),
-            create_systems_coin_spawn(),
+            // create_systems_coin_spawn(),
         ]);
-        app.add_fixed_fps_stage(vec![create_systems_trail_particles_spawn()]);
-        app.add_fixed_fps_stage(vec![create_system_update_game_state()]);
+        // app.add_fixed_fps_stage(vec![create_systems_trail_particles_spawn()]);
+        // app.add_fixed_fps_stage(vec![create_system_update_game_state()]);
     }
 }

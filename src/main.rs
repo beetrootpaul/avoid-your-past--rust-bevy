@@ -15,62 +15,50 @@ mod pixel_art_support;
 mod print_fps;
 mod z_layer;
 
-const PIXELS_EXAMPLE_WIDTH: u32 = 128;
-const PIXELS_EXAMPLE_HEIGHT: u32 = 128;
-
 #[derive(Component, Debug)]
 struct Color(u8, u8, u8, u8);
 
 fn main() {
-    App::new()
-        .add_plugins(DefaultPlugins.set(WindowPlugin {
-            window: WindowDescriptor {
-                title: "Hello Bevy Pixels".to_string(),
-                width: PIXELS_EXAMPLE_WIDTH as f32 * 2.,
-                height: PIXELS_EXAMPLE_HEIGHT as f32 * 2.,
-                resize_constraints: WindowResizeConstraints {
-                    min_width: PIXELS_EXAMPLE_WIDTH as f32,
-                    min_height: PIXELS_EXAMPLE_HEIGHT as f32,
-                    ..default()
-                },
-                fit_canvas_to_parent: true,
+    #[cfg(target_arch = "wasm32")]
+    const ZOOM: f32 = 3.;
+    #[cfg(not(target_arch = "wasm32"))]
+    const ZOOM: f32 = 4.;
+
+    let mut app = App::new();
+
+    app.add_plugins(DefaultPlugins.set(WindowPlugin {
+        window: WindowDescriptor {
+            title: game::GAME_TITLE.to_string(),
+            width: VIEWPORT_W as f32 * ZOOM,
+            height: VIEWPORT_H as f32 * ZOOM,
+            resize_constraints: WindowResizeConstraints {
+                min_width: VIEWPORT_W as f32,
+                min_height: VIEWPORT_H as f32,
                 ..default()
             },
+            fit_canvas_to_parent: true,
             ..default()
-        }))
-        .add_plugin(PixelsPlugin {
-            width: PIXELS_EXAMPLE_WIDTH,
-            height: PIXELS_EXAMPLE_HEIGHT,
-            ..default()
-        })
-        .add_plugin(FrameTimeDiagnosticsPlugin::default())
-        .add_plugin(LogDiagnosticsPlugin::default())
-        .add_startup_system(pixels_example_setup)
+        },
+        ..default()
+    }));
+
+    app.add_plugin(PixelsPlugin {
+        width: VIEWPORT_W as u32,
+        height: VIEWPORT_H as u32,
+        ..default()
+    });
+
+    app.add_startup_system(pixels_example_setup)
         .add_system(pixels_example_bounce)
         .add_system(pixels_example_movement.after(pixels_example_bounce))
-        .add_system(pixels_example_exit_on_escape)
         .add_system_to_stage(PixelsStage::Draw, pixels_example_draw_background)
-        .add_system_to_stage(PixelsStage::Draw, pixels_example_draw_objects.after(pixels_example_draw_background))
-        .run();
-
-    // #[cfg(target_arch = "wasm32")]
-    // const ZOOM: f32 = 3.;
-    // #[cfg(not(target_arch = "wasm32"))]
-    // const ZOOM: f32 = 4.;
-
-    // let mut app = App::new();
+        .add_system_to_stage(
+            PixelsStage::Draw,
+            pixels_example_draw_objects.after(pixels_example_draw_background),
+        );
 
     // app.add_plugins(
     //     DefaultPlugins
-    //         .set(WindowPlugin {
-    //             window: WindowDescriptor {
-    //                 title: game::GAME_TITLE.to_string(),
-    //                 width: VIEWPORT_W * ZOOM,
-    //                 height: VIEWPORT_H * ZOOM,
-    //                 ..default()
-    //             },
-    //             ..default()
-    //         })
     //         .set(AssetPlugin {
     //             // Watch for changes made to assets while the app is run and
     //             // hot-reload them in the app without need to run the app again
@@ -85,15 +73,15 @@ fn main() {
     // Get rid of edges of neighbour sprites visible around the given sprite from the sprite sheet
     // app.insert_resource(Msaa { samples: 1 });
 
-    // app.add_plugin(GamePlugin);
+    app.add_plugin(GamePlugin);
 
-    // #[cfg(debug_assertions)]
-    // app.add_plugin(PrintFpsPlugin);
+    #[cfg(debug_assertions)]
+    app.add_plugin(PrintFpsPlugin);
 
-    // #[cfg(debug_assertions)]
-    // app.add_system(close_on_esc);
+    #[cfg(debug_assertions)]
+    app.add_system(close_on_esc);
 
-    // app.run();
+    app.run();
 }
 
 #[derive(Bundle, Debug)]
@@ -146,11 +134,11 @@ fn pixels_example_bounce(
 ) {
     for (position, mut velocity, size, mut color) in query.iter_mut() {
         let mut bounce = false;
-        if position.x == 0 || position.x + size.width > PIXELS_EXAMPLE_WIDTH {
+        if position.x == 0 || position.x + size.width > (VIEWPORT_W as u32) {
             velocity.x *= -1;
             bounce = true;
         }
-        if position.y == 0 || position.y + size.height > PIXELS_EXAMPLE_HEIGHT {
+        if position.y == 0 || position.y + size.height > (VIEWPORT_H as u32) {
             velocity.y *= -1;
             bounce = true;
         }
@@ -169,12 +157,6 @@ fn pixels_example_movement(mut query: Query<(&mut PixelsExamplePosition, &Pixels
     }
 }
 
-fn pixels_example_exit_on_escape(keyboard_input: Res<Input<KeyCode>>, mut app_exit_events: EventWriter<AppExit>) {
-    if keyboard_input.just_pressed(KeyCode::Escape) {
-        app_exit_events.send(AppExit);
-    }
-}
-
 fn pixels_example_draw_background(mut pixels_resource: ResMut<PixelsResource>) {
     let frame = pixels_resource.pixels.get_frame_mut();
     frame.copy_from_slice(&[0x48, 0xb2, 0xe8, 0xff].repeat(frame.len() / 4));
@@ -185,7 +167,7 @@ fn pixels_example_draw_objects(
     query: Query<(&PixelsExamplePosition, &PixelsExampleSize, &Color)>,
 ) {
     let frame = pixels_resource.pixels.get_frame_mut();
-    let frame_width_bytes = (PIXELS_EXAMPLE_WIDTH * 4) as usize;
+    let frame_width_bytes = (VIEWPORT_W as u32 * 4) as usize;
 
     for (position, size, color) in query.iter() {
         let x_offset = (position.x * 4) as usize;
@@ -201,14 +183,14 @@ fn pixels_example_draw_objects(
         }
     }
 
-    let line_data = &[0xff, 0x00, 0x00, 0xff].repeat((PIXELS_EXAMPLE_WIDTH - 2) as usize);
-    let width_bytes = ((PIXELS_EXAMPLE_WIDTH - 2) * 4) as usize;
+    let line_data = &[0xff, 0x00, 0x00, 0xff].repeat((VIEWPORT_W as u32 - 2) as usize);
+    let width_bytes = ((VIEWPORT_W as u32 - 2) * 4) as usize;
     let x_offset = (1 * 4) as usize;
     let y_offset = 1 * frame_width_bytes;
     let i = y_offset + x_offset;
     let j = i + width_bytes;
     frame[i..j].copy_from_slice(line_data);
-    let y_offset = (PIXELS_EXAMPLE_WIDTH as usize - 2) * frame_width_bytes;
+    let y_offset = (VIEWPORT_W as usize - 2) * frame_width_bytes;
     let i = y_offset + x_offset;
     let j = i + width_bytes;
     frame[i..j].copy_from_slice(line_data);

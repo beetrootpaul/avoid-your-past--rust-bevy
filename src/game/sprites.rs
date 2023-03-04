@@ -79,7 +79,7 @@ fn load_spritesheet(
     // );
     // let texture_atlas_handle = texture_atlases.add(texture_atlas);
     //
-    // commands.insert_resource(SpriteSheet {
-    //     texture_atlas_handle: Some(texture_atlas_handle),
-    // });
+    commands.insert_resource(SpriteSheet {
+        //     texture_atlas_handle: Some(texture_atlas_handle),
+    });
 }
