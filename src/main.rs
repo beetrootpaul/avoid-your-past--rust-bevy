@@ -191,7 +191,7 @@ fn pixels_example_draw_objects(
     let frame_w: usize = VIEWPORT_W as usize;
     let frame_h: usize = VIEWPORT_H as usize;
 
-    for tmp in 0..400 {
+    for tmp in 0..200 {
         // println!("{:?}", sprite_sheet.maybe_rgba_image.as_ref().unwrap().width());
         // println!("{:?}", sprite_sheet.maybe_rgba_image.as_ref().unwrap().height());
         // println!("{:?}", sprite_sheet.maybe_rgba_image.as_ref().unwrap().as_bytes());
@@ -212,6 +212,7 @@ fn pixels_example_draw_objects(
                 let source_i_b = source_i_g + 1;
                 let source_i_a = source_i_b + 1;
                 if sprite_bytes[source_i_a] > 0x88 {
+                    // frame[target_i_r..=target_i_a].copy_from_slice(&sprite_bytes[source_i_r..=source_i_a])
                     frame[target_i_r] = sprite_bytes[source_i_r];
                     frame[target_i_g] = sprite_bytes[source_i_g];
                     frame[target_i_b] = sprite_bytes[source_i_b];
