@@ -1,9 +1,11 @@
 use bevy::math::vec2;
 use bevy::prelude::*;
+use image::{DynamicImage, EncodableLayout, RgbaImage};
 
 #[derive(Resource, Default)]
 pub struct SpriteSheet {
     // pub texture_atlas_handle: Option<Handle<TextureAtlas>>,
+    pub maybe_rgba_image: Option<RgbaImage>,
 }
 
 impl SpriteSheet {
@@ -65,9 +67,10 @@ impl Default for SpriteDimensions {
 
 fn load_spritesheet(
     mut commands: Commands,
-    asset_server: Res<AssetServer>,
+    // asset_server: Res<AssetServer>,
     // mut texture_atlases: ResMut<Assets<TextureAtlas>>,
 ) {
+    let img: DynamicImage = image::open("assets/spritesheet.png").unwrap();
     // let image_handle: Handle<Image> = asset_server.load("spritesheet.png");
     // let texture_atlas = TextureAtlas::from_grid(
     //     image_handle,
@@ -81,5 +84,6 @@ fn load_spritesheet(
     //
     commands.insert_resource(SpriteSheet {
         //     texture_atlas_handle: Some(texture_atlas_handle),
+        maybe_rgba_image: Some(img.to_rgba8()),
     });
 }

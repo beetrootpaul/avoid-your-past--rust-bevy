@@ -3,9 +3,10 @@ use bevy::diagnostic::{FrameTimeDiagnosticsPlugin, LogDiagnosticsPlugin};
 use bevy::prelude::*;
 use bevy::window::{close_on_esc, WindowResizeConstraints};
 use bevy_pixels::{PixelsPlugin, PixelsResource, PixelsStage};
+use image::EncodableLayout;
 use rand::random;
 
-use crate::game::{GamePlugin, VIEWPORT_H, VIEWPORT_W};
+use crate::game::{GamePlugin, SpriteSheet, VIEWPORT_H, VIEWPORT_W};
 #[cfg(debug_assertions)]
 use crate::print_fps::PrintFpsPlugin;
 
@@ -165,6 +166,7 @@ fn pixels_example_draw_background(mut pixels_resource: ResMut<PixelsResource>) {
 fn pixels_example_draw_objects(
     mut pixels_resource: ResMut<PixelsResource>,
     query: Query<(&PixelsExamplePosition, &PixelsExampleSize, &Color)>,
+    sprite_sheet: ResMut<SpriteSheet>,
 ) {
     let frame = pixels_resource.pixels.get_frame_mut();
     let frame_width_bytes = (VIEWPORT_W as u32 * 4) as usize;
@@ -183,14 +185,28 @@ fn pixels_example_draw_objects(
         }
     }
 
-    let line_data = &[0xff, 0x00, 0x00, 0xff].repeat((VIEWPORT_W as u32 - 2) as usize);
-    let width_bytes = ((VIEWPORT_W as u32 - 2) * 4) as usize;
+    // println!("{:?}", sprite_sheet.maybe_rgba_image.as_ref().unwrap().width());
+    // println!("{:?}", sprite_sheet.maybe_rgba_image.as_ref().unwrap().height());
+    // println!("{:?}", sprite_sheet.maybe_rgba_image.as_ref().unwrap().as_bytes());
+    let frame_w: usize = VIEWPORT_W as usize;
+    let frame_h: usize = VIEWPORT_H as usize;
+    let sprite_w: usize = sprite_sheet.maybe_rgba_image.as_ref().unwrap().width() as usize;
+    let sprite_h: usize = sprite_sheet.maybe_rgba_image.as_ref().unwrap().height() as usize;
+    let sprite_bytes: &[u8] = sprite_sheet.maybe_rgba_image.as_ref().unwrap().as_bytes();
+    for sprite_row in 0..sprite_h {
+        let target_range = (sprite_row * frame_w * 4)..(sprite_row * frame_w * 4 + sprite_w * 4);
+        let source_range = (sprite_row * sprite_w * 4)..(sprite_row * sprite_w * 4 + sprite_w * 4);
+        frame[target_range].copy_from_slice(&sprite_bytes[source_range]);
+    }
+
+    let line_data = &[0xff, 0x00, 0x00, 0xff].repeat((frame_w - 2) as usize);
+    let width_bytes = ((frame_w - 2) * 4) as usize;
     let x_offset = (1 * 4) as usize;
     let y_offset = 1 * frame_width_bytes;
     let i = y_offset + x_offset;
     let j = i + width_bytes;
     frame[i..j].copy_from_slice(line_data);
-    let y_offset = (VIEWPORT_W as usize - 2) * frame_width_bytes;
+    let y_offset = (frame_w - 2) * frame_width_bytes;
     let i = y_offset + x_offset;
     let j = i + width_bytes;
     frame[i..j].copy_from_slice(line_data);

@@ -23,6 +23,7 @@ use crate::game::trail::{
 };
 use crate::pico8_color::Pico8Color;
 use crate::pixel_art_support::{FixedFpsBevyAppExtension, FixedFpsPlugin, PixelArtCameraPlugin};
+pub use sprites::SpriteSheet;
 
 mod animation;
 mod audio;
