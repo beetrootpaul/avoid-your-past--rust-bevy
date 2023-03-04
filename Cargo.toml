@@ -124,9 +124,10 @@ features = [
 
 
 [dependencies.bevy_pixels]
-version = "0.8.0"
+path = "bevy_pixels_local"
+#version = "0.8.0"
 default-features = false
 features = [
-    #    "x11",
-    #    "wayland"
+    #        "x11",
+    #        "wayland"
 ]

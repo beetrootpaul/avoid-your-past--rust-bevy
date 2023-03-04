@@ -1,5 +1,6 @@
 use bevy::prelude::*;
-use iyes_loopless::prelude::AppLooplessStateExt;
+use bevy_pixels::{PixelsPlugin, PixelsResource, PixelsStage};
+use iyes_loopless::prelude::{AppLooplessStateExt, ConditionSet};
 
 pub use coin::create_systems_coin_spawn;
 pub use coin::Coin;
@@ -8,6 +9,7 @@ pub use player::create_systems_player_move;
 pub use player::create_systems_player_spawn;
 pub use player::PlayerMovement;
 pub use sprites::GameSpriteSheetPlugin;
+pub use sprites::SpriteSheet;
 
 use crate::game::animation::create_systems_animate_sprite;
 use crate::game::audio::GameAudioPlugin;
@@ -23,7 +25,7 @@ use crate::game::trail::{
 };
 use crate::pico8_color::Pico8Color;
 use crate::pixel_art_support::{FixedFpsBevyAppExtension, FixedFpsPlugin, PixelArtCameraPlugin};
-pub use sprites::SpriteSheet;
+use crate::{Color, pixels_example_bounce, pixels_example_draw_background, pixels_example_draw_objects, pixels_example_movement, PixelsExamplePosition, PixelsExampleSize};
 
 mod animation;
 mod audio;
@@ -79,7 +81,22 @@ impl Plugin for GamePlugin {
             create_systems_player_spawn(),
             // create_systems_coin_spawn(),
         ]);
+        app.add_fixed_fps_stage(vec![ConditionSet::new()
+            .with_system(pixels_example_bounce)
+            .into()]);
+        app.add_fixed_fps_stage(vec![ConditionSet::new()
+            .with_system(pixels_example_movement)
+            .into()]);
         // app.add_fixed_fps_stage(vec![create_systems_trail_particles_spawn()]);
         // app.add_fixed_fps_stage(vec![create_system_update_game_state()]);
+        app.add_fixed_fps_stage(vec![ConditionSet::new()
+            .with_system(pixels_example_draw_background)
+            .into()]);
+        app.add_fixed_fps_stage(vec![ConditionSet::new()
+            .with_system(pixels_example_draw_objects)
+            .into()]);
+        app.add_fixed_fps_stage(vec![ConditionSet::new()
+            .with_system(PixelsPlugin::render)
+            .into()]);
     }
 }
