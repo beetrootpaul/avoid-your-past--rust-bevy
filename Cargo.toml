@@ -111,14 +111,6 @@ features = [
     #    "wgpu_trace",   # WGPU/rendering tracing
 ]
 
-[dependencies.bevy_pixels]
-version = "0.8.0"
-default-features = false
-features = [
-    #    "x11",
-    #    "wayland"
-]
-
 [dependencies.bevy_kira_audio]
 version = "0.13.0"
 default-features = false
@@ -128,4 +120,13 @@ features = [
     #    "flac",
     #    "mp3",
     #    "ogg",
+]
+
+
+[dependencies.bevy_pixels]
+version = "0.8.0"
+default-features = false
+features = [
+    #    "x11",
+    #    "wayland"
 ]

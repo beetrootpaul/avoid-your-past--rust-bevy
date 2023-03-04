@@ -194,9 +194,25 @@ fn pixels_example_draw_objects(
     let sprite_h: usize = sprite_sheet.maybe_rgba_image.as_ref().unwrap().height() as usize;
     let sprite_bytes: &[u8] = sprite_sheet.maybe_rgba_image.as_ref().unwrap().as_bytes();
     for sprite_row in 0..sprite_h {
-        let target_range = (sprite_row * frame_w * 4)..(sprite_row * frame_w * 4 + sprite_w * 4);
-        let source_range = (sprite_row * sprite_w * 4)..(sprite_row * sprite_w * 4 + sprite_w * 4);
-        frame[target_range].copy_from_slice(&sprite_bytes[source_range]);
+        // let target_range = (sprite_row * frame_w * 4)..(sprite_row * frame_w * 4 + sprite_w * 4);
+        // let source_range = (sprite_row * sprite_w * 4)..(sprite_row * sprite_w * 4 + sprite_w * 4);
+        // frame[target_range].copy_from_slice(&sprite_bytes[source_range]);
+        for sprite_column in 0..sprite_w {
+            let target_i_r = sprite_row * frame_w * 4 + sprite_column * 4;
+            let target_i_g = target_i_r + 1;
+            let target_i_b = target_i_g + 1;
+            let target_i_a = target_i_b + 1;
+            let source_i_r = sprite_row * sprite_w * 4 + sprite_column * 4;
+            let source_i_g = source_i_r + 1;
+            let source_i_b = source_i_g + 1;
+            let source_i_a = source_i_b + 1;
+            if sprite_bytes[source_i_a] > 0x88 {
+                frame[target_i_r] = sprite_bytes[source_i_r];
+                frame[target_i_g] = sprite_bytes[source_i_g];
+                frame[target_i_b] = sprite_bytes[source_i_b];
+                frame[target_i_a] = sprite_bytes[source_i_a];
+            }
+        }
     }
 
     let line_data = &[0xff, 0x00, 0x00, 0xff].repeat((frame_w - 2) as usize);
