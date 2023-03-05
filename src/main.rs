@@ -3,6 +3,7 @@ use bevy::diagnostic::{FrameTimeDiagnosticsPlugin, LogDiagnosticsPlugin};
 use bevy::prelude::*;
 use bevy::window::{close_on_esc, WindowResizeConstraints};
 use bevy_pixels::{PixelsPlugin, PixelsResource, PixelsStage};
+use image::EncodableLayout;
 
 use crate::game::{GamePlugin, SpriteSheet, VIEWPORT_H, VIEWPORT_W};
 #[cfg(debug_assertions)]
@@ -188,31 +189,31 @@ fn pixels_example_draw_objects(
     // println!("{:?}", sprite_sheet.maybe_rgba_image.as_ref().unwrap().width());
     // println!("{:?}", sprite_sheet.maybe_rgba_image.as_ref().unwrap().height());
     // println!("{:?}", sprite_sheet.maybe_rgba_image.as_ref().unwrap().as_bytes());
-    // let sprite_w: usize = sprite_sheet.maybe_rgba_image.as_ref().unwrap().width() as usize;
-    // let sprite_h: usize = sprite_sheet.maybe_rgba_image.as_ref().unwrap().height() as usize;
-    // let sprite_bytes: &[u8] = sprite_sheet.maybe_rgba_image.as_ref().unwrap().as_bytes();
-    // for sprite_row in 0..sprite_h {
-    // let target_range = (sprite_row * frame_w * 4)..(sprite_row * frame_w * 4 + sprite_w * 4);
-    // let source_range = (sprite_row * sprite_w * 4)..(sprite_row * sprite_w * 4 + sprite_w * 4);
-    // frame[target_range].copy_from_slice(&sprite_bytes[source_range]);
-    // for sprite_column in 0..sprite_w {
-    //     let target_i_r = sprite_row * frame_w * 4 + sprite_column * 4;
-    //     let target_i_g = target_i_r + 1;
-    //     let target_i_b = target_i_g + 1;
-    //     let target_i_a = target_i_b + 1;
-    //     let source_i_r = sprite_row * sprite_w * 4 + sprite_column * 4;
-    //     let source_i_g = source_i_r + 1;
-    //     let source_i_b = source_i_g + 1;
-    //     let source_i_a = source_i_b + 1;
-    //     if sprite_bytes[source_i_a] > 0x88 {
-    // frame[target_i_r..=target_i_a].copy_from_slice(&sprite_bytes[source_i_r..=source_i_a])
-    // frame[target_i_r] = sprite_bytes[source_i_r];
-    // frame[target_i_g] = sprite_bytes[source_i_g];
-    // frame[target_i_b] = sprite_bytes[source_i_b];
-    // frame[target_i_a] = sprite_bytes[source_i_a];
-    // }
-    // }
-    // }
+    let sprite_w: usize = sprite_sheet.maybe_rgba_image.as_ref().expect("error 1").width() as usize;
+    let sprite_h: usize = sprite_sheet.maybe_rgba_image.as_ref().expect("error 2").height() as usize;
+    let sprite_bytes: &[u8] = sprite_sheet.maybe_rgba_image.as_ref().expect("error 3").as_bytes();
+    for sprite_row in 0..sprite_h {
+        let target_range = (sprite_row * frame_w * 4)..(sprite_row * frame_w * 4 + sprite_w * 4);
+        let source_range = (sprite_row * sprite_w * 4)..(sprite_row * sprite_w * 4 + sprite_w * 4);
+        frame[target_range].copy_from_slice(&sprite_bytes[source_range]);
+        // for sprite_column in 0..sprite_w {
+        //     let target_i_r = sprite_row * frame_w * 4 + sprite_column * 4;
+        //     let target_i_g = target_i_r + 1;
+        //     let target_i_b = target_i_g + 1;
+        //     let target_i_a = target_i_b + 1;
+        //     let source_i_r = sprite_row * sprite_w * 4 + sprite_column * 4;
+        //     let source_i_g = source_i_r + 1;
+        //     let source_i_b = source_i_g + 1;
+        //     let source_i_a = source_i_b + 1;
+        //     if sprite_bytes[source_i_a] > 0x88 {
+        // frame[target_i_r..=target_i_a].copy_from_slice(&sprite_bytes[source_i_r..=source_i_a])
+        // frame[target_i_r] = sprite_bytes[source_i_r];
+        // frame[target_i_g] = sprite_bytes[source_i_g];
+        // frame[target_i_b] = sprite_bytes[source_i_b];
+        // frame[target_i_a] = sprite_bytes[source_i_a];
+        // }
+        // }
+    }
     // }
 
     let line_data = &[0xff, 0x00, 0x00, 0xff].repeat(frame_w - 2);

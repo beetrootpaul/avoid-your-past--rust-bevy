@@ -1,10 +1,11 @@
 use bevy::math::vec2;
 use bevy::prelude::*;
+use image::{DynamicImage, RgbaImage};
 
 #[derive(Resource, Default)]
 pub struct SpriteSheet {
     // pub texture_atlas_handle: Option<Handle<TextureAtlas>>,
-    // pub maybe_rgba_image: Option<RgbaImage>,
+    pub maybe_rgba_image: Option<RgbaImage>,
 }
 
 impl SpriteSheet {
@@ -69,9 +70,10 @@ fn load_spritesheet(
     // asset_server: Res<AssetServer>,
     // mut texture_atlases: ResMut<Assets<TextureAtlas>>,
 ) {
-    let path = "/assets/spritesheet.png";
-    println!("Path is '{}'", path);
-    // let img: DynamicImage = image::open(path).unwrap();
+    let path = "assets/spritesheet.png";
+    // let path = "spritesheet.png";
+    info!("Path is '{}'", path);
+    let img: DynamicImage = image::open(path).unwrap();
     // let image_handle: Handle<Image> = asset_server.load("spritesheet.png");
     // let texture_atlas = TextureAtlas::from_grid(
     //     image_handle,
@@ -83,8 +85,9 @@ fn load_spritesheet(
     // );
     // let texture_atlas_handle = texture_atlases.add(texture_atlas);
     //
-    // commands.insert_resource(SpriteSheet {
-    //     texture_atlas_handle: Some(texture_atlas_handle),
-    // maybe_rgba_image: Some(img.to_rgba8()),
-    // });
+    commands.insert_resource(SpriteSheet {
+        // texture_atlas_handle: Some(texture_atlas_handle),
+        maybe_rgba_image: Some(img.to_rgba8()),
+        // maybe_rgba_image: None,
+    });
 }
