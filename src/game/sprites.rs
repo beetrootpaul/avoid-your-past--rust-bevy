@@ -70,7 +70,9 @@ fn load_spritesheet(
     // asset_server: Res<AssetServer>,
     // mut texture_atlases: ResMut<Assets<TextureAtlas>>,
 ) {
-    let img: DynamicImage = image::open("assets/spritesheet.png").unwrap();
+    let path = "/assets/spritesheet.png";
+    println!("Path is '{}'", path);
+    // let img: DynamicImage = image::open(path).unwrap();
     // let image_handle: Handle<Image> = asset_server.load("spritesheet.png");
     // let texture_atlas = TextureAtlas::from_grid(
     //     image_handle,
@@ -82,8 +84,8 @@ fn load_spritesheet(
     // );
     // let texture_atlas_handle = texture_atlases.add(texture_atlas);
     //
-    commands.insert_resource(SpriteSheet {
-        //     texture_atlas_handle: Some(texture_atlas_handle),
-        maybe_rgba_image: Some(img.to_rgba8()),
-    });
+    // commands.insert_resource(SpriteSheet {
+    //     texture_atlas_handle: Some(texture_atlas_handle),
+    // maybe_rgba_image: Some(img.to_rgba8()),
+    // });
 }

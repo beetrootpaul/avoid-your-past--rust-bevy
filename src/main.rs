@@ -114,7 +114,7 @@ struct PixelsExampleSize {
 fn pixels_example_setup(mut commands: Commands) {
     let box_object = PixelsExampleRectangleBundle {
         position: PixelsExamplePosition { x: 5, y: 5 },
-        velocity: PixelsExampleVelocity { x: 3, y: 2 },
+        velocity: PixelsExampleVelocity { x: 1, y: 1 },
         size: PixelsExampleSize {
             width: 32,
             height: 48,
@@ -191,36 +191,36 @@ fn pixels_example_draw_objects(
     let frame_w: usize = VIEWPORT_W as usize;
     let frame_h: usize = VIEWPORT_H as usize;
 
-    for tmp in 0..200 {
-        // println!("{:?}", sprite_sheet.maybe_rgba_image.as_ref().unwrap().width());
-        // println!("{:?}", sprite_sheet.maybe_rgba_image.as_ref().unwrap().height());
-        // println!("{:?}", sprite_sheet.maybe_rgba_image.as_ref().unwrap().as_bytes());
-        let sprite_w: usize = sprite_sheet.maybe_rgba_image.as_ref().unwrap().width() as usize;
-        let sprite_h: usize = sprite_sheet.maybe_rgba_image.as_ref().unwrap().height() as usize;
-        let sprite_bytes: &[u8] = sprite_sheet.maybe_rgba_image.as_ref().unwrap().as_bytes();
-        for sprite_row in 0..sprite_h {
-            // let target_range = (sprite_row * frame_w * 4)..(sprite_row * frame_w * 4 + sprite_w * 4);
-            // let source_range = (sprite_row * sprite_w * 4)..(sprite_row * sprite_w * 4 + sprite_w * 4);
-            // frame[target_range].copy_from_slice(&sprite_bytes[source_range]);
-            for sprite_column in 0..sprite_w {
-                let target_i_r = sprite_row * frame_w * 4 + sprite_column * 4;
-                let target_i_g = target_i_r + 1;
-                let target_i_b = target_i_g + 1;
-                let target_i_a = target_i_b + 1;
-                let source_i_r = sprite_row * sprite_w * 4 + sprite_column * 4;
-                let source_i_g = source_i_r + 1;
-                let source_i_b = source_i_g + 1;
-                let source_i_a = source_i_b + 1;
-                if sprite_bytes[source_i_a] > 0x88 {
-                    // frame[target_i_r..=target_i_a].copy_from_slice(&sprite_bytes[source_i_r..=source_i_a])
-                    frame[target_i_r] = sprite_bytes[source_i_r];
-                    frame[target_i_g] = sprite_bytes[source_i_g];
-                    frame[target_i_b] = sprite_bytes[source_i_b];
-                    frame[target_i_a] = sprite_bytes[source_i_a];
-                }
-            }
-        }
-    }
+    // for tmp in 0..200 {
+    // println!("{:?}", sprite_sheet.maybe_rgba_image.as_ref().unwrap().width());
+    // println!("{:?}", sprite_sheet.maybe_rgba_image.as_ref().unwrap().height());
+    // println!("{:?}", sprite_sheet.maybe_rgba_image.as_ref().unwrap().as_bytes());
+    // let sprite_w: usize = sprite_sheet.maybe_rgba_image.as_ref().unwrap().width() as usize;
+    // let sprite_h: usize = sprite_sheet.maybe_rgba_image.as_ref().unwrap().height() as usize;
+    // let sprite_bytes: &[u8] = sprite_sheet.maybe_rgba_image.as_ref().unwrap().as_bytes();
+    // for sprite_row in 0..sprite_h {
+    // let target_range = (sprite_row * frame_w * 4)..(sprite_row * frame_w * 4 + sprite_w * 4);
+    // let source_range = (sprite_row * sprite_w * 4)..(sprite_row * sprite_w * 4 + sprite_w * 4);
+    // frame[target_range].copy_from_slice(&sprite_bytes[source_range]);
+    // for sprite_column in 0..sprite_w {
+    //     let target_i_r = sprite_row * frame_w * 4 + sprite_column * 4;
+    //     let target_i_g = target_i_r + 1;
+    //     let target_i_b = target_i_g + 1;
+    //     let target_i_a = target_i_b + 1;
+    //     let source_i_r = sprite_row * sprite_w * 4 + sprite_column * 4;
+    //     let source_i_g = source_i_r + 1;
+    //     let source_i_b = source_i_g + 1;
+    //     let source_i_a = source_i_b + 1;
+    //     if sprite_bytes[source_i_a] > 0x88 {
+    // frame[target_i_r..=target_i_a].copy_from_slice(&sprite_bytes[source_i_r..=source_i_a])
+    // frame[target_i_r] = sprite_bytes[source_i_r];
+    // frame[target_i_g] = sprite_bytes[source_i_g];
+    // frame[target_i_b] = sprite_bytes[source_i_b];
+    // frame[target_i_a] = sprite_bytes[source_i_a];
+    // }
+    // }
+    // }
+    // }
 
     let line_data = &[0xff, 0x00, 0x00, 0xff].repeat((frame_w - 2) as usize);
     let width_bytes = ((frame_w - 2) * 4) as usize;

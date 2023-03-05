@@ -1,14 +1,27 @@
 #!/usr/bin/env sh
-set -e
+set -ex
 
-RUSTFLAGS="-D warnings -A dead_code -A unused-imports -A unused_mut -A unused-variables" \
+#RUSTFLAGS="-D warnings -A dead_code -A unused-imports -A unused_mut -A unused-variables" \
   cargo build --target wasm32-unknown-unknown --release
 
-echo "When the command below runs, open http://127.0.0.1:1334/ in your browser."
+#echo "When the command below runs, open http://127.0.0.1:1334/ in your browser."
 
 # TODO: create a proper web release page, not this temporary quick way to start and run it
 # This command should serve the game under http://127.0.0.1:1334/
-wasm-server-runner ./target/wasm32-unknown-unknown/release/avoid_your_past_rust_bevy.wasm
+#wasm-server-runner ./target/wasm32-unknown-unknown/release/avoid_your_past_rust_bevy.wasm
+
+rm -rf ./web_build/
+
+wasm-bindgen \
+  --target web \
+  --no-typescript \
+  --out-dir web_build \
+  --out-name web_build_tmp_app \
+  target/wasm32-unknown-unknown/release/avoid_your_past_rust_bevy.wasm
+
+cp web_build_template/index.html web_build/index.html
+
+miniserve --index index.html web_build
 
 # TODO: WASM https://github.com/bevyengine/bevy/tree/latest/examples#wasm
 
