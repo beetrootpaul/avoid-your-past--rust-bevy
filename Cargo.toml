@@ -47,6 +47,7 @@ opt-level = 3
 #iyes_loopless = "0.9.1"
 #rand = "0.8.5"
 image = "0.24.5"
+bevy_web_asset = "0.5.0"
 
 [dependencies.bevy]
 version = "0.9.1"
@@ -70,7 +71,7 @@ features = [
 
     ## "render" actually just includes:
     ## (feel free to use just a subset of these, instead of "render")
-    #"bevy_render",        # Rendering framework core
+    "bevy_render", # Rendering framework core
     #"bevy_core_pipeline", # Common rendering abstractions
     #"bevy_sprite",        # 2D (sprites) rendering
     #    "bevy_pbr",           # 3D (physically-based) rendering
@@ -79,7 +80,7 @@ features = [
     #    "bevy_ui",            # UI toolkit
 
     # File formats:
-    #    "png",
+    "png",
     #    "hdr",
     #    "vorbis",   # WARNING: Do not enable it, because we use bevy_kira_audio instead
 
