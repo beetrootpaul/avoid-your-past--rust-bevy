@@ -33,6 +33,11 @@ edition = "2021"
 [profile.dev.package."*"]
 opt-level = 3
 
+# See: https://bevy-cheatbook.github.io/platforms/wasm/size-opt.html#compiling-for-size-instead-of-speed
+[profile.release]
+opt-level = 's'
+#opt-level = 'z'
+
 # TODO: web: optimize for binary size https://doc.rust-lang.org/cargo/reference/profiles.html#opt-level
 
 # TODO: zdefiniuj brak incremental i inne rzeczy dla profilu release https://doc.rust-lang.org/cargo/reference/profiles.html#release
