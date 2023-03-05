@@ -20,6 +20,7 @@ wasm-bindgen \
   target/wasm32-unknown-unknown/release/avoid_your_past_rust_bevy.wasm
 
 cp web_build_template/index.html web_build/index.html
+cp assets/spritesheet.png web_build/spritesheet.png
 
 miniserve --index index.html web_build
 
