@@ -67,7 +67,7 @@ impl Default for SpriteDimensions {
 
 fn load_spritesheet(
     mut commands: Commands,
-    asset_server: Res<AssetServer>,
+    // asset_server: Res<AssetServer>,
     // mut texture_atlases: ResMut<Assets<TextureAtlas>>,
 ) {
     let path = "assets/spritesheet.png";
@@ -76,13 +76,8 @@ fn load_spritesheet(
     // let path = "./spritesheet.png";
     info!("Path is '{}'", path);
 
-    // let img: DynamicImage = image::open(path).unwrap();
-
+    let img: DynamicImage = image::open(path).unwrap();
     // let image_handle: Handle<Image> = asset_server.load("spritesheet.png");
-    // let path = "spritesheet.png";
-    let path = "http://127.0.0.1:8080/spritesheet.png";
-    let image_handle: Handle<Image> = asset_server.load(path);
-
     // let texture_atlas = TextureAtlas::from_grid(
     //     image_handle,
     //     vec2(SpriteSheet::DEFAULT_SPRITE_W, SpriteSheet::DEFAULT_SPRITE_H),
@@ -95,7 +90,7 @@ fn load_spritesheet(
     //
     commands.insert_resource(SpriteSheet {
         // texture_atlas_handle: Some(texture_atlas_handle),
-        // maybe_rgba_image: Some(img.to_rgba8()),
-        maybe_rgba_image: None,
+        maybe_rgba_image: Some(img.to_rgba8()),
+        // maybe_rgba_image: None,
     });
 }

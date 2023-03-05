@@ -3,7 +3,6 @@ use bevy::diagnostic::{FrameTimeDiagnosticsPlugin, LogDiagnosticsPlugin};
 use bevy::prelude::*;
 use bevy::window::{close_on_esc, WindowResizeConstraints};
 use bevy_pixels::{PixelsPlugin, PixelsResource, PixelsStage};
-use bevy_web_asset::WebAssetPlugin;
 use image::EncodableLayout;
 
 use crate::game::{GamePlugin, SpriteSheet, VIEWPORT_H, VIEWPORT_W};
@@ -27,25 +26,21 @@ fn main() {
 
     let mut app = App::new();
 
-    app.add_plugin(WebAssetPlugin::default()).add_plugins(
-        DefaultPlugins
-            .set(WindowPlugin {
-                window: WindowDescriptor {
-                    title: game::GAME_TITLE.to_string(),
-                    width: VIEWPORT_W as f32 * ZOOM,
-                    height: VIEWPORT_H as f32 * ZOOM,
-                    resize_constraints: WindowResizeConstraints {
-                        min_width: VIEWPORT_W as f32,
-                        min_height: VIEWPORT_H as f32,
-                        ..default()
-                    },
-                    fit_canvas_to_parent: true,
-                    ..default()
-                },
+    app.add_plugins(DefaultPlugins.set(WindowPlugin {
+        window: WindowDescriptor {
+            title: game::GAME_TITLE.to_string(),
+            width: VIEWPORT_W as f32 * ZOOM,
+            height: VIEWPORT_H as f32 * ZOOM,
+            resize_constraints: WindowResizeConstraints {
+                min_width: VIEWPORT_W as f32,
+                min_height: VIEWPORT_H as f32,
                 ..default()
-            })
-            .disable::<AssetPlugin>(),
-    );
+            },
+            fit_canvas_to_parent: true,
+            ..default()
+        },
+        ..default()
+    }));
 
     app.add_plugin(PixelsPlugin {
         width: VIEWPORT_W as u32,
