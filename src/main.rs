@@ -93,29 +93,29 @@ struct PixelsExampleRectangleBundle {
 
 #[derive(Component, Debug)]
 struct PixelsExamplePosition {
-    x: u32,
-    y: u32,
+    x: f32,
+    y: f32,
 }
 
 #[derive(Component, Debug)]
 struct PixelsExampleVelocity {
-    x: i16,
-    y: i16,
+    x: f32,
+    y: f32,
 }
 
 #[derive(Component, Debug)]
 struct PixelsExampleSize {
-    width: u32,
-    height: u32,
+    width: f32,
+    height: f32,
 }
 
 fn pixels_example_setup(mut commands: Commands) {
     let box_object = PixelsExampleRectangleBundle {
-        position: PixelsExamplePosition { x: 5, y: 5 },
-        velocity: PixelsExampleVelocity { x: 1, y: 1 },
+        position: PixelsExamplePosition { x: 5., y: 5. },
+        velocity: PixelsExampleVelocity { x: 0.3, y: 0.8 },
         size: PixelsExampleSize {
-            width: 32,
-            height: 48,
+            width: 32.,
+            height: 48.,
         },
         color: Color(0x5e, 0x48, 0xe8, 0xff),
     };
@@ -132,12 +132,12 @@ fn pixels_example_bounce(
 ) {
     for (position, mut velocity, size, mut color) in query.iter_mut() {
         let mut bounce = false;
-        if position.x < 4 || position.x + size.width > (VIEWPORT_W as u32 - 4) {
-            velocity.x *= -1;
+        if position.x < 4. || position.x + size.width > (VIEWPORT_W - 4.) {
+            velocity.x *= -1.;
             bounce = true;
         }
-        if position.y < 4 || position.y + size.height > (VIEWPORT_H as u32 - 4) {
-            velocity.y *= -1;
+        if position.y < 4. || position.y + size.height > (VIEWPORT_H - 4.) {
+            velocity.y *= -1.;
             bounce = true;
         }
     }
@@ -145,12 +145,12 @@ fn pixels_example_bounce(
 
 fn pixels_example_movement(mut query: Query<(&mut PixelsExamplePosition, &PixelsExampleVelocity)>) {
     for (mut position, velocity) in query.iter_mut() {
-        let mut x_tmp = position.x as i16 + velocity.x;
-        x_tmp = x_tmp.max(1);
-        position.x = (x_tmp) as u32;
-        let mut y_tmp = (position.y as i16 + velocity.y);
-        y_tmp = y_tmp.max(1);
-        position.y = y_tmp as u32;
+        let mut x_tmp = position.x + velocity.x;
+        x_tmp = x_tmp.max(1.);
+        position.x = x_tmp;
+        let mut y_tmp = (position.y + velocity.y);
+        y_tmp = y_tmp.max(1.);
+        position.y = y_tmp;
     }
 }
 
@@ -168,12 +168,12 @@ fn pixels_example_draw_objects(
     let frame_width_bytes = (VIEWPORT_W as u32 * 4) as usize;
 
     for (position, size, color) in query.iter() {
-        let x_offset = (position.x * 4) as usize;
-        let width_bytes = (size.width * 4) as usize;
-        let object_row = &[color.0, color.1, color.2, color.3].repeat((size.width) as usize);
+        let x_offset = position.x as usize * 4;
+        let width_bytes = size.width as usize * 4;
+        let object_row = &[color.0, color.1, color.2, color.3].repeat(size.width as usize);
 
-        for y in position.y..(position.y + size.height - 1) {
-            let y_offset = y as usize * frame_width_bytes;
+        for y in (position.y as usize)..(position.y as usize + size.height as usize - 1) {
+            let y_offset = y * frame_width_bytes;
             let i = y_offset + x_offset;
             let j = i + width_bytes;
 
@@ -215,10 +215,10 @@ fn pixels_example_draw_objects(
     // }
     // }
 
-    let line_data = &[0xff, 0x00, 0x00, 0xff].repeat((frame_w - 2) as usize);
-    let width_bytes = ((frame_w - 2) * 4) as usize;
-    let x_offset = (1 * 4) as usize;
-    let y_offset = 1 * frame_width_bytes;
+    let line_data = &[0xff, 0x00, 0x00, 0xff].repeat(frame_w - 2);
+    let width_bytes = (frame_w - 2) * 4;
+    let x_offset = 4;
+    let y_offset = frame_width_bytes;
     let i = y_offset + x_offset;
     let j = i + width_bytes;
     frame[i..j].copy_from_slice(line_data);
