@@ -6,7 +6,6 @@ use bevy_pixels::{PixelsPlugin, PixelsResource, PixelsStage};
 use image::EncodableLayout;
 
 use crate::game::{GamePlugin, SpriteSheet, VIEWPORT_H, VIEWPORT_W};
-#[cfg(debug_assertions)]
 use crate::print_fps::PrintFpsPlugin;
 
 mod game;
@@ -75,7 +74,6 @@ fn main() {
 
     app.add_plugin(GamePlugin);
 
-    #[cfg(debug_assertions)]
     app.add_plugin(PrintFpsPlugin);
 
     #[cfg(debug_assertions)]
@@ -190,6 +188,11 @@ fn pixels_example_draw_objects(
         let sprite_h: usize = rgba_image.height() as usize;
         let sprite_bytes: &[u8] = rgba_image.as_bytes();
 
+        // if let Some(rgba_bytes) = sprite_sheet.maybe_bytes.as_ref() {
+        //     let sprite_w: usize = 128;
+        //     let sprite_h: usize = 32;
+        //     let sprite_bytes: &[u8] = rgba_bytes;
+
         // println!("{:?}", sprite_sheet.maybe_rgba_image.as_ref().unwrap().width());
         // println!("{:?}", sprite_sheet.maybe_rgba_image.as_ref().unwrap().height());
         // println!("{:?}", sprite_sheet.maybe_rgba_image.as_ref().unwrap().as_bytes());
@@ -197,28 +200,30 @@ fn pixels_example_draw_objects(
         // for tmp in 0..200 {
 
         for sprite_row in 0..sprite_h {
-            let target_range =
-                (sprite_row * frame_w * 4)..(sprite_row * frame_w * 4 + sprite_w * 4);
-            let source_range =
-                (sprite_row * sprite_w * 4)..(sprite_row * sprite_w * 4 + sprite_w * 4);
-            frame[target_range].copy_from_slice(&sprite_bytes[source_range]);
-            // for sprite_column in 0..sprite_w {
-            //     let target_i_r = sprite_row * frame_w * 4 + sprite_column * 4;
-            //     let target_i_g = target_i_r + 1;
-            //     let target_i_b = target_i_g + 1;
-            //     let target_i_a = target_i_b + 1;
-            //     let source_i_r = sprite_row * sprite_w * 4 + sprite_column * 4;
-            //     let source_i_g = source_i_r + 1;
-            //     let source_i_b = source_i_g + 1;
-            //     let source_i_a = source_i_b + 1;
-            //     if sprite_bytes[source_i_a] > 0x88 {
-            // frame[target_i_r..=target_i_a].copy_from_slice(&sprite_bytes[source_i_r..=source_i_a])
-            // frame[target_i_r] = sprite_bytes[source_i_r];
-            // frame[target_i_g] = sprite_bytes[source_i_g];
-            // frame[target_i_b] = sprite_bytes[source_i_b];
-            // frame[target_i_a] = sprite_bytes[source_i_a];
-            // }
-            // }
+            // let target_range =
+            //     (sprite_row * frame_w * 4)..(sprite_row * frame_w * 4 + sprite_w * 4);
+            // let source_range =
+            //     (sprite_row * sprite_w * 4)..(sprite_row * sprite_w * 4 + sprite_w * 4);
+            // frame[target_range].copy_from_slice(&sprite_bytes[source_range]);
+
+            for sprite_column in 0..sprite_w {
+                let target_i_r = sprite_row * frame_w * 4 + sprite_column * 4;
+                let target_i_g = target_i_r + 1;
+                let target_i_b = target_i_g + 1;
+                let target_i_a = target_i_b + 1;
+                let source_i_r = sprite_row * sprite_w * 4 + sprite_column * 4;
+                let source_i_g = source_i_r + 1;
+                let source_i_b = source_i_g + 1;
+                let source_i_a = source_i_b + 1;
+                if sprite_bytes[source_i_a] > 0x88 {
+                    // frame[target_i_r..=target_i_a].copy_from_slice(&sprite_bytes[source_i_r..=source_i_a]);
+
+                    frame[target_i_r] = sprite_bytes[source_i_r];
+                    frame[target_i_g] = sprite_bytes[source_i_g];
+                    frame[target_i_b] = sprite_bytes[source_i_b];
+                    frame[target_i_a] = sprite_bytes[source_i_a];
+                }
+            }
         }
         // }
     }

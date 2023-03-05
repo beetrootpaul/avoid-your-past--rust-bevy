@@ -1,11 +1,12 @@
 use bevy::math::vec2;
 use bevy::prelude::*;
-use image::{DynamicImage, RgbaImage};
+use image::{DynamicImage, EncodableLayout, RgbaImage};
 
 #[derive(Resource, Default)]
 pub struct SpriteSheet {
     // pub texture_atlas_handle: Option<Handle<TextureAtlas>>,
     pub maybe_rgba_image: Option<RgbaImage>,
+    pub maybe_bytes: Option<&'static [u8]>,
 }
 
 impl SpriteSheet {
@@ -70,13 +71,31 @@ fn load_spritesheet(
     // asset_server: Res<AssetServer>,
     // mut texture_atlases: ResMut<Assets<TextureAtlas>>,
 ) {
-    let path = "assets/spritesheet.png";
+    let bytes = include_bytes!("../../assets/spritesheet.png");
+    info!("inlined bytes len: {}", bytes.len());
+    info!("inlined bytes: {:?}", bytes);
+    // println!("{:?}",bytes.len());
+    // return bytes.to_vec();
+
+    // let path = "assets/spritesheet.png";
     // let path = "spritesheet.png";
     // let path = "/spritesheet.png";
     // let path = "./spritesheet.png";
-    info!("Path is '{}'", path);
+    // info!("Path is '{}'", path);
 
-    let img: DynamicImage = image::open(path).unwrap();
+    // let tmp1 = image::RgbaImage::from_raw(128, 32, bytes.to_vec());
+    // let tmp2 = tmp1.expect("lol");
+    // let tmp3 = DynamicImage::ImageRgba8(tmp2);
+
+    let dyn_img: DynamicImage = image::load_from_memory(bytes).expect("bytes from memory image!");
+    // let dyn_img: DynamicImage = image::open(path).expect("LOAD DYN IMG");
+    info!("{:?}", dyn_img.as_bytes().len());
+    info!("{:?}", dyn_img.as_bytes());
+    // let rgba8: RgbaImage = dyn_img.to_rgba8();
+    // let rgba8_bytes = rgba8.as_bytes();
+    // info!("dyn img bytes len: {}", rgba8_bytes.len());
+    // info!("dyn img bytes: {:?}", rgba8_bytes);
+
     // let image_handle: Handle<Image> = asset_server.load("spritesheet.png");
     // let texture_atlas = TextureAtlas::from_grid(
     //     image_handle,
@@ -90,7 +109,11 @@ fn load_spritesheet(
     //
     commands.insert_resource(SpriteSheet {
         // texture_atlas_handle: Some(texture_atlas_handle),
-        maybe_rgba_image: Some(img.to_rgba8()),
+
+        maybe_rgba_image: Some(dyn_img.to_rgba8()),
         // maybe_rgba_image: None,
+
+        // maybe_bytes: Some(bytes),
+        maybe_bytes: None,
     });
 }
