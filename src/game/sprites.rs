@@ -71,9 +71,17 @@ fn load_spritesheet(
     // asset_server: Res<AssetServer>,
     // mut texture_atlases: ResMut<Assets<TextureAtlas>>,
 ) {
-    let bytes = include_bytes!("../../assets/spritesheet.png");
-    info!("inlined bytes len: {}", bytes.len());
-    info!("inlined bytes: {:?}", bytes);
+    /*
+    let included_bytes = include_bytes!("../../assets/spritesheet.png");
+    let loaded_image = image::load_from_memory(included_bytes).expect("should load image from memory");
+    let now_it_is_for_sure_rgba8_image = loaded_image.to_rgba8();
+    let rgba8_bytes = now_it_is_for_sure_rgba8_image.as_bytes();
+    info!("{} bytes, content: {:?}", rgba8_bytes.len(), rgba8_bytes);
+     */
+
+    let included_bytes = include_bytes!("../../assets/spritesheet.png");
+    // info!("inlined bytes len: {}", included_bytes.len());
+    // info!("inlined bytes: {:?}", included_bytes);
     // println!("{:?}",bytes.len());
     // return bytes.to_vec();
 
@@ -87,10 +95,10 @@ fn load_spritesheet(
     // let tmp2 = tmp1.expect("lol");
     // let tmp3 = DynamicImage::ImageRgba8(tmp2);
 
-    let dyn_img: DynamicImage = image::load_from_memory(bytes).expect("bytes from memory image!");
+    let loaded_image: DynamicImage = image::load_from_memory(included_bytes).expect("should load image from memory");
     // let dyn_img: DynamicImage = image::open(path).expect("LOAD DYN IMG");
-    info!("{:?}", dyn_img.as_bytes().len());
-    info!("{:?}", dyn_img.as_bytes());
+    // info!("{:?}", loaded_image.as_bytes().len());
+    // info!("{:?}", loaded_image.as_bytes());
     // let rgba8: RgbaImage = dyn_img.to_rgba8();
     // let rgba8_bytes = rgba8.as_bytes();
     // info!("dyn img bytes len: {}", rgba8_bytes.len());
@@ -110,7 +118,7 @@ fn load_spritesheet(
     commands.insert_resource(SpriteSheet {
         // texture_atlas_handle: Some(texture_atlas_handle),
 
-        maybe_rgba_image: Some(dyn_img.to_rgba8()),
+        maybe_rgba_image: Some(loaded_image.to_rgba8()),
         // maybe_rgba_image: None,
 
         // maybe_bytes: Some(bytes),
