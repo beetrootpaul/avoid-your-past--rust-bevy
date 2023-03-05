@@ -15,6 +15,7 @@ use crate::game::collision_debug::HitCirclesVisualizationPlugin;
 use crate::game::game_area::{spawn_game_area, GAME_AREA_H, GAME_AREA_W};
 use crate::game::game_state::{create_system_update_game_state, GameState};
 use crate::game::gui::TOPBAR_H;
+use crate::game::input::GameGamepadControlsPlugin;
 use crate::game::logic::create_systems_collect_coins;
 #[cfg(debug_assertions)]
 use crate::game::sprites_debug::SpritesBoundariesPlugin;
@@ -50,6 +51,7 @@ impl Plugin for GamePlugin {
         app.add_loopless_state(GameState::InGame);
 
         app.add_plugin(GameKeyboardControlsPlugin);
+        app.add_plugin(GameGamepadControlsPlugin);
 
         // TODO: add some nice assertions for whether plugin was added or not, because right now error is very cryptic
         app.add_plugin(GameSpriteSheetPlugin);

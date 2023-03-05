@@ -1,14 +1,30 @@
 #!/usr/bin/env sh
 set -e
 
+# TODO: optimize for size: https://bevy-cheatbook.github.io/platforms/wasm/size-opt.html
 RUSTFLAGS="-D warnings -A dead_code -A unused-imports -A unused_mut -A unused-variables" \
   cargo build --target wasm32-unknown-unknown --release
 
-echo "When the command below runs, open http://127.0.0.1:1334/ in your browser."
-
 # TODO: create a proper web release page, not this temporary quick way to start and run it
+
 # This command should serve the game under http://127.0.0.1:1334/
-wasm-server-runner ./target/wasm32-unknown-unknown/release/avoid_your_past_rust_bevy.wasm
+#wasm-server-runner ./target/wasm32-unknown-unknown/release/avoid_your_past_rust_bevy.wasm
+
+rm -rf ./wasm_debug/release/
+
+wasm-bindgen \
+  --target web \
+  --no-typescript \
+  --out-dir ./wasm/release \
+  --out-name avoid_your_past \
+  target/wasm32-unknown-unknown/debug/avoid_your_past_rust_bevy.wasm
+
+cp ./wasm/template/index.html ./wasm/release/index.html
+
+mkdir -p ./wasm/release/assets/
+cp ./assets/* ./wasm/release/assets/
+
+miniserve --port 8080 --index index.html ./wasm/release/
 
 # TODO: WASM https://github.com/bevyengine/bevy/tree/latest/examples#wasm
 
