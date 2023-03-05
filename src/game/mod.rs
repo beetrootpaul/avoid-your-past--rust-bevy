@@ -1,6 +1,5 @@
 use bevy::prelude::*;
 use bevy_pixels::{PixelsPlugin, PixelsResource, PixelsStage};
-use iyes_loopless::prelude::{AppLooplessStateExt, ConditionSet};
 
 pub use coin::create_systems_coin_spawn;
 pub use coin::Coin;
@@ -25,7 +24,10 @@ use crate::game::trail::{
 };
 use crate::pico8_color::Pico8Color;
 use crate::pixel_art_support::{FixedFpsBevyAppExtension, FixedFpsPlugin, PixelArtCameraPlugin};
-use crate::{Color, pixels_example_bounce, pixels_example_draw_background, pixels_example_draw_objects, pixels_example_movement, PixelsExamplePosition, PixelsExampleSize};
+use crate::{
+    pixels_example_bounce, pixels_example_draw_background, pixels_example_draw_objects,
+    pixels_example_movement, Color, PixelsExamplePosition, PixelsExampleSize,
+};
 
 mod animation;
 mod audio;
@@ -50,7 +52,7 @@ pub struct GamePlugin;
 
 impl Plugin for GamePlugin {
     fn build(&self, app: &mut App) {
-        app.add_loopless_state(GameState::InGame);
+        // app.add_loopless_state(GameState::InGame);
 
         // app.add_plugin(GameKeyboardControlsPlugin);
 
@@ -71,32 +73,41 @@ impl Plugin for GamePlugin {
 
         // TODO: prevent FixedFpsPlugin from being added twice in different places in the app
         app.add_plugin(FixedFpsPlugin);
-        #[cfg(debug_assertions)]
-        app.log_fixed_fps_measurements();
+        // #[cfg(debug_assertions)]
+        // app.log_fixed_fps_measurements();
         // app.add_fixed_fps_stage(vec![create_systems_trail_particles_age()]);
         // app.add_fixed_fps_stage(vec![create_systems_player_move()]);
         // app.add_fixed_fps_stage(vec![create_systems_collect_coins()]);
         // app.add_fixed_fps_stage(vec![create_systems_animate_sprite()]);
-        app.add_fixed_fps_stage(vec![
-            create_systems_player_spawn(),
-            // create_systems_coin_spawn(),
-        ]);
-        app.add_fixed_fps_stage(vec![ConditionSet::new()
-            .with_system(pixels_example_bounce)
-            .into()]);
-        app.add_fixed_fps_stage(vec![ConditionSet::new()
-            .with_system(pixels_example_movement)
-            .into()]);
+        // app.add_fixed_fps_stage(vec![
+        //     create_systems_player_spawn(),
+        // create_systems_coin_spawn(),
+        // ]);
+        // app.add_fixed_fps_stage(vec![
+        // ConditionSet::new()
+        // SystemSet::new().with_system(pixels_example_bounce), // .into()
+        // ]);
+        // app.add_fixed_fps_stage(vec![
+        // ConditionSet::new()
+        // SystemSet::new().with_system(pixels_example_movement), // .into()
+        // ]);
         // app.add_fixed_fps_stage(vec![create_systems_trail_particles_spawn()]);
         // app.add_fixed_fps_stage(vec![create_system_update_game_state()]);
-        app.add_fixed_fps_stage(vec![ConditionSet::new()
-            .with_system(pixels_example_draw_background)
-            .into()]);
-        app.add_fixed_fps_stage(vec![ConditionSet::new()
-            .with_system(pixels_example_draw_objects)
-            .into()]);
-        app.add_fixed_fps_stage(vec![ConditionSet::new()
-            .with_system(PixelsPlugin::render)
-            .into()]);
+        // app.add_fixed_fps_stage(vec![
+        // ConditionSet::new()
+        // SystemSet::new().with_system(pixels_example_draw_background), // .into()
+        // ]);
+        // app.add_fixed_fps_stage(vec![
+        // ConditionSet::new()
+        // SystemSet::new().with_system(pixels_example_draw_objects), // .into()
+        // ]);
+        // app.add_fixed_fps_stage(vec![
+        // ConditionSet::new()
+        // SystemSet::new().with_system(PixelsPlugin::render), // .into()
+        // ]);
+        app.add_system(pixels_example_bounce);
+        app.add_system(pixels_example_movement.after(pixels_example_bounce));
+        app.add_system(pixels_example_draw_background.after(pixels_example_movement));
+        app.add_system(pixels_example_draw_objects.after(pixels_example_draw_background));
     }
 }

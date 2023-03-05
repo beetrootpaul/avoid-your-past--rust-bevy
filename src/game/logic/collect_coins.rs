@@ -1,8 +1,6 @@
 use std::ops::Add;
 
 use bevy::prelude::*;
-use bevy_kira_audio::{Audio, AudioControl};
-use iyes_loopless::prelude::ConditionSet;
 
 use crate::game::audio::AudioFiles;
 use crate::game::collision::HitCircle;
@@ -11,17 +9,18 @@ use crate::game::player::Player;
 use crate::game::Coin;
 
 pub fn create_systems_collect_coins() -> SystemSet {
-    ConditionSet::new()
-        .run_if(GameState::should_game_update)
-        .with_system(collect_coins)
-        .into()
+    SystemSet::new()
+    // ConditionSet::new()
+    //     .run_if(GameState::should_game_update)
+    //     .with_system(collect_coins)
+    //     .into()
 }
 
 fn collect_coins(
     mut commands: Commands,
     players_query: Query<(&Transform, &HitCircle), With<Player>>,
     coins_query: Query<(Entity, &Transform, &HitCircle), With<Coin>>,
-    audio: Res<Audio>,
+    // audio: Res<Audio>,
     audio_files: Res<AudioFiles>,
 ) {
     for (player_transform, player_hit_circle) in players_query.iter() {
@@ -33,11 +32,11 @@ fn collect_coins(
             if distance < (player_hit_circle.r + coin_hit_circle.r) {
                 commands.entity(coin_entity).despawn_recursive();
                 // TODO: consider moving audio play somewhere else, and here just a simple function call or event maybe?
-                let sfx = audio_files
-                    .sfx_coin_collected
-                    .clone()
-                    .expect("should have sfx_coin_collected file already loaded");
-                audio.play(sfx);
+                // let sfx = audio_files
+                //     .sfx_coin_collected
+                //     .clone()
+                //     .expect("should have sfx_coin_collected file already loaded");
+                // audio.play(sfx);
             }
         }
     }

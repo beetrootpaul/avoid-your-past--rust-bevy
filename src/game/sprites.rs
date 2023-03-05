@@ -1,11 +1,10 @@
 use bevy::math::vec2;
 use bevy::prelude::*;
-use image::{DynamicImage, EncodableLayout, RgbaImage};
 
 #[derive(Resource, Default)]
 pub struct SpriteSheet {
     // pub texture_atlas_handle: Option<Handle<TextureAtlas>>,
-    pub maybe_rgba_image: Option<RgbaImage>,
+    // pub maybe_rgba_image: Option<RgbaImage>,
 }
 
 impl SpriteSheet {

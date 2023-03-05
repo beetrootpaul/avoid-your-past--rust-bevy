@@ -1,8 +1,6 @@
 use bevy::math::vec3;
 use bevy::prelude::*;
 // use bevy::sprite::Anchor;
-use iyes_loopless::prelude::ConditionSet;
-use rand::Rng;
 
 use crate::game::animation::AnimationFrames;
 use crate::game::collision::HitCircle;
@@ -26,11 +24,12 @@ struct CoinBundle {
 }
 
 pub fn create_systems_coin_spawn() -> SystemSet {
-    ConditionSet::new()
-        .run_if(GameState::should_game_update)
-        .run_if(there_is_no_coin)
-        .with_system(spawn_coin)
-        .into()
+    SystemSet::new()
+    // ConditionSet::new()
+    //     .run_if(GameState::should_game_update)
+    //     .run_if(there_is_no_coin)
+    //     .with_system(spawn_coin)
+    //     .into()
 }
 
 fn there_is_no_coin(query: Query<&Coin>) -> bool {
@@ -43,7 +42,7 @@ fn spawn_coin(
     // meshes: ResMut<Assets<Mesh>>,
     // materials: ResMut<Assets<ColorMaterial>>,
 ) {
-    let mut rng = rand::thread_rng();
+    // let mut rng = rand::thread_rng();
 
     let animation_frames = AnimationFrames {
         first: SpriteSheet::COIN_FIRST,

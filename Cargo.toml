@@ -44,9 +44,9 @@ opt-level = 3
 [dependencies]
 #bevy_pixel_camera = "0.3.0"
 #bevy_prototype_debug_lines = "0.9.0"
-iyes_loopless = "0.9.1"
-rand = "0.8.5"
-image = "0.24.5"
+#iyes_loopless = "0.9.1"
+#rand = "0.8.5"
+#image = "0.24.5"
 
 [dependencies.bevy]
 version = "0.9.1"
@@ -65,7 +65,7 @@ features = [
     #    "animation",          # Animation support
     #    "x11",                # Linux: Support X11 windowing system
     # TODO: add this to dev only (same as dynamic), NOT the release one!
-    "filesystem_watcher", # Asset hot-reloading
+    #    "filesystem_watcher", # Asset hot-reloading
     #    "render",             # Graphics Rendering
 
     ## "render" actually just includes:
@@ -111,23 +111,23 @@ features = [
     #    "wgpu_trace",   # WGPU/rendering tracing
 ]
 
-[dependencies.bevy_kira_audio]
-version = "0.13.0"
-default-features = false
-features = [
-    # TODO: would OGG be better for web in terms of compatibility?
-    "wav",
-    #    "flac",
-    #    "mp3",
-    #    "ogg",
-]
+#[dependencies.bevy_kira_audio]
+#version = "0.13.0"
+#default-features = false
+#features = [
+# TODO: would OGG be better for web in terms of compatibility?
+#    "wav",
+#    "flac",
+#    "mp3",
+#    "ogg",
+#]
 
 
 [dependencies.bevy_pixels]
-path = "bevy_pixels_local"
-#version = "0.8.0"
-default-features = false
-features = [
-    #        "x11",
-    #        "wayland"
-]
+#path = "bevy_pixels_local"
+version = "0.8.0"
+#default-features = false
+#features = [
+#            "x11",
+#            "wayland"
+#]

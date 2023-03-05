@@ -3,8 +3,6 @@ use bevy::diagnostic::{FrameTimeDiagnosticsPlugin, LogDiagnosticsPlugin};
 use bevy::prelude::*;
 use bevy::window::{close_on_esc, WindowResizeConstraints};
 use bevy_pixels::{PixelsPlugin, PixelsResource, PixelsStage};
-use image::EncodableLayout;
-use rand::random;
 
 use crate::game::{GamePlugin, SpriteSheet, VIEWPORT_H, VIEWPORT_W};
 #[cfg(debug_assertions)]
@@ -141,11 +139,6 @@ fn pixels_example_bounce(
         if position.y < 4 || position.y + size.height > (VIEWPORT_H as u32 - 4) {
             velocity.y *= -1;
             bounce = true;
-        }
-        if bounce {
-            color.0 = random();
-            color.1 = random();
-            color.2 = random();
         }
     }
 }

@@ -1,7 +1,5 @@
 use bevy::math::vec3;
 use bevy::prelude::*;
-// use bevy::sprite::Anchor;
-use iyes_loopless::prelude::ConditionSet;
 
 use crate::game::collision::HitCircle;
 #[cfg(debug_assertions)]
@@ -36,19 +34,21 @@ struct PlayerBundle {
 }
 
 pub fn create_systems_player_spawn() -> SystemSet {
-    ConditionSet::new()
-        .run_if(GameState::should_game_update)
-        .run_if(there_is_no_player)
-        .with_system(spawn_player)
-        .into()
+    SystemSet::new()
+    // ConditionSet::new()
+    //     .run_if(GameState::should_game_update)
+    //     .run_if(there_is_no_player)
+    //     .with_system(spawn_player)
+    //     .into()
 }
 
 pub fn create_systems_player_move() -> SystemSet {
-    ConditionSet::new()
-        .run_if(GameState::should_game_update)
-        .with_system(move_player)
-        // .with_system(update_player_sprite)
-        .into()
+    SystemSet::new()
+    // ConditionSet::new()
+    //     .run_if(GameState::should_game_update)
+    //     .with_system(move_player)
+    // .with_system(update_player_sprite)
+    // .into()
 }
 
 fn there_is_no_player(query: Query<&Player>) -> bool {

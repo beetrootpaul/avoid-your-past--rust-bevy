@@ -1,6 +1,4 @@
 use bevy::prelude::*;
-use iyes_loopless::prelude::NextState;
-use iyes_loopless::state::CurrentState;
 
 use crate::game::collision_debug::HitCirclesVisualizationConfig;
 use crate::game::game_state::GameState;
@@ -20,7 +18,7 @@ fn handle_keyboard_input(
     keyboard_input: Res<Input<KeyCode>>,
     mut player_movement_query: Query<&mut PlayerMovement>,
     mut commands: Commands,
-    current_state: Res<CurrentState<GameState>>,
+    // current_state: Res<CurrentState<GameState>>,
     sprites_boundaries_config: Option<ResMut<SpritesBoundariesConfig>>,
     hit_circles_visualization_config: Option<ResMut<HitCirclesVisualizationConfig>>,
 ) {
@@ -48,22 +46,22 @@ fn handle_keyboard_input(
     // d = enter [d]ebug pause
     #[cfg(debug_assertions)]
     if keyboard_input.just_pressed(KeyCode::D) {
-        match *current_state {
-            CurrentState(GameState::InGame) => {
-                commands.insert_resource(NextState(GameState::DebugPause));
-            },
-            CurrentState(GameState::DebugPause) => {
-                commands.insert_resource(NextState(GameState::InGame));
-            },
-            _ => {},
-        };
+        // match *current_state {
+        //     CurrentState(GameState::InGame) => {
+        //         commands.insert_resource(NextState(GameState::DebugPause));
+        //     },
+        //     CurrentState(GameState::DebugPause) => {
+        //         commands.insert_resource(NextState(GameState::InGame));
+        //     },
+        //     _ => {},
+        // };
     }
-    #[cfg(debug_assertions)]
-    if let CurrentState(GameState::DebugPause) = *current_state {
-        if keyboard_input.just_pressed(KeyCode::Period) {
-            commands.insert_resource(NextState(GameState::DebugResumeFor1Frame));
-        }
-    }
+    // #[cfg(debug_assertions)]
+    // if let CurrentState(GameState::DebugPause) = *current_state {
+    //     if keyboard_input.just_pressed(KeyCode::Period) {
+    //         commands.insert_resource(NextState(GameState::DebugResumeFor1Frame));
+    //     }
+    // }
     // s = draw [s]prite boundaries
     #[cfg(debug_assertions)]
     if keyboard_input.just_pressed(KeyCode::S) {
