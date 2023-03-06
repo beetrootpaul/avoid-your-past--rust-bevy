@@ -11,9 +11,15 @@ itch.io 😄 ).
 
 Controls:
 
-- keyboard: arrows
-- gamepad: D-Pad
-- gamepad: left stick
+- keyboard: arrows to move
+- gamepad: D-Pad to move
+- gamepad: left stick to move as well
+- keyboard, in debug build: `D` to enter debug pause, in which most of systems stop and pressing `.` advances the game
+  by 1 frame. BTW movement works, since keyboard handling happens on a regular system, while all main game systems
+  happen on a fixed FPS – meaning, you can change player's movement direction while being in debug pause, then press `.`
+  to see its result
+- keyboard, in debug build: `S` to toggle sprite boundaries visualization
+- keyboard, in debug build: `C` to toggle hit circles visualization
 
 ## License
 
