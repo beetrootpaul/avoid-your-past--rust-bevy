@@ -33,6 +33,11 @@ edition = "2021"
 [profile.dev.package."*"]
 opt-level = 3
 
+# See: https://bevy-cheatbook.github.io/platforms/wasm/size-opt.html#compiling-for-size-instead-of-speed
+[profile.release]
+opt-level = 's'
+#opt-level = 'z'
+
 # TODO: web: optimize for binary size https://doc.rust-lang.org/cargo/reference/profiles.html#opt-level
 
 # TODO: zdefiniuj brak incremental i inne rzeczy dla profilu release https://doc.rust-lang.org/cargo/reference/profiles.html#release
@@ -58,7 +63,7 @@ features = [
     # Bevy functionality:
     "bevy_asset", # Assets management
     #    "bevy_scene",         # Scenes management
-    #    "bevy_gilrs",         # Gamepad input support
+    "bevy_gilrs", # Gamepad input support
     #    "bevy_audio",         # Builtin audio | WARNING: Do not enable it, because we use bevy_kira_audio instead
     "bevy_winit", # Window management
     #    "animation",          # Animation support
@@ -114,8 +119,8 @@ version = "0.13.0"
 default-features = false
 features = [
     # TODO: would OGG be better for web in terms of compatibility?
-    "wav",
+    #    "wav",
     #    "flac",
     #    "mp3",
-    #    "ogg",
+    "ogg",
 ]
