@@ -9,4 +9,5 @@ set -ex
 
 cargo install wasm-server-runner
 cargo install wasm-bindgen-cli
+cargo install trunk
 cargo install miniserve
