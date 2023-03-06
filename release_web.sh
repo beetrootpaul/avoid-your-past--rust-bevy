@@ -10,14 +10,14 @@ RUSTFLAGS="-D warnings -A dead_code -A unused-imports -A unused_mut -A unused-va
 # This command should serve the game under http://127.0.0.1:1334/
 #wasm-server-runner ./target/wasm32-unknown-unknown/release/avoid_your_past_rust_bevy.wasm
 
-rm -rf ./wasm_debug/release/
+rm -rf ./wasm/release/
 
 wasm-bindgen \
   --target web \
   --no-typescript \
   --out-dir ./wasm/release \
   --out-name avoid_your_past \
-  target/wasm32-unknown-unknown/debug/avoid_your_past_rust_bevy.wasm
+  target/wasm32-unknown-unknown/release/avoid_your_past_rust_bevy.wasm
 
 cp ./wasm/template/index.html ./wasm/release/index.html
 
