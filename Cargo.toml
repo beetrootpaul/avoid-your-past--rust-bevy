@@ -119,8 +119,8 @@ version = "0.13.0"
 default-features = false
 features = [
     # TODO: would OGG be better for web in terms of compatibility?
-    "wav",
+    #    "wav",
     #    "flac",
     #    "mp3",
-    #    "ogg",
+    "ogg",
 ]

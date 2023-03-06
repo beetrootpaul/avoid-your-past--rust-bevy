@@ -28,3 +28,5 @@ wasm-server-runner ./target/wasm32-unknown-unknown/debug/avoid_your_past_rust_be
 # TODO: FIX RUST_LOG to work on web same as on desktop
 
 # TODO: prevent game from starting before we click on it to get sound and keyboard inputs
+
+# TODO: document somewhere this command for WAV->OGG conversion: ffmpeg -i input.wav -c:a libvorbis -qscale:a 3 output.ogg

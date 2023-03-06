@@ -22,8 +22,11 @@ impl Plugin for GameAudioPlugin {
 
 fn load_sfx_files(mut commands: Commands, asset_server: Res<AssetServer>) {
     commands.insert_resource(AudioFiles {
-        sfx_coin_collected: Some(asset_server.load("sfx_coin_collected.wav")),
-        music_base: Some(asset_server.load("music_base.wav")),
+        // sfx_coin_collected: Some(asset_server.load("sfx_coin_collected.wav")),
+        sfx_coin_collected: Some(asset_server.load("sfx_coin_collected.ogg")),
+
+        // music_base: Some(asset_server.load("music_base.wav")),
+        music_base: Some(asset_server.load("music_base.ogg")),
     });
 }
 
