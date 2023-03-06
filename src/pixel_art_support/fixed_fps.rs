@@ -62,7 +62,7 @@ fn log_measurements(timesteps: Res<iyes_loopless::fixedtimestep::FixedTimesteps>
     let info = timesteps
         .get_current()
         .expect("should get current fixed timestep");
-    debug!(
+    trace!(
         "Fixed timestep: expected = {:?} | overstepped by = {:?}",
         info.timestep(),
         info.remaining(),
