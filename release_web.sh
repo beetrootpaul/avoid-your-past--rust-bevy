@@ -42,3 +42,5 @@ miniserve --port 8080 --index index.html ./wasm/release/
 # TODO: check app size after build, wonder how heavy file would it be for web
 
 # TODO: prevent game from starting before we click on it to get sound and keyboard inputs
+
+# TODO: based on browsing Bevy Discord, audio on a mobile is very problematic, because it works on same thread as WASM. Sadly, it might be better to NOT support mobile web and only release mobile desktop :-/ In this category PICO-8 wins for sure
