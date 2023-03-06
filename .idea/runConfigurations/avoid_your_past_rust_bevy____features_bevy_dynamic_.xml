@@ -1,6 +1,6 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="Run avoid_your_past_rust_bevy" type="CargoCommandRunConfiguration" factoryName="Cargo Command">
-    <option name="command" value="run --package avoid_your_past_rust_bevy --bin avoid_your_past_rust_bevy --features bevy/dynamic" />
+  <configuration default="false" name="avoid_your_past_rust_bevy (--features bevy/dynamic)" type="CargoCommandRunConfiguration" factoryName="Cargo Command">
+    <option name="command" value="run --features bevy/dynamic" />
     <option name="workingDirectory" value="file://$PROJECT_DIR$" />
     <option name="emulateTerminal" value="false" />
     <option name="channel" value="DEFAULT" />
@@ -10,7 +10,7 @@
     <option name="buildTarget" value="REMOTE" />
     <option name="backtrace" value="SHORT" />
     <envs>
-      <env name="RUST_LOG" value="avoid_your_past_rust_bevy=info" />
+      <env name="RUST_LOG" value="warn,bevy=info,avoid_your_past_rust_bevy=debug" />
     </envs>
     <option name="isRedirectInput" value="false" />
     <option name="redirectInputPath" value="" />
