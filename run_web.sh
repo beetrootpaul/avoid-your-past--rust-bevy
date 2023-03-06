@@ -9,7 +9,7 @@ RUST_LOG=warn,bevy=info,avoid_your_past_rust_bevy=debug \
 rm -rf ./wasm/debug/
 
 wasm-bindgen \
-  --target web \
+  --target no-modules \
   --no-typescript \
   --out-dir ./wasm/debug \
   --out-name avoid_your_past \

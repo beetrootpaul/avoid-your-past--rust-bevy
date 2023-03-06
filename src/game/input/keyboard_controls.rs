@@ -4,8 +4,8 @@ use iyes_loopless::state::CurrentState;
 
 use crate::game::collision_debug::HitCirclesVisualizationConfig;
 use crate::game::game_state::GameState;
-use crate::game::PlayerMovement;
 use crate::game::sprites_debug::SpritesBoundariesConfig;
+use crate::game::PlayerMovement;
 
 pub struct GameKeyboardControlsPlugin;
 

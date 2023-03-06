@@ -170,6 +170,8 @@ dependencies = [
  "bevy_prototype_debug_lines",
  "iyes_loopless",
  "rand",
+ "wasm-bindgen",
+ "web-sys",
 ]
 
 [[package]]

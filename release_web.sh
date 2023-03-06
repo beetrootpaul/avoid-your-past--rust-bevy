@@ -10,7 +10,7 @@ RUSTFLAGS="-D warnings -A dead_code -A unused-imports -A unused_mut -A unused-va
 rm -rf ./wasm/release/
 
 wasm-bindgen \
-  --target web \
+  --target no-modules \
   --no-typescript \
   --out-dir ./wasm/release \
   --out-name avoid_your_past \
@@ -41,3 +41,5 @@ miniserve --port 8080 --index index.html ./wasm/release/
 # TODO: prevent game from starting before we click on it to get sound and keyboard inputs
 
 # TODO: based on browsing Bevy Discord, audio on a mobile is very problematic, because it works on same thread as WASM. Sadly, it might be better to NOT support mobile web and only release mobile desktop :-/ In this category PICO-8 wins for sure
+
+# TODO: wasm-opt ? https://rustwasm.github.io/wasm-bindgen/examples/add.html
