@@ -7,17 +7,14 @@ RUSTFLAGS="-D warnings -A dead_code -A unused-imports -A unused_mut -A unused-va
 
 # TODO: create a proper web release page, not this temporary quick way to start and run it
 
-# This command should serve the game under http://127.0.0.1:1334/
-#wasm-server-runner ./target/wasm32-unknown-unknown/release/avoid_your_past_rust_bevy.wasm
-
-rm -rf ./wasm_debug/release/
+rm -rf ./wasm/release/
 
 wasm-bindgen \
-  --target web \
+  --target no-modules \
   --no-typescript \
   --out-dir ./wasm/release \
   --out-name avoid_your_past \
-  target/wasm32-unknown-unknown/debug/avoid_your_past_rust_bevy.wasm
+  target/wasm32-unknown-unknown/release/avoid_your_past_rust_bevy.wasm
 
 cp ./wasm/template/index.html ./wasm/release/index.html
 
@@ -44,3 +41,5 @@ miniserve --port 8080 --index index.html ./wasm/release/
 # TODO: prevent game from starting before we click on it to get sound and keyboard inputs
 
 # TODO: based on browsing Bevy Discord, audio on a mobile is very problematic, because it works on same thread as WASM. Sadly, it might be better to NOT support mobile web and only release mobile desktop :-/ In this category PICO-8 wins for sure
+
+# TODO: wasm-opt ? https://rustwasm.github.io/wasm-bindgen/examples/add.html

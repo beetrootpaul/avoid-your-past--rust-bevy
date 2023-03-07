@@ -51,6 +51,7 @@ bevy_pixel_camera = "0.3.0"
 bevy_prototype_debug_lines = "0.9.0"
 iyes_loopless = "0.9.1"
 rand = "0.8.5"
+wasm-bindgen = "0.2.84"
 
 [dependencies.bevy]
 version = "0.9.1"
@@ -62,14 +63,14 @@ features = [
 
     # Bevy functionality:
     "bevy_asset", # Assets management
-    #    "bevy_scene",         # Scenes management
+    # "bevy_scene",         # Scenes management
     "bevy_gilrs", # Gamepad input support
-    "bevy_audio", # Builtin audio | WARNING: Do not enable it, because we use bevy_kira_audio instead
+    # "bevy_audio",         # Builtin audio | WARNING: Do not enable it, because we use bevy_kira_audio instead
     "bevy_winit", # Window management
-    #    "animation",          # Animation support
-    #    "x11",                # Linux: Support X11 windowing system
+    # "animation",          # Animation support
+    # "x11",                # Linux: Support X11 windowing system
     "filesystem_watcher", # Asset hot-reloading
-    #    "render",             # Graphics Rendering
+    # "render",             # Graphics Rendering
 
     ## "render" actually just includes:
     ## (feel free to use just a subset of these, instead of "render")
@@ -83,8 +84,8 @@ features = [
 
     # File formats:
     "png",
-    #    "hdr",
-    "vorbis", # WARNING: Do not enable it, because we use bevy_kira_audio instead
+    # "hdr",
+    # "vorbis", # WARNING: Do not enable it, because we use bevy_kira_audio instead
 
     # These are other features that may be of interest:
     # (add any of these that you need)
@@ -114,13 +115,24 @@ features = [
     #    "wgpu_trace",   # WGPU/rendering tracing
 ]
 
-#[dependencies.bevy_kira_audio]
-#version = "0.13.0"
-#default-features = false
-#features = [
-# TODO: would OGG be better for web in terms of compatibility?
-#    "wav",
-#    "flac",
-#    "mp3",
-#    "ogg",
-#]
+[dependencies.bevy_kira_audio]
+version = "0.13.0"
+default-features = false
+features = [
+    # TODO: would OGG be better for web in terms of compatibility?
+    #    "wav",
+    #    "flac",
+    #    "mp3",
+    "ogg",
+]
+
+# TODO: Where is it used? Added, because of https://rustwasm.github.io/wasm-bindgen/examples/without-a-bundler.html
+[dependencies.web-sys]
+version = "0.3.4"
+features = [
+    'Document',
+    'Element',
+    'HtmlElement',
+    'Node',
+    'Window',
+]
