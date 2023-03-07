@@ -81,7 +81,7 @@
 <h1 style="background-color: purple; color: peachpuff">some area outside the game</h1>
 
 <div style="display: flex; flex-direction: column">
-    <button id="load_game_button">load</button>
+    <!--    <button id="load_game_button">load</button>-->
     <button id="turn_left_button">LEFT</button>
     <button id="turn_right_button">RIGHT</button>
     <button id="turn_up_button">UP</button>
@@ -118,9 +118,13 @@
 <script src='./avoid_your_past.js'></script>
 
 <script>
-    document.getElementById("load_game_button").addEventListener("click", () => {
+    // document.getElementById("load_game_button").addEventListener("click", () => {
+    //     wasm_bindgen().catch(console.error);
+    // });
+    window.addEventListener("load", () => {
         wasm_bindgen().catch(console.error);
     });
+
     document.getElementById("turn_left_button").addEventListener("click", () => {
         window.turn_left = true;
     });
