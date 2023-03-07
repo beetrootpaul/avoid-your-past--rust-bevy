@@ -91,14 +91,6 @@
 
 <body>
 
-<div class="touch_controls">
-    <!--    <button id="load_game_button">load</button>-->
-    <button id="turn_left_button">LEFT</button>
-    <button id="turn_right_button">RIGHT</button>
-    <button id="turn_up_button">UP</button>
-    <button id="turn_down_button">DOWN</button>
-</div>
-
 <script>
     window.turn_left = false;
     window.should_turn_left = function should_turn_left() {
@@ -130,10 +122,10 @@
 
 <script>
     // document.getElementById("load_game_button").addEventListener("click", () => {
-    //     wasm_bindgen().catch(console.error);
+    //     game_loader().catch(console.error);
     // });
     window.addEventListener("load", () => {
-        wasm_bindgen().catch(console.error);
+        game_loader().catch(console.error);
     });
 
     document.getElementById("turn_left_button").addEventListener("click", () => {
@@ -149,6 +141,14 @@
         window.turn_down = true;
     });
 </script>
+
+<div class="touch_controls">
+    <!--    <button id="load_game_button">load</button>-->
+    <button id="turn_left_button">LEFT</button>
+    <button id="turn_right_button">RIGHT</button>
+    <button id="turn_up_button">UP</button>
+    <button id="turn_down_button">DOWN</button>
+</div>
 
 </body>
 </html>
