@@ -10,10 +10,23 @@
         }
 
         body {
-            background-color: black;
+            background-color: darkslateblue;
             height: 100%;
             margin: 0;
             overflow: hidden;
+        }
+
+        .touch_controls {
+            display: none;
+        }
+
+        /* smarthphones */
+        @media only screen and (hover: none) and (pointer: coarse) {
+            .touch_controls {
+                display: flex;
+                flex-direction: column
+            }
+
         }
     </style>
     <script>
@@ -76,11 +89,9 @@
     </script>
 </head>
 
-<body style="background-color: teal">
+<body>
 
-<h1 style="background-color: purple; color: peachpuff">some area outside the game</h1>
-
-<div style="display: flex; flex-direction: column">
+<div class="touch_controls">
     <!--    <button id="load_game_button">load</button>-->
     <button id="turn_left_button">LEFT</button>
     <button id="turn_right_button">RIGHT</button>
