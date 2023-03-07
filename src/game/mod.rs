@@ -1,8 +1,8 @@
 use bevy::prelude::*;
 use iyes_loopless::prelude::AppLooplessStateExt;
 
-pub use coin::Coin;
 pub use coin::create_systems_coin_spawn;
+pub use coin::Coin;
 pub use input::GameKeyboardControlsPlugin;
 pub use player::create_systems_player_move;
 pub use player::create_systems_player_spawn;
@@ -12,10 +12,12 @@ pub use sprites::GameSpriteSheetPlugin;
 use crate::game::animation::create_systems_animate_sprite;
 use crate::game::audio::GameAudioPlugin;
 use crate::game::collision_debug::HitCirclesVisualizationPlugin;
-use crate::game::game_area::{GAME_AREA_H, GAME_AREA_W, spawn_game_area};
+use crate::game::game_area::{spawn_game_area, GAME_AREA_H, GAME_AREA_W};
 use crate::game::game_state::{create_system_update_game_state, GameState};
 use crate::game::gui::TOPBAR_H;
-use crate::game::input::{GameGamepadControlsPlugin, GameHtmlControlsPlugin};
+use crate::game::input::GameGamepadControlsPlugin;
+#[cfg(target_arch = "wasm32")]
+use crate::game::input::GameHtmlControlsPlugin;
 use crate::game::logic::create_systems_collect_coins;
 #[cfg(debug_assertions)]
 use crate::game::sprites_debug::SpritesBoundariesPlugin;
