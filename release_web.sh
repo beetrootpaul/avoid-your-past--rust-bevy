@@ -11,9 +11,11 @@ rm -rf ./wasm/release/
 
 wasm-bindgen \
   --target no-modules \
-  --no-typescript \
+  --no-modules-global game_loader \
   --out-dir ./wasm/release \
   --out-name avoid_your_past \
+  --no-demangle \
+  --no-typescript \
   target/wasm32-unknown-unknown/release/avoid_your_past_rust_bevy.wasm
 
 cp ./wasm/template/index.html ./wasm/release/index.html

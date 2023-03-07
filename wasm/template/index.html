@@ -10,13 +10,58 @@
         }
 
         body {
-            background-color: black;
+            background-color: darkslateblue;
             height: 100%;
             margin: 0;
             overflow: hidden;
+
+            display: flex;
+            flex-direction: column-reverse;
+        }
+
+        #loading_info {
+            position: absolute;
+            z-index: -1;
+            top: 10px;
+            left: 30px;
+            color: antiquewhite;
+        }
+
+        #rest-of-the-page-besides-game-canvas {
+            flex-grow: 1;
+        }
+
+        .touch_controls {
+            width: 348px;
+            display: none;
+        }
+
+        .touch_controls__grid_cell {
+            /* ~ (3*128px) / 5 */
+            width: 68px;
+            height: 68px;
+        }
+
+        .touch_controls__grid_cell button {
+            width: 100%;
+            height: 100%;
+        }
+
+        /* smarthphones */
+        @media only screen and (hover: none) and (pointer: coarse) {
+            .touch_controls {
+                display: grid;
+                grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+            }
+        }
+
+        .html-controls-button {
+            width: 64px;
+            height: 64px;
         }
     </style>
     <script>
+        // SOME POPULAR AUDIO FIX
         (function () {
             // An array of all contexts to resume on the page
             const audioContextList = [];
@@ -76,16 +121,42 @@
     </script>
 </head>
 
-<body style="background-color: teal">
+<body>
 
-<h1 style="background-color: purple; color: peachpuff">some area outside the game</h1>
+<!-- MAKE SURE THERE IS ONLY ONE DIRECT ELEMENT OF BODY -->
+<!-- Why? Because we will reverse flex direction in order to put this whole container below canvas injected at the end -->
+<div id="rest-of-the-page-besides-game-canvas">
+    <div class="touch_controls">
+        <!--    <button id="load_game_button">load</button>-->
 
-<div style="display: flex; flex-direction: column">
-    <!--    <button id="load_game_button">load</button>-->
-    <button id="turn_left_button">LEFT</button>
-    <button id="turn_right_button">RIGHT</button>
-    <button id="turn_up_button">UP</button>
-    <button id="turn_down_button">DOWN</button>
+        <!-- row 1 -->
+        <div class="touch_controls__grid_cell"></div>
+        <div class="touch_controls__grid_cell"></div>
+        <div class="touch_controls__grid_cell">
+            <button id="turn_up_button">UP</button>
+        </div>
+        <div class="touch_controls__grid_cell"></div>
+        <div class="touch_controls__grid_cell"></div>
+        <!-- row 2 -->
+        <div class="touch_controls__grid_cell"></div>
+        <div class="touch_controls__grid_cell">
+            <button id="turn_left_button">LEFT</button>
+        </div>
+        <div class="touch_controls__grid_cell"></div>
+        <div class="touch_controls__grid_cell">
+            <button id="turn_right_button">RIGHT</button>
+        </div>
+        <div class="touch_controls__grid_cell"></div>
+        <!-- row 3 -->
+        <div class="touch_controls__grid_cell"></div>
+        <div class="touch_controls__grid_cell"></div>
+        <div class="touch_controls__grid_cell">
+            <button id="turn_down_button">DOWN</button>
+        </div>
+        <div class="touch_controls__grid_cell"></div>
+        <div class="touch_controls__grid_cell"></div>
+
+    </div>
 </div>
 
 <script>
@@ -119,10 +190,11 @@
 
 <script>
     // document.getElementById("load_game_button").addEventListener("click", () => {
-    //     wasm_bindgen().catch(console.error);
+    //     game_loader().catch(console.error);
     // });
+
     window.addEventListener("load", () => {
-        wasm_bindgen().catch(console.error);
+        game_loader();
     });
 
     document.getElementById("turn_left_button").addEventListener("click", () => {
@@ -138,6 +210,11 @@
         window.turn_down = true;
     });
 </script>
+
+<!-- CANVAS WILL BE INJECTED HERE -->
+
+<!-- LOADER WHICH IS POSITIONED ABSOLUTE AND EXPECTED TO HIDE BEHIND THE GAME -->
+<h1 id="loading_info">loading…</h1>
 
 </body>
 </html>
