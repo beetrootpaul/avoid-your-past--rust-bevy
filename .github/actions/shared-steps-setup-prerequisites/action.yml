@@ -3,10 +3,14 @@ description: "Shared steps used to setup prerequisites for other jobs."
 runs:
   using: "composite"
   steps:
-    # See https://github.com/Spotifyd/spotifyd/issues/659#issuecomment-737730954
-    - name: "Install missing alsa dependency"
+    - name: "apt-get update"
       shell: sh
-      run: sudo apt install librust-alsa-sys-dev
+      run: sudo apt-get update
+    # See https://github.com/Spotifyd/spotifyd/issues/659#issuecomment-737730954
+    # and https://users.rust-lang.org/t/failed-to-run-custom-build-command-for-libudev-sys-v0-1-4/53926/2
+    - name: "Install missing alsa and libudev dependencies"
+      shell: sh
+      run: sudo apt install librust-alsa-sys-dev libudev-dev
     - name: "Update rustup and Rust 'stable' toolchain"
       shell: sh
       run: rustup update stable
