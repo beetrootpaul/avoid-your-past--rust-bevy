@@ -1,13 +1,11 @@
-# Avoid Your Past (Bevy/Rust)
+# Bevy web game PoC
 
-> a snake-like [PICO-8](https://www.lexaloffle.com/pico-8.php) game where each collected coin brings a harmful memory of
-> your past steps. Rewritten from PICO-8/Lua to Bevy/Rust as an exercise.
+This is a personal PoC of a web (desktop&mobile) game setup based on Bevy game engine. I managed to make it playable on
+my phone and some other people confirmed it works on their phones as well.
 
-Based on https://github.com/beetrootpaul/avoid-your-past
+Based on https://github.com/beetrootpaul/avoid-your-past (partial rewrite)
 
-Temporarily deployed to https://beetrootpaul.itch.io/tmp-avoid-your-past-rust-bevy (behind password `qwerty` – yes, I am
-OK with sharing it publicly here, because the only reason I restrict access is to not have this game listed publicly on
-itch.io 😄 ).
+Deployed to https://beetrootpaul.itch.io/bevy-web-game-poc
 
 Controls:
 
@@ -21,6 +19,10 @@ Controls:
 - keyboard, in debug build: `S` to toggle sprite boundaries visualization
 - keyboard, in debug build: `C` to toggle hit circles visualization
 
+![progress 2023-03-07 mobile controls.jpg | width=256](progress%2Fprogress%202023-03-07%20mobile%20controls.jpg)
+
 ## License
 
-TODO: choose a license which allows non-commercial usage. It is probably "developer-friendly" type of a license.
+Distributed under the terms of the MIT license.
+
+See [LICENSE](LICENSE).
