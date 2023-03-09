@@ -19,7 +19,7 @@ Controls:
 - keyboard, in debug build: `S` to toggle sprite boundaries visualization
 - keyboard, in debug build: `C` to toggle hit circles visualization
 
-![progress 2023-03-07 mobile controls.jpg | width=256](progress%2Fprogress%202023-03-07%20mobile%20controls.jpg)
+<img src="progress/progress%202023-03-07%20mobile%20controls.jpg" alt="progress 2023-03-07 mobile controls.jpg" width="256">
 
 ## License
 
