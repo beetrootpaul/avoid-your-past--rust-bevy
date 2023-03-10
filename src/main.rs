@@ -1,16 +1,3 @@
-use bevy::prelude::*;
-use bevy::window::close_on_esc;
-
-use crate::game::{GamePlugin, VIEWPORT_H, VIEWPORT_W};
-#[cfg(debug_assertions)]
-use crate::print_fps::PrintFpsPlugin;
-
-mod game;
-mod pico8_color;
-mod pixel_art_support;
-mod print_fps;
-mod z_layer;
-
 fn main() {
     #[cfg(target_arch = "wasm32")]
     const ZOOM: f32 = 3.;
@@ -21,14 +8,6 @@ fn main() {
 
     app.add_plugins(
         DefaultPlugins
-            .set(WindowPlugin {
-                window: WindowDescriptor {
-                    width: VIEWPORT_W * ZOOM,
-                    height: VIEWPORT_H * ZOOM,
-                    ..default()
-                },
-                ..default()
-            })
             .set(AssetPlugin {
                 // Watch for changes made to assets while the app is run and
                 // hot-reload them in the app without need to run the app again
@@ -37,16 +16,6 @@ fn main() {
                 ..default()
             }),
     );
-
-    app.add_plugin(GamePlugin);
-
-    #[cfg(debug_assertions)]
-    app.add_plugin(PrintFpsPlugin);
-
-    #[cfg(debug_assertions)]
-    app.add_system(close_on_esc);
-
-    app.run();
 }
 
 // TODO: at the end, remove some "pub"s and exports and check which of them are still needed (or clippy will take care of that?)
