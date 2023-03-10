@@ -21,8 +21,3 @@ Controls:
 
 <img src="progress/progress%202023-03-07%20mobile%20controls.jpg" alt="progress 2023-03-07 mobile controls.jpg" width="256">
 
-## License
-
-Distributed under the terms of the MIT license.
-
-See [LICENSE](LICENSE).
