@@ -23,7 +23,6 @@ fn main() {
         DefaultPlugins
             .set(WindowPlugin {
                 window: WindowDescriptor {
-                    title: game::GAME_TITLE.to_string(),
                     width: VIEWPORT_W * ZOOM,
                     height: VIEWPORT_H * ZOOM,
                     ..default()
@@ -36,13 +35,8 @@ fn main() {
                 #[cfg(debug_assertions)]
                 watch_for_changes: true,
                 ..default()
-            })
-            // Prevent blurring of scaled up pixel art sprites
-            .set(ImagePlugin::default_nearest()),
+            }),
     );
-
-    // Get rid of edges of neighbour sprites visible around the given sprite from the sprite sheet
-    app.insert_resource(Msaa { samples: 1 });
 
     app.add_plugin(GamePlugin);
 
