@@ -1,28 +1,3 @@
-# # # # # # # #
-# workspaces
-#
-
-# Resolver set to 2 is required if you are using Cargo Workspaces
-# See: https://bevyengine.org/learn/book/getting-started/setup/#cargo-workspaces
-#[workspace]
-#resolver = "2" # Important! wgpu/Bevy needs this!
-
-# # # # # # # # #
-# optimization
-#
-
-# Enable a small amount of optimization in debug_helpers mode
-# See: https://bevyengine.org/learn/book/getting-started/setup/#compile-with-performance-optimizations
-# See: https://bevy-cheatbook.github.io/pitfalls/performance.html#unoptimized-debug-builds
-#[profile.dev]
-#opt-level = 1
-
-# Enable high optimizations for dependencies (incl. Bevy), but not for our code:
-# See: https://bevyengine.org/learn/book/getting-started/setup/#compile-with-performance-optimizations
-# See: https://bevy-cheatbook.github.io/pitfalls/performance.html#unoptimized-debug-builds
-[profile.dev.package."*"]
-opt-level = 3
-
 # See: https://bevy-cheatbook.github.io/platforms/wasm/size-opt.html#compiling-for-size-instead-of-speed
 [profile.release]
 opt-level = 's'
