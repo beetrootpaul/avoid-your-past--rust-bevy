@@ -3,6 +3,7 @@ set -e
 
 # Prepare a package for itch.io
 rm -f ./wasm/dist/avoid_your_past_itch_io.zip
+mkdir -p ./wasm/dist/
 cd ./wasm/release/
 zip ../dist/avoid_your_past_itch_io.zip \
   ./index.html \
